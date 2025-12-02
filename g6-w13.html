@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Conditional Formatting Lesson</title>
+<style>
+ body {font-family: Arial, sans-serif; margin: 0; background:#f1f5f9;}
+ header {background:#0f172a; color:white; padding:18px; text-align:center; font-size:20px;}
+ main {padding:15px;}
+ h2 {color:#0f172a; margin-top:25px;}
+ .card {background:white; padding:15px; border-radius:10px; margin-bottom:18px; box-shadow:0 2px 6px rgba(0,0,0,0.1);} 
+ .btn {background:#0f172a; color:white; padding:10px 15px; border:none; border-radius:6px; margin-top:10px; width:100%; font-size:16px;}
+ .exercise-input {width:100%; padding:10px; font-size:16px; margin-top:10px; border-radius:6px; border:1px solid #cbd5e1;}
+ .feedback {margin-top:10px; font-weight:bold;}
+ .cell-box {display:inline-block; padding:10px 15px; border-radius:6px; margin-top:10px; background:#e2e8f0;}
+</style>
+</head>
+<body>
+<header>2.1 Spreadsheets — Conditional Formatting (Interactive)</header>
+<main>
+
+<section class="card">
+<h2>📘 Онол: Conditional Formatting гэж юу вэ?</h2>
+<p><b>Spreadsheet</b> гэдэг нь тоо, өгөгдөл, мэдээллийг хүснэгтээр зохион байгуулж тооцоолол хийх, анализ хийх, загварчлал хийхэд ашигладаг програм юм. Нүд (cell) бүрт нэг утга байрладаг бөгөөд олон мянган мөр, баганаас бүрддэг.</p>
+<p><b>Formatting</b> гэдэг нь текст эсвэл нүдийг өнгө, үсгийн хэмжээ, дэвсгэр өнгөөр ялгах үйлдэл. Энэ нь өгөгдлийг хурдан ойлгоход тусалдаг.</p>
+<p><b>Condition</b> гэдэг нь шалгах тест — жишээ нь: “Утга > 10 уу?”, “Утга = 0 юу?” гэх мэт. Үр дүн нь <b>true</b> (үнэн) эсвэл <b>false</b> (худал) гэж гардаг.</p>
+<p><b>Conditional formatting</b> нь форматыг автоматаар өөрчлөх дүрэм юм. Өөрөөр хэлбэл:</p>
+<ul>
+<li>нөхцөл үнэн бол → тогтоосон өнгө, формат идэвхжинэ</li>
+<li>нөхцөл худал бол → формат идэвхжихгүй</li>
+</ul>
+<p>Жишээ нь:</p>
+<ul>
+<li>Утга <b>> 0</b> бол — нөгөөн өнгө</li>
+<li>Утга <b>< 0</b> бол — улаан</li>
+<li>Утга <b>= 0</b> бол — улбар</li>
+</ul>
+<p>Их хэмжээний өгөгдлөөс чухал хэсгүүдийг илрүүлэхэд conditional formatting маш их хэрэгтэй. Жишээ нь бизнесийн ашиг алдагдлыг улаан/ногоон өнгөөр ялгаж харуулах, оноо зорилтоос давсан эсэхийг шалгах, хяналтын хүснэгтэд анхааруулах утгуудыг тодруулах гэх мэт.</p>
+<p><b>Rule</b> гэдэг нь нөхцөл + формат гэсэн хоёр хэсгээс бүрдсэн өгүүлбэр:</p>
+<p style="background:#e2e8f0; padding:10px; border-radius:6px;">Хэрэв утга = 0 бол → нүдийг улбар өнгөтэй болго.</p>
+</section>
+
+<section class="card">
+<h2>🧠 Онолыг ойлгох жижиг дасгал (Interactive)</h2>
+<p><b>Даалгавар:</b> Дараах нөхцөл ямар өнгө үүсгэх ёстой вэ?</p>
+<label>Утга: <input type="number" id="ex1" class="exercise-input" placeholder="тоо оруул" /></label>
+<button class="btn" onclick="checkEx1()">Шалгах</button>
+<div id="fb1" class="feedback"></div>
+</section>
+
+<section class="card">
+<h2>📊 Нөхцөл шалгах симулятор</h2>
+<p>Та тоо оруулахад тухайн тоо ямар өнгөөр харагдахыг доорх "нүд" харуулна.</p>
+<input type="number" id="sim" class="exercise-input" placeholder="тоо оруул" oninput="simulate()" />
+<div id="cell" class="cell-box">Cell</div>
+</section>
+
+<section class="card">
+<h2>🏠 Гэрийн даалгавар (Interactive + Mobile friendly)</h2>
+<p>Доорх нөхцөлүүдэд тохирох өнгийг зөв оруулж чадвал оноо авна.</p>
+
+<div>
+<p><b>1. Тухайн нүдний утга = -5 → ямар өнгө?</b></p>
+<select id="h1" class="exercise-input">
+<option value="">Сонго…</option>
+<option value="red">Улаан</option>
+<option value="green">Ногоон</option>
+<option value="orange">Улбар</option>
+</select>
+</div>
+
+<div>
+<p><b>2. Тухайн нүдний утга = 0 → ямар өнгө?</b></p>
+<select id="h2" class="exercise-input">
+<option value="">Сонго…</option>
+<option value="red">Улаан</option>
+<option value="green">Ногоон</option>
+<option value="orange">Улбар</option>
+</select>
+</div>
+
+<div>
+<p><b>3. Тухайн нүдний утга = 15 → ямар өнгө?</b></p>
+<select id="h3" class="exercise-input">
+<option value="">Сонго…</option>
+<option value="red">Улаан</option>
+<option value="green">Ногоон</option>
+<option value="orange">Улбар</option>
+</select>
+</div>
+
+<button class="btn" onclick="checkHW()">Гэрийн даалгавар шалгах</button>
+<div id="hwfb" class="feedback"></div>
+</section>
+
+<section class="card">
+<h2>📝 Номноос сэдэвлэсэн интерактив дасгал 1 — Формат ямар утгыг илэрхийлэх вэ?</h2>
+<p>Доорх текстүүд ямар мэдрэмж төрүүлдэг вэ? Зөв хариуг сонгоорой.</p>
+<p><b style='color:red;'>Энэ улаан текст</b> → юу илэрхийлэх вэ?</p>
+<select id="m1" class="exercise-input">
+<option value="">Сонго…</option>
+<option value="neg">Сөрөг, анхааруулах</option>
+<option value="pos">Эерэг, баяртай</option>
+</select>
+
+<p><b style='background:yellow;'>Шар фонттой текст</b> → юу илэрхийлэх вэ?</p>
+<select id="m2" class="exercise-input">
+<option value="">Сонго…</option>
+<option value="warn">Анхааруулга / сэрэмж</option>
+<option value="ok">Энгийн мэдээлэл</option>
+</select>
+
+<button class="btn" onclick="checkM1()">Шалгах</button>
+<div id="mf1" class="feedback"></div>
+</section>
+
+<section class="card">
+<h2>🧩 Интерактив дасгал 2 — Үнэн эсвэл Худал?</h2>
+<p><b>1. "Утга > 10" бол ногоон болж харагддаг.</b></p>
+<select id="t1" class="exercise-input">
+<option value="">Сонго…</option>
+<option value="true">Үнэн</option>
+<option value="false">Худал</option>
+</select>
+
+<p><b>2. Conditional formatting нь өгөгдлийг хурдан ойлгоход тусалдаг.</b></p>
+<select id="t2" class="exercise-input">
+<option value="">Сонго…</option>
+<option value="true">Үнэн</option>
+<option value="false">Худал</option>
+</select>
+
+<button class="btn" onclick="checkT()">Шалгах</button>
+<div id="tfb" class="feedback"></div>
+</section>
+
+</main><script>
+function checkM1(){
+ let s1=document.getElementById('m1').value;
+ let s2=document.getElementById('m2').value;
+ let msg="";
+ let score=0;
+ if(s1=="neg") score++;
+ if(s2=="warn") score++;
+ msg = "Оноо: "+score+" / 2";
+ document.getElementById('mf1').textContent = msg;
+}
+function checkT(){
+ let a=document.getElementById('t1').value;
+ let b=document.getElementById('t2').value;
+ let score=0;
+ if(a=="true") score++;
+ if(b=="true") score++;
+ document.getElementById('tfb').textContent="Оноо: "+score+" / 2";
+}
+</script>
+<script>
+function checkEx1(){
+  const v = parseFloat(document.getElementById('ex1').value);
+  const fb = document.getElementById('fb1');
+  if(isNaN(v)){fb.textContent = "Тоо оруулна уу"; fb.style.color="red"; return;}
+  if(v>0){fb.textContent = "Ногоон (утга 0-ээс их)"; fb.style.color="green";}
+  else if(v<0){fb.textContent = "Улаан (утга 0-ээс бага)"; fb.style.color="red";}
+  else{fb.textContent = "Улбар (утга 0-тэй тэнцүү)"; fb.style.color="orange";}
+}
+
+function simulate(){
+  const v = parseFloat(document.getElementById('sim').value);
+  const cell = document.getElementById('cell');
+  if(isNaN(v)){cell.style.background="#e2e8f0"; cell.style.color="#000"; return;}
+  if(v>0){cell.style.background="green"; cell.style.color="white";}
+  else if(v<0){cell.style.background="red"; cell.style.color="white";}
+  else{cell.style.background="orange"; cell.style.color="black";}
+}
+
+function checkHW(){
+ const a=document.getElementById('h1').value;
+ const b=document.getElementById('h2').value;
+ const c=document.getElementById('h3').value;
+ let score=0;
+ if(a=="red")score++;
+ if(b=="orange")score++;
+ if(c=="green")score++;
+ document.getElementById('hwfb').textContent = "Таны авсан оноо: "+score+" / 3";
+}
+</script>
+<script>
+// LocalStorage: Save exercise results automatically
+function saveLS(key,value){ localStorage.setItem(key,value); }
+function loadLS(key){ return localStorage.getItem(key); }
+
+// Modify previous check functions to save progress
+const oldCheckEx1 = checkEx1;
+checkEx1 = function(){ oldCheckEx1(); saveLS('ex1', document.getElementById('ex1').value); }
+
+const oldCheckHW = checkHW;
+checkHW = function(){ oldCheckHW(); saveLS('hw1', document.getElementById('h1').value); saveLS('hw2', document.getElementById('h2').value); saveLS('hw3', document.getElementById('h3').value); }
+
+// Load saved data on page load
+document.addEventListener('DOMContentLoaded', ()=>{
+ if(loadLS('ex1')) document.getElementById('ex1').value = loadLS('ex1');
+ if(loadLS('h1')) document.getElementById('h1').value = loadLS('h1');
+ if(loadLS('h2')) document.getElementById('h2').value = loadLS('h2');
+ if(loadLS('h3')) document.getElementById('h3').value = loadLS('h3');
+});
+</script>
+</body>
+</html>
