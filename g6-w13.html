@@ -3,232 +3,183 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>2.1 Capturing Data — Interactive Lesson</title>
+<title>2.1 Capturing Data - Interactive Lesson</title>
+
 <style>
- body {font-family: Arial, sans-serif; margin:0; background:#f1f5f9;}
- header {background:#0f172a; color:white; padding:18px; text-align:center; font-size:20px;}
- main {padding:15px;}
- h2 {color:#0f172a; margin-top:25px;}
- .card {background:white; padding:15px; border-radius:10px; margin-bottom:18px; box-shadow:0 2px 6px rgba(0,0,0,0.1);} 
- .btn {background:#0f172a; color:white; padding:10px; border:none; border-radius:6px; margin-top:10px; width:100%; font-size:16px;}
- .exercise-input, select {width:100%; padding:10px; font-size:16px; margin-top:10px; border-radius:6px; border:1px solid #cbd5e1;}
- .feedback {margin-top:10px; font-weight:bold;}
- .badge {padding:6px 10px; border-radius:6px; color:white; font-size:14px;}
- .cat {background:#3b82f6;} .dis {background:#6366f1;} .con {background:#22c55e;}
- .question-box {padding:10px; background:#e2e8f0; border-radius:6px; margin-top:10px;}
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        background: #f1f5f9;
+        padding-bottom: 40px;
+    }
+    header {
+        background: #0f172a;
+        color: white;
+        padding: 18px;
+        text-align: center;
+        font-size: 22px;
+    }
+    main { padding: 15px; }
+    .card {
+        background: white;
+        padding: 15px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 5px #0002;
+    }
+    h2 { color: #0f172a; margin-top:0; }
+    textarea, input[type="text"] {
+        width: 100%;
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px solid #94a3b8;
+        margin-top: 10px;
+        font-size: 15px;
+    }
+    .check-btn{
+        padding:10px 16px;
+        background:#0f172a;
+        border:none;
+        color:white;
+        border-radius:8px;
+        margin-top:10px;
+        cursor:pointer;
+    }
+    .result {
+        margin-top:10px;
+        font-weight:bold;
+    }
 </style>
-</head>
-<body>
-<header>2.1 Capturing Data — Interactive Mobile Lesson</header>
-<main>
 
-<section class="card">
-<h2>📘 Онол: Data гэж юу вэ?</h2>
-<p><b>Data</b> гэдэг нь аливаа мэдээлэл, тоо баримт бөгөөд статистик судалгаа хийхэд хэрэглэгддэг. Энэ хичээл нь номын (pp.95–114) үндсэн агуулгыг хүүхдэд маш ойлгомжтой хэлбэрээр тайлбарлаж өгнө.</p>
-
-<h3>📗 1. Statistical Investigation гэж юу вэ?</h3>
-<p>Статистик судалгаа нь <b>асуултанд хариу олохын тулд</b> мэдээлэл цуглуулж, түүнийг шинжилж, дүгнэлт хийдэг үйл явц юм.</p>
-<p>Жишээ (номын хуудас 96):</p>
-<ul>
-<li>Өдөрт хэдэн удаа шувуу ирдэг вэ?</li>
-<li>Ангид хамгийн олон төрлийн дуртай өнгө аль вэ?</li>
-<li>Хүмүүсийн өндөр дундажаар хэд вэ?</li>
-</ul>
-<p>Статистик судалгааны эхний зорилго нь <b>асуултыг тодорхойлох</b> юм.</p>
-
-<h3>📗 2. Data Types (Өгөгдлийн төрлүүд)</h3>
-<p>Номд өгөгдлийг 3 төрөлд ангилсан (p.97–98):</p>
-
-<h4>📘 2.1. Categorical Data</h4>
-<p>Ангилдаг мэдээлэл. Тоон биш, үгээр илэрхийлэгдэнэ.</p>
-<ul>
-<li>дуртай өнгө — “Blue”</li>
-<li>дуртай амттан — “Cake”</li>
-<li>амьтны төрөл — “Dog”</li>
-</ul>
-<p>✔ Сэтгэгдэл, нэр, төрөл бүхий өгөгдөл бүгд categorical.</p>
-
-<h4>📘 2.2. Discrete Data</h4>
-<p>Зөвхөн <b>бүхэл тоо</b>. Тоолж болдог.</p>
-<ul>
-<li>ангийн сурагчдын тоо</li>
-<li>гэрт байгаа тэжээвэр амьтдын тоо</li>
-<li>машины тоо</li>
-</ul>
-<p>❗ 3.5 сурагч гэж байдаггүй → whole numbers only.</p>
-
-<h4>📘 2.3. Continuous Data</h4>
-<p>Хэмжигддэг бөгөөд <b>таслалтай байж болно</b>.</p>
-<ul>
-<li>өндөр — 1.72 m</li>
-<li>жин — 45.3 kg</li>
-<li>температур — 22.8°C</li>
-<li>цag — 2.63 sec</li>
-</ul>
-<p>✔ Энэ төрлийн өгөгдөл тасралтгүй өөрчлөгдөж байдаг.</p>
-
-<h3>📗 3. Planning an Investigation (Судалгаа төлөвлөх) — p.99</h3>
-<p>Судалгаа хийхээсээ өмнө дараах асуултуудад заавал хариулах ёстой:</p>
-<ul>
-<li><b>Ямар мэдээлэл цуглуулах вэ?</b></li>
-<li><b>Ямар асуулт тавих вэ?</b> (жавчаа, сонголттой, нээлттэй?)</li>
-<li><b>Хэнд асуух вэ?</b> (target group)</li>
-<li><b>Хэрхэн цуглуулах вэ?</b> (асуулга, хэмжилт, data logger)</li>
-<li><b>Хэрхэн шинжлэх вэ?</b> (chart, table, spreadsheet)</li>
-</ul>
-<p>Энэ алхам маш чухал. Буруу төлөвлөсөн судалгаа → буруу үр дүн.</p>
-
-<h3>📗 4. Tools for Collecting Data — p.100–106</h3>
-<h4>🛰 Data Loggers</h4>
-<p>Температур, гэрлийн түвшин зэрэг мэдээллийг автомат хэмждэг төхөөрөмж.</p>
-<p>Жишээ (номоос): цаг тутам температурыг хэмждэг weather station.</p>
-
-<h4>📊 Spreadsheets</h4>
-<p>Судалгааны өгөгдлийг тооцоолох, хүснэгт, график гаргахад ашиглана.</p>
-
-<h4>🗂 Databases</h4>
-<p>Их хэмжээний өгөгдлийг хадгалах, хайлт хийх, шүүхэд ашиглана.</p>
-<p>Жишээ (p.104): ангийн сурагчдын дуртай жимсний жагсаалт.</p>
-
-<h4>📝 Online Forms</h4>
-<p>Google Forms зэрэг хэрэгсэл нь хүмүүст асуулга бөглүүлэхэд ашиглагдана. Автоматаар spreadsheet рүү мэдээлэл дамжуулна.</p>
-
-<h3>📗 5. Question Types — p.112–113</h3>
-<p>Судалгааны асуултын төрөл нь цуглуулах өгөгдлийг тодорхойлно.</p>
-<ul>
-<li><b>Open text questions</b> — хариулт өөрөө бичнэ</li>
-<li><b>Multiple choice questions</b> — сонголттой</li>
-<li><b>Ranking questions</b> — оноогоор үнэлэх (1–5)</li>
-</ul>
-<p>✔ Continuous data авахыг хүсвэл сонголт багатай асуулт тохиромжгүй болохыг анхаар!</p>
-</section>
-
-<section class="card">
-<h2>🧠 Дасгал 1 — Өгөгдлийн төрлийг зөв тань!</h2>
-<p>Доорх өгөгдлүүдээс сонгоорой:</p>
-<div class="question-box">
-<p><b>1. Анги дахь хүүхдийн тоо</b></p>
-<select id="q1">
-<option value="">Сонго…</option>
-<option value="categorical">Categorical</option>
-<option value="discrete">Discrete</option>
-<option value="continuous">Continuous</option>
-</select>
-</div>
-<div class="question-box">
-<p><b>2. Хүний өндөр (m)</b></p>
-<select id="q2">
-<option value="">Сонго…</option>
-<option value="categorical">Categorical</option>
-<option value="discrete">Discrete</option>
-<option value="continuous">Continuous</option>
-</select>
-</div>
-<div class="question-box">
-<p><b>3. Дуртай жимс</b></p>
-<select id="q3">
-<option value="">Сонго…</option>
-<option value="categorical">Categorical</option>
-<option value="discrete">Discrete</option>
-<option value="continuous">Continuous</option>
-</select>
-</div>
-<button class="btn" onclick="checkTypes()">Шалгах</button>
-<div id="fTypes" class="feedback"></div>
-</section>
-
-<section class="card">
-<h2>📊 Дасгал 2 — Investigation Planner</h2>
-<p>Өгөгдөл цуглуулах жижиг судалгаа төлөвлөөрэй:</p>
-<select id="inv1">
-<option value="">Та юу судлах вэ?</option>
-<option value="pets">Ангийнхны тэжээвэр амьтан</option>
-<option value="temp">Өрөөний температур</option>
-<option value="height">Ангийнхны өндөр</option>
-</select>
-<select id="inv2">
-<option value="">Яаж цуглуулах вэ?</option>
-<option value="survey">Судалгаа асуулга</option>
-<option value="measure">Шууд хэмжих</option>
-<option value="log">Data logger ашиглах</option>
-</select>
-<button class="btn" onclick="planInvestigation()">Төлөвлөгөө гаргах</button>
-<div id="invFb" class="feedback"></div>
-</section>
-
-<section class="card">
-<h2>📐 Дасгал 3 — Question Type Classifier</h2>
-<p>Доорх асуултуудын төрлийг сонгоорой:</p>
-<div class="question-box">
-<p><b>1. Why do you like reading?</b></p>
-<select id="qt1">
-<option value="">Сонго…</option>
-<option value="open">Open</option>
-<option value="mcq">Multiple choice</option>
-<option value="rank">Ranking</option>
-</select>
-</div>
-<div class="question-box">
-<p><b>2. What is your favourite colour?</b></p>
-<select id="qt2">
-<option value="">Сонго…</option>
-<option value="open">Open</option>
-<option value="mcq">Multiple choice</option>
-<option value="rank">Ranking</option>
-</select>
-</div>
-<div class="question-box">
-<p><b>3. Rate today’s lunch (1–5)</b></p>
-<select id="qt3">
-<option value="">Сонго…</option>
-<option value="open">Open</option>
-<option value="mcq">Multiple choice</option>
-<option value="rank">Ranking</option>
-</select>
-</div>
-<button class="btn" onclick="checkQT()">Шалгах</button>
-<div id="qtFb" class="feedback"></div>
-</section>
-
-<section class="card">
-<h2>🏠 Гэрийн даалгавар</h2>
-<p>Доорх судалгааны төрлөөс аль нь <b>continuous data</b> цуглуулах вэ?</p>
-<select id="hw1" class="exercise-input">
-<option value="">Сонго…</option>
-<option value="rain">Сарын хур тунадасны хэмжээ</option>
-<option value="supermarket">Супермаркетын хүмүүсийн тоо</option>
-<option value="pets">Гэрийн тэжээвэр амьтдын тоо</option>
-</select>
-<button class="btn" onclick="checkHW()">Хариу шалгах</button>
-<div id="hwFb" class="feedback"></div>
-</section>
-
-</main>
 <script>
-function checkTypes(){
- let score=0;
- if(document.getElementById('q1').value=='discrete') score++;
- if(document.getElementById('q2').value=='continuous') score++;
- if(document.getElementById('q3').value=='categorical') score++;
- document.getElementById('fTypes').textContent = "Оноо: "+score+" / 3";
+function checkQ1(){
+    const a1 = document.getElementById("q1").value.trim().toLowerCase();
+    let res="";
+    if(a1.includes("тасралтгүй") || a1.includes("continuous")) res="Зөв! Температур = тасралтгүй өгөгдөл.";
+    else res="❌ Түр буруу. Температур = тасралтгүй өгөгдөл.";
+    document.getElementById("r1").innerHTML = res;
 }
-function planInvestigation(){
- let a=document.getElementById('inv1').value;
- let b=document.getElementById('inv2').value;
- if(!a || !b){document.getElementById('invFb').textContent='Бүх талбарыг бөглөнө үү.';return;}
- document.getElementById('invFb').textContent='Төлөвлөгөө бэлэн! Та өгөгдлийг '+b+' аргаар цуглуулна.';
+function checkQ2(){
+    const a2 = document.getElementById("q2").value.trim().toLowerCase();
+    let res="";
+    if(a2.includes("тасралттай биш") || a2.includes("discrete")) res="Зөв! Нас = бүхэл тоо → тасралттай биш өгөгдөл.";
+    else res="❌ Буруу. Нас = тасралттай биш өгөгдөл.";
+    document.getElementById("r2").innerHTML = res;
 }
-function checkQT(){
- let score=0;
- if(document.getElementById('qt1').value=='open') score++;
- if(document.getElementById('qt2').value=='mcq') score++;
- if(document.getElementById('qt3').value=='rank') score++;
- document.getElementById('qtFb').textContent="Оноо: "+score+" / 3";
-}
-function checkHW(){
- let v=document.getElementById('hw1').value;
- document.getElementById('hwFb').textContent = (v=='rain') ? 'Зөв!' : 'Буруу, дахин оролдоорой!';
+function checkQ3(){
+    const a3 = document.getElementById("q3").value.trim().toLowerCase();
+    let res="";
+    if(a3.includes("ангиллын") || a3.includes("categorical")) res="Зөв! Ундааны төрөл = ангиллын өгөгдөл.";
+    else res="❌ Буруу. Ундааны төрөл = ангиллын өгөгдөл.";
+    document.getElementById("r3").innerHTML = res;
 }
 </script>
+
+</head>
+<body>
+
+<header>
+2.1 Capturing Data – Interactive Lesson (6-р анги)
+</header>
+
+<main>
+
+<!-- FULL THEORY -->
+<div class="card">
+    <h2>📘 Онолын хэсэг — 2.1 Өгөгдөл цуглуулах</h2>
+
+    <p><b>Статистик судалгаа</b> гэдэг нь нэг асуултын хариуг олохын тулд өгөгдөл цуглуулах процесс юм.</p>
+
+    <p>Жишээ нь, София нэг сард тоглосон хөлбөмбөгийн тоглолтуудад дундажаар хэдэн гоол хийдгээ мэдмээр болжээ. Тэр тоглолт бүрийн гоолын тоог цуглуулаад дараа нь дундажийг гаргана.</p>
+
+    <p><b>Өгөгдлийн 3 төрөл байдаг:</b></p>
+
+    <h3>1️⃣ Ангиллын өгөгдөл (Categorical)</h3>
+    <p>Сонголт, төрөл, өнгө, дуртай зүйл гэх мэт. Жишээ: дуртай амттан, амьтны төрөл.</p>
+
+    <h3>2️⃣ Тасралттай биш өгөгдөл (Discrete)</h3>
+    <p>Зөвхөн бүхэл тоо авдаг. Жишээ: хүүхдийн тоо, нас, амьтдын тоо.</p>
+
+    <h3>3️⃣ Тасралтгүй өгөгдөл (Continuous)</h3>
+    <p>Бүх төрлийн тоо байж болно, бутархай ч байж болно. Жишээ: температур, өндөр, жин, борооны хэмжээ.</p>
+
+    <hr>
+
+    <h3>📟 Дата логгер гэж юу вэ?</h3>
+    <p>Дата логгер нь мэдрэгч ашиглан тасралтгүй өгөгдлийг автоматаар цуглуулдаг төхөөрөмж юм.</p>
+
+    <p>Жишээ:</p>
+    <ul>
+        <li>Температур хэмждэг цаг тутмын төхөөрөмж</li>
+        <li>Спортын хичээл дээр зүрхний цохилтыг хэмжигч</li>
+        <li>Хүрэхэд хэцүү газар байрлуулдаг мэдрэгч (Антарктид, галт уул гэх мэт)</li>
+    </ul>
+
+    <p>Дэлхий дээр жилд 12,000–14,000 газар хөдлөлт болдог бөгөөд үүнийг <b>seismograph</b> гэдэг дата логгер хэмждэг.</p>
+
+    <hr>
+
+    <h3>📊 Спредшит гэж юу вэ?</h3>
+    <p>Спредшит ашиглан:</p>
+    <ul>
+        <li>Өгөгдөл хадгална</li>
+        <li>Дундаж, нэмэх, хасах, үржих, хуваах тооцоолно</li>
+        <li>График, диаграмм зурж өгөгдлийг ойлгомжтой болгоно</li>
+    </ul>
+</div>
+
+<!-- EXERCISE 1 -->
+<div class="card">
+    <h2>📝 Дасгал 1 — Өгөгдлийн төрлийг тодорхойлох</h2>
+
+    <p><b>1. Өдрийн турш гэрийн температурын өөрчлөлтийг судлах</b></p>
+    <input type="text" id="q1" placeholder="Ямар өгөгдөл вэ? (тасралтгүй/тасралттай биш/ангиллын)" />
+    <button class="check-btn" onclick="checkQ1()">Шалгах</button>
+    <div id="r1" class="result"></div>
+
+    <hr>
+
+    <p><b>2. Ангид хэн хамгийн ахмад болохыг мэдэх</b></p>
+    <input type="text" id="q2" placeholder="Ямар өгөгдөл вэ?" />
+    <button class="check-btn" onclick="checkQ2()">Шалгах</button>
+    <div id="r2" class="result"></div>
+
+    <hr>
+
+    <p><b>3. Цайны газар хамгийн алдартай ундааны төрлийг олох</b></p>
+    <input type="text" id="q3" placeholder="Ямар өгөгдөл вэ?" />
+    <button class="check-btn" onclick="checkQ3()">Шалгах</button>
+    <div id="r3" class="result"></div>
+</div>
+
+<!-- EXERCISE 2 -->
+<div class="card">
+    <h2>📝 Дасгал 2 — Тасралтгүй өгөгдлийн жишээ бичих</h2>
+    <p>Тасралтгүй өгөгдөл цуглуулах боломжтой 3 судалгааны санаа бичнэ үү.</p>
+    <textarea placeholder="Жишээ: Температурын өөрчлөлтийг цаг тутамд хэмжих"></textarea>
+</div>
+
+<!-- EXERCISE 3 -->
+<div class="card">
+    <h2>🌡️ Дасгал 3 — Анги танхимын температурыг хэмжих</h2>
+
+    <p>Доорх хүснэгтийг ангийнхаа хэмжилтээр бөглөөрэй:</p>
+    <textarea placeholder="Цаг — Температур ..."></textarea>
+
+    <p>Дараа нь spreadsheet програм ашиглан график зурж, үр дүнг тайлбарлана.</p>
+
+    <textarea placeholder="Тайлбар: Хамгийн халуун цаг нь..., Учир нь..."></textarea>
+</div>
+
+<!-- EXERCISE 4 -->
+<div class="card">
+    <h2>🔍 Дасгал 4 — Өгөгдлийн төрлийг таних</h2>
+
+    <p>Доорх өгөгдөл тус бүр ямар төрөл вэ?</p>
+    <textarea placeholder="1. Анги дахь хүүхдийн тоо = ?&#10;2. Өндөр = ?&#10;3. Дуртай амттан = ?&#10;4. Температурын өөрчлөлт = ?&#10;5. Нас = ?"></textarea>
+</div>
+
+</main>
+
 </body>
 </html>
