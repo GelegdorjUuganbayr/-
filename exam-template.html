@@ -1,0 +1,556 @@
+<!doctype html>
+<html lang="mn">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>8-р анги – CTP Шалгалт (Auto Score)</title>
+  <style>
+    :root{
+      --bg:#0b1220;
+      --card:#0f172a;
+      --muted:#94a3b8;
+      --text:#e5e7eb;
+      --accent:#38bdf8;
+      --good:#22c55e;
+      --warn:#f59e0b;
+      --bad:#ef4444;
+      --line: rgba(148,163,184,.18);
+      --white:#fff;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: radial-gradient(1100px 600px at 20% -10%, rgba(56,189,248,.25), transparent 60%),
+                  radial-gradient(900px 500px at 90% 0%, rgba(34,197,94,.18), transparent 55%),
+                  var(--bg);
+      color:var(--text);
+    }
+    header{
+      position: sticky; top:0; z-index:10;
+      background: linear-gradient(180deg, rgba(15,23,42,.95), rgba(15,23,42,.75));
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(10px);
+    }
+    .wrap{max-width:980px;margin:0 auto;padding:14px 14px}
+    .top{
+      display:flex; gap:10px; align-items:center; justify-content:space-between; flex-wrap:wrap;
+    }
+    .brand{display:flex; flex-direction:column; gap:4px}
+    .brand h1{margin:0;font-size:18px; letter-spacing:.2px}
+    .brand .sub{font-size:12px;color:var(--muted)}
+    .btns{display:flex; gap:8px; flex-wrap:wrap}
+    button{
+      border: 1px solid var(--line);
+      background: rgba(2,6,23,.35);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 12px;
+      cursor:pointer;
+      font-weight:600;
+      font-size: 13px;
+    }
+    button.primary{
+      background: rgba(56,189,248,.18);
+      border-color: rgba(56,189,248,.45);
+    }
+    button.good{
+      background: rgba(34,197,94,.18);
+      border-color: rgba(34,197,94,.45);
+    }
+    button:disabled{opacity:.55; cursor:not-allowed}
+    main{padding:16px 14px 28px}
+    .grid{
+      max-width:980px; margin:0 auto;
+      display:grid; gap:14px;
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 920px){
+      .grid{grid-template-columns: 1.2fr .8fr; align-items:start;}
+    }
+    .card{
+      background: linear-gradient(180deg, rgba(15,23,42,.92), rgba(2,6,23,.55));
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 14px;
+      box-shadow: 0 12px 30px rgba(0,0,0,.25);
+    }
+    .card h2{
+      margin:0 0 10px 0;
+      font-size: 15px;
+      letter-spacing:.2px;
+    }
+    .muted{color:var(--muted); font-size:12px; line-height:1.4}
+    .row{display:flex; gap:10px; flex-wrap:wrap}
+    label{font-size:13px}
+    input[type="text"], textarea, input[type="date"]{
+      width:100%;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border:1px solid var(--line);
+      background: rgba(2,6,23,.35);
+      color: var(--text);
+      outline:none;
+    }
+    textarea{min-height: 86px; resize: vertical}
+    .infoRow{
+      display:grid; gap:10px; grid-template-columns: 1fr;
+    }
+    @media (min-width: 520px){
+      .infoRow{grid-template-columns: 1.3fr .7fr .7fr}
+    }
+    .q{
+      border-top:1px solid var(--line);
+      padding-top:12px; margin-top:12px;
+    }
+    .q:first-child{border-top:none; padding-top:0; margin-top:0}
+    .qtitle{
+      font-weight:700;
+      font-size: 13.5px;
+      margin-bottom: 10px;
+      line-height:1.35;
+    }
+    .opts{
+      display:grid; gap:8px;
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 520px){
+      .opts{grid-template-columns: 1fr 1fr}
+    }
+    .opt{
+      display:flex; gap:10px; align-items:flex-start;
+      padding: 10px 10px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(2,6,23,.26);
+    }
+    .opt input{transform: translateY(2px)}
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:8px 10px; border-radius: 999px;
+      border:1px solid var(--line);
+      background: rgba(2,6,23,.28);
+      font-size:12px; color: var(--muted);
+    }
+    .pill strong{color:var(--text)}
+    .notice{
+      border-left: 3px solid rgba(56,189,248,.7);
+      padding: 10px 12px;
+      background: rgba(56,189,248,.08);
+      border-radius: 12px;
+      margin-top: 10px;
+      font-size: 12.5px;
+      color: var(--text);
+    }
+    .scoreBox{
+      display:flex; gap:10px; flex-wrap:wrap; align-items:center;
+      margin-top: 10px;
+    }
+    .tag{font-size:12px; padding:6px 10px; border-radius:999px; border:1px solid var(--line)}
+    .tag.good{border-color: rgba(34,197,94,.55); background: rgba(34,197,94,.12)}
+    .tag.warn{border-color: rgba(245,158,11,.55); background: rgba(245,158,11,.12)}
+    .tag.bad{border-color: rgba(239,68,68,.55); background: rgba(239,68,68,.12)}
+    .list{
+      display:flex; flex-direction:column; gap:10px;
+      max-height: 62vh; overflow:auto; padding-right: 6px;
+    }
+    .item{
+      border: 1px solid var(--line);
+      background: rgba(2,6,23,.28);
+      border-radius: 14px;
+      padding: 10px;
+    }
+    .itemTop{display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap}
+    .itemName{font-weight:800}
+    .mini{font-size:12px; color: var(--muted)}
+    .ans{
+      margin-top: 8px;
+      display:grid; gap:8px;
+    }
+    .ans .box{
+      border:1px dashed rgba(148,163,184,.25);
+      border-radius: 12px;
+      padding: 8px 10px;
+      background: rgba(2,6,23,.18);
+      font-size: 12.5px;
+      color: var(--text);
+      white-space: pre-wrap;
+    }
+    .hidden{display:none !important}
+  </style>
+</head>
+
+<body>
+<header>
+  <div class="wrap">
+    <div class="top">
+      <div class="brand">
+        <h1 id="hdrTitle">8-р анги – Computational Thinking & Programming</h1>
+        <div class="sub" id="hdrSub">Front-end auto score · Нэг төхөөрөмж дээр олон хүүхэд · localStorage хадгалалт</div>
+      </div>
+      <div class="btns">
+        <button id="btnExam" class="primary" type="button">📝 Шалгалт</button>
+        <button id="btnPoints" type="button">🏁 Points</button>
+        <button id="btnNew" class="good" type="button">➕ Өөр хүүхэд шалгалт өгөх</button>
+        <!-- 🗑️ Бүгдийг устгах товчийг ХАСАВ -->
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="grid">
+    <!-- EXAM -->
+    <section id="examView" class="card">
+      <h2>Шалгалт бөглөх</h2>
+      <div class="muted">
+        Заавар: 1–18 тест (нэг зөв хариулттай). Дараах 2 задгай даалгаврыг өгүүлбэрээр гүйцэтгэ.
+      </div>
+
+      <div class="notice">
+        ✅ Нэр заавал. ✅ Бүх тестийг бөглөөд “Submit” дарна. Дараа нь “Өөр хүүхэд шалгалт өгөх” дарж дараагийн хүүхэд өгнө.
+      </div>
+
+      <div style="margin-top:12px" class="infoRow">
+        <div>
+          <label><strong>Нэр *</strong></label>
+          <input id="studentName" type="text" placeholder="Жишээ: Бат-Эрдэнэ" required />
+        </div>
+        <div>
+          <label><strong>Анги</strong></label>
+          <input id="studentClass" type="text" placeholder="Жишээ: 8A" />
+        </div>
+        <div>
+          <label><strong>Огноо</strong></label>
+          <input id="examDate" type="date" />
+        </div>
+      </div>
+
+      <div style="margin-top:12px" class="row">
+        <span class="pill">Тест бөглөсөн: <strong id="filledCount">0</strong>/18</span>
+        <span class="pill">Сүүлд хадгалсан: <strong id="lastSaved">-</strong></span>
+      </div>
+
+      <form id="examForm" novalidate style="margin-top:10px">
+        <div id="questions"></div>
+
+        <div class="q">
+          <div class="qtitle">B. ✍️ Задгай даалгавар (2)</div>
+
+          <label><strong id="openQ1Label">1) Pseudocode болон Python кодын ялгааг 2–3 өгүүлбэрээр тайлбарла.</strong></label>
+          <textarea id="open1" placeholder="Энд бичнэ..."></textarea>
+
+          <div style="height:10px"></div>
+
+          <label><strong id="openQ2Label">2) Функ(function) болон сан (library) гэж юу вэ өөрийн ойлгосноор тайлбарла.</strong></label>
+          <textarea id="open2" placeholder="Энд бичнэ..."></textarea>
+        </div>
+
+        <div class="scoreBox">
+          <button id="btnSubmit" class="primary" type="submit">✅ Submit</button>
+          <span class="muted">Submit дармагц хадгална. (Оноо сурагчид харагдахгүй)</span>
+        </div>
+      </form>
+    </section>
+
+    <!-- POINTS -->
+    <section id="pointsView" class="card hidden">
+      <h2>🏁 Points (Багш)</h2>
+      <div class="muted">Энд нэг төхөөрөмж дээр өгсөн бүх хүүхдийн үр дүн хадгалагдана.</div>
+
+      <div style="margin-top:10px" class="row">
+        <span class="pill">Нийт бүртгэл: <strong id="totalCount">0</strong></span>
+        <span class="pill">Дундаж оноо: <strong id="avgScore">-</strong></span>
+      </div>
+
+      <!-- ⬇️ CSV Export / 📋 Copy All товчийг ХАСАВ -->
+
+      <div style="margin-top:12px" class="list" id="resultsList"></div>
+    </section>
+  </div>
+</main>
+
+<script>
+  // ============================================================
+  // ✅ CONFIG (TEMPLATE) — ЗӨВХӨН ЭНЭ ХЭСГИЙГ СОЛИОД Л БОЛНО
+  // ============================================================
+  const EXAM = {
+    examId: "ctp_exam_v1",          // Шинэ шалгалт болгохдоо үүнийг соль (ж: "ctp_exam_v2")
+    headerTitle: "8-р анги – Computational Thinking & Programming",
+    headerSub: "Front-end auto score · Нэг төхөөрөмж дээр олон хүүхэд · localStorage хадгалалт",
+    teacherPin: "9801",             // Points нээх PIN
+    openQ1: "1) Pseudocode болон Python кодын ялгааг 2–3 өгүүлбэрээр тайлбарла.",
+    openQ2: "2) Функ(function) болон сан (library) гэж юу вэ өөрийн ойлгосноор тайлбарла.",
+
+    // 18 тестийн асуултууд
+    questions: [
+      {n:1,  t:"Pseudocode гэж юу вэ?", o:{A:"Програмчлалын бодит хэл",B:"Алгоритмыг төлөвлөх бичиглэл",C:"Зөвхөн Python код",D:"Flowchart-ын төрөл"}},
+      {n:2,  t:"Pseudocode-ийн гол зорилго?", o:{A:"Компьютерт шууд ажиллуулах",B:"Алгоритмыг ойлгомжтой болгох",C:"Интерфейс хийх",D:"Алдаа засах"}},
+      {n:3,  t:"Аль нь pseudocode-д input-г илэрхийлнэ вэ?", o:{A:"INPUT name",B:"READ name",C:"name = input()",D:"A ба B"}},
+      {n:4,  t:"Утга оноох (assignment) тэмдэг?", o:{A:"==",B:"← эсвэл =",C:">",D:"!"}},
+      {n:5,  t:"IF нөхцөл ямар утга буцаадаг вэ?", o:{A:"Тоо",B:"Текст",C:"True / False",D:"List"}},
+      {n:6,  t:"AND оператор хэзээ true вэ?", o:{A:"Нэг нь үнэн үед",B:"Хоёулаа үнэн үед",C:"Хоёулаа худал үед",D:"Ямар ч үед"}},
+      {n:7,  t:"OR оператор хэзээ false вэ?", o:{A:"Нэг нь үнэн үед",B:"Хоёулаа үнэн үед",C:"Хоёулаа худал үед",D:"Нэг нь худал үед"}},
+      {n:8,  t:"NOT операторын үүрэг?", o:{A:"Нэмэх",B:"Үржүүлэх",C:"Утгыг эсрэг болгох",D:"Харьцуулах"}},
+      {n:9,  t:"IF–ELSE бүтэц юунд ашиглагддаг вэ?", o:{A:"Давталт",B:"Сонголт",C:"Хадгалалт",D:"Хайлт"}},
+      {n:10, t:"Linear search гэж юу вэ?", o:{A:"Санамсаргүй хайлт",B:"Дарааллаар хайх",C:"Хоёр хувааж хайх",D:"Зөвхөн хурдан хайлт"}},
+      {n:11, t:"Linear search аль өгөгдөлд тохиромжтой вэ?", o:{A:"Эрэмбэлэгдсэн",B:"Эрэмбэлэгдээгүй",C:"Зөвхөн жижиг",D:"Зөвхөн том"}},
+      {n:12, t:"Хайж буй утга олдохгүй бол?", o:{A:"Алдаа гарна",B:"Эхний утгыг авна",C:"Бүх элементийг шалгана",D:"Програм зогсоно"}},
+      {n:13, t:"Pseudocode яагаад language independent вэ?", o:{A:"Нэг хэлтэй",B:"Ямар ч хэлд хөрвүүлж болдог",C:"Зөвхөн Python",D:"Маш нарийн syntax-тэй"}},
+      {n:14, t:"IF–ELSEIF–ELSE бүтэц:", o:{A:"Давталт хийхэд",B:"Олон нөхцөл шалгахад",C:"Хайлт хийхэд",D:"Хувьсагч зарлахад"}},
+      {n:15, t:"Algorithm гэдэг нь:", o:{A:"Програм",B:"Алхамчилсан заавар",C:"Кодын алдаа",D:"Зураг"}},
+      {n:16, t:"Selection аль ойлголт вэ?", o:{A:"Давталт",B:"Сонголт",C:"Дараалал",D:"Хайлт"}},
+      {n:17, t:"Linear search-ийн давуу тал?", o:{A:"Маш хурдан",B:"Энгийн, ойлгомжтой",C:"Заавал эрэмбэлнэ",D:"Маш төвөгтэй"}},
+      {n:18, t:"prototype гэж юу вэ?", o:{A:"Алгоритм",B:"Хайлтын арга",C:"command",D:"Туршилтын загвар"}},
+    ],
+
+    // Зөв хариунууд (1..18) — Шинэ тест болгоход ЭНЭГ солино
+    answerKey: {
+      1:"B",2:"B",3:"D",4:"B",5:"C",6:"B",7:"C",8:"C",9:"B",
+      10:"B",11:"B",12:"C",13:"B",14:"B",15:"B",16:"B",17:"B",18:"D"
+    }
+  };
+
+  // ============================================================
+  // Доорх хэсгийг ихэнхдээ оролдохгүй — template engine
+  // ============================================================
+
+  const STORAGE_KEY = `ctp_exam_results_${EXAM.examId}`;
+
+  function loadResults(){
+    try{ return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"); }
+    catch(e){ return []; }
+  }
+  function saveResults(arr){
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
+  }
+
+  const examView = document.getElementById("examView");
+  const pointsView = document.getElementById("pointsView");
+
+  const btnExam = document.getElementById("btnExam");
+  const btnPoints = document.getElementById("btnPoints");
+  const btnNew = document.getElementById("btnNew");
+
+  const questionsEl = document.getElementById("questions");
+  const examForm = document.getElementById("examForm");
+
+  const studentName = document.getElementById("studentName");
+  const studentClass = document.getElementById("studentClass");
+  const examDate = document.getElementById("examDate");
+
+  const filledCount = document.getElementById("filledCount");
+  const lastSaved = document.getElementById("lastSaved");
+
+  const totalCount = document.getElementById("totalCount");
+  const avgScore = document.getElementById("avgScore");
+  const resultsList = document.getElementById("resultsList");
+
+  function escapeHtml(s){
+    return String(s)
+      .replaceAll("&","&amp;")
+      .replaceAll("<","&lt;")
+      .replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;")
+      .replaceAll("'","&#039;");
+  }
+
+  // Apply header + open labels
+  document.getElementById("hdrTitle").textContent = EXAM.headerTitle;
+  document.getElementById("hdrSub").textContent = EXAM.headerSub;
+  document.getElementById("openQ1Label").textContent = EXAM.openQ1;
+  document.getElementById("openQ2Label").textContent = EXAM.openQ2;
+
+  function renderQuestions(){
+    questionsEl.innerHTML = "";
+    for(const q of EXAM.questions){
+      const wrap = document.createElement("div");
+      wrap.className = "q";
+      wrap.innerHTML = `
+        <div class="qtitle">${q.n}. ${escapeHtml(q.t)}</div>
+        <div class="opts">
+          ${Object.entries(q.o).map(([k,v]) => `
+            <label class="opt">
+              <input type="radio" name="q${q.n}" value="${k}" />
+              <div><strong>${k})</strong> ${escapeHtml(v)}</div>
+            </label>
+          `).join("")}
+        </div>
+      `;
+      questionsEl.appendChild(wrap);
+    }
+  }
+
+  function getSelectedAnswers(){
+    const answers = {};
+    for(const q of EXAM.questions){
+      const checked = document.querySelector(`input[name="q${q.n}"]:checked`);
+      answers[q.n] = checked ? checked.value : "";
+    }
+    return answers;
+  }
+
+  function computeScore(ans){
+    let score = 0;
+    for(let i=1;i<=18;i++){
+      if(ans[i] && ans[i] === EXAM.answerKey[i]) score++;
+    }
+    return score;
+  }
+
+  function updateProgress(){
+    const ans = getSelectedAnswers();
+    const filled = Object.values(ans).filter(v=>v).length;
+    filledCount.textContent = filled;
+  }
+
+  function showExam(){
+    examView.classList.remove("hidden");
+    pointsView.classList.add("hidden");
+  }
+  function showPoints(){
+    examView.classList.add("hidden");
+    pointsView.classList.remove("hidden");
+    renderPoints();
+  }
+
+  function resetForm(){
+    examForm.reset();
+    studentName.value = "";
+    studentClass.value = "";
+    document.getElementById("open1").value = "";
+    document.getElementById("open2").value = "";
+    lastSaved.textContent = "-";
+    updateProgress();
+    studentName.focus();
+  }
+
+  function saveAttempt(){
+    const name = studentName.value.trim();
+    if(!name){
+      alert("Нэр заавал бөглөнө!");
+      studentName.focus();
+      return null;
+    }
+
+    const answers = getSelectedAnswers();
+    const missing = [];
+    for(let i=1;i<=18;i++){
+      if(!answers[i]) missing.push(i);
+    }
+    if(missing.length){
+      alert("Дараах асуултууд дутуу байна: " + missing.join(", "));
+      return null;
+    }
+
+    const score = computeScore(answers);
+    const open1 = document.getElementById("open1").value.trim();
+    const open2 = document.getElementById("open2").value.trim();
+    const cls = studentClass.value.trim();
+    const date = examDate.value || new Date().toISOString().slice(0,10);
+
+    const record = {
+      id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random().toString(16).slice(2),
+      name,
+      class: cls,
+      date,
+      score,
+      outOf: 18,
+      answers,
+      open1,
+      open2,
+      ts: Date.now()
+    };
+
+    const all = loadResults();
+    all.push(record);
+    saveResults(all);
+
+    // Сурагчид оноо харуулахгүй — зөвхөн "хадгалсан" гэж тэмдэглэнэ
+    lastSaved.textContent = "✔";
+
+    return record;
+  }
+
+  function scoreTag(score){
+    const ratio = score/18;
+    if(ratio >= 0.8) return `<span class="tag good">Сайн</span>`;
+    if(ratio >= 0.5) return `<span class="tag warn">Дунд</span>`;
+    return `<span class="tag bad">Сайжруулах</span>`;
+  }
+
+  function renderPoints(){
+    const all = loadResults().sort((a,b)=>b.ts-a.ts);
+    totalCount.textContent = all.length;
+
+    if(all.length){
+      const avg = all.reduce((s,x)=>s+x.score,0) / all.length;
+      avgScore.textContent = avg.toFixed(2) + "/18";
+    } else {
+      avgScore.textContent = "-";
+    }
+
+    resultsList.innerHTML = "";
+    if(!all.length){
+      resultsList.innerHTML = `<div class="muted">Одоогоор хадгалсан үр дүн алга байна.</div>`;
+      return;
+    }
+
+    for(const r of all){
+      const item = document.createElement("div");
+      item.className = "item";
+      item.innerHTML = `
+        <div class="itemTop">
+          <div>
+            <div class="itemName">${escapeHtml(r.name)} ${r.class ? `<span class="mini">(${escapeHtml(r.class)})</span>` : ""}</div>
+            <div class="mini">Огноо: ${escapeHtml(r.date)} · Бүртгэсэн: ${new Date(r.ts).toLocaleString()}</div>
+          </div>
+          <div style="display:flex; gap:8px; align-items:center">
+            <div style="font-size:26px;font-weight:900">${r.score}/${r.outOf}</div>
+            ${scoreTag(r.score)}
+          </div>
+        </div>
+        <div class="ans">
+          <div class="box"><strong>Задгай 1:</strong>\n${escapeHtml(r.open1 || "(хоосон)")}</div>
+          <div class="box"><strong>Задгай 2:</strong>\n${escapeHtml(r.open2 || "(хоосон)")}</div>
+        </div>
+      `;
+      resultsList.appendChild(item);
+    }
+  }
+
+  // ====== Events ======
+  renderQuestions();
+  updateProgress();
+  examDate.value = new Date().toISOString().slice(0,10);
+
+  questionsEl.addEventListener("change", updateProgress);
+
+  btnExam.addEventListener("click", showExam);
+
+  // ✅ Points товч дээр дарахад PIN асууна
+  btnPoints.addEventListener("click", ()=>{
+    const pin = prompt("Багшийн кодоо оруулна уу:");
+    if(pin === null) return;
+    if(String(pin).trim() !== EXAM.teacherPin){
+      alert("Код буруу байна!");
+      return;
+    }
+    showPoints();
+  });
+
+  btnNew.addEventListener("click", ()=>{
+    resetForm();
+    showExam();
+  });
+
+  // ✅ Submit дармагц “баярлалаа, хадгалж авлаа” гэж л гарна (оноо байхгүй)
+  examForm.addEventListener("submit", (e)=>{
+    e.preventDefault();
+    const rec = saveAttempt();
+    if(!rec) return;
+    alert("Шалгалт өгсөнд баярлалаа. Хариуг хадгалж авлаа ✅");
+  });
+</script>
+</body>
+</html>
