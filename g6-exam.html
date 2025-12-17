@@ -1,0 +1,529 @@
+<!doctype html>
+<html lang="mn">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CTP Шалгалт (Template · Auto Score)</title>
+  <style>
+    :root{
+      --bg:#0b1220;
+      --card:#0f172a;
+      --muted:#94a3b8;
+      --text:#e5e7eb;
+      --accent:#38bdf8;
+      --good:#22c55e;
+      --warn:#f59e0b;
+      --bad:#ef4444;
+      --line: rgba(148,163,184,.18);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: radial-gradient(1100px 600px at 20% -10%, rgba(56,189,248,.25), transparent 60%),
+                  radial-gradient(900px 500px at 90% 0%, rgba(34,197,94,.18), transparent 55%),
+                  var(--bg);
+      color:var(--text);
+    }
+    header{
+      position: sticky; top:0; z-index:10;
+      background: linear-gradient(180deg, rgba(15,23,42,.95), rgba(15,23,42,.75));
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(10px);
+    }
+    .wrap{max-width:980px;margin:0 auto;padding:14px 14px}
+    .top{display:flex; gap:10px; align-items:center; justify-content:space-between; flex-wrap:wrap;}
+    .brand{display:flex; flex-direction:column; gap:4px}
+    .brand h1{margin:0;font-size:18px; letter-spacing:.2px}
+    .brand .sub{font-size:12px;color:var(--muted)}
+    .btns{display:flex; gap:8px; flex-wrap:wrap}
+    button{
+      border: 1px solid var(--line);
+      background: rgba(2,6,23,.35);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 12px;
+      cursor:pointer;
+      font-weight:600;
+      font-size: 13px;
+    }
+    button.primary{
+      background: rgba(56,189,248,.18);
+      border-color: rgba(56,189,248,.45);
+    }
+    button.good{
+      background: rgba(34,197,94,.18);
+      border-color: rgba(34,197,94,.45);
+    }
+    button:disabled{opacity:.55; cursor:not-allowed}
+    main{padding:16px 14px 28px}
+    .grid{
+      max-width:980px; margin:0 auto;
+      display:grid; gap:14px;
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 920px){
+      .grid{grid-template-columns: 1.2fr .8fr; align-items:start;}
+    }
+    .card{
+      background: linear-gradient(180deg, rgba(15,23,42,.92), rgba(2,6,23,.55));
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 14px;
+      box-shadow: 0 12px 30px rgba(0,0,0,.25);
+    }
+    .card h2{margin:0 0 10px 0;font-size: 15px;letter-spacing:.2px;}
+    .muted{color:var(--muted); font-size:12px; line-height:1.4}
+    .row{display:flex; gap:10px; flex-wrap:wrap}
+    label{font-size:13px}
+    input[type="text"], textarea, input[type="date"]{
+      width:100%;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border:1px solid var(--line);
+      background: rgba(2,6,23,.35);
+      color: var(--text);
+      outline:none;
+    }
+    textarea{min-height: 86px; resize: vertical}
+    .infoRow{display:grid; gap:10px; grid-template-columns: 1fr;}
+    @media (min-width: 520px){
+      .infoRow{grid-template-columns: 1.3fr .7fr .7fr}
+    }
+    .q{
+      border-top:1px solid var(--line);
+      padding-top:12px; margin-top:12px;
+    }
+    .q:first-child{border-top:none; padding-top:0; margin-top:0}
+    .qtitle{
+      font-weight:700;
+      font-size: 13.5px;
+      margin-bottom: 10px;
+      line-height:1.35;
+    }
+    .opts{display:grid; gap:8px; grid-template-columns: 1fr;}
+    @media (min-width: 520px){
+      .opts{grid-template-columns: 1fr 1fr}
+    }
+    .opt{
+      display:flex; gap:10px; align-items:flex-start;
+      padding: 10px 10px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(2,6,23,.26);
+    }
+    .opt input{transform: translateY(2px)}
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:8px 10px; border-radius: 999px;
+      border:1px solid var(--line);
+      background: rgba(2,6,23,.28);
+      font-size:12px; color: var(--muted);
+    }
+    .pill strong{color:var(--text)}
+    .notice{
+      border-left: 3px solid rgba(56,189,248,.7);
+      padding: 10px 12px;
+      background: rgba(56,189,248,.08);
+      border-radius: 12px;
+      margin-top: 10px;
+      font-size: 12.5px;
+      color: var(--text);
+    }
+    .scoreBox{
+      display:flex; gap:10px; flex-wrap:wrap; align-items:center;
+      margin-top: 10px;
+    }
+    .list{display:flex; flex-direction:column; gap:10px; max-height: 62vh; overflow:auto; padding-right: 6px;}
+    .item{border: 1px solid var(--line); background: rgba(2,6,23,.28); border-radius: 14px; padding: 10px;}
+    .itemTop{display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap}
+    .itemName{font-weight:800}
+    .mini{font-size:12px; color: var(--muted)}
+    .ans{margin-top: 8px; display:grid; gap:8px;}
+    .ans .box{
+      border:1px dashed rgba(148,163,184,.25);
+      border-radius: 12px;
+      padding: 8px 10px;
+      background: rgba(2,6,23,.18);
+      font-size: 12.5px;
+      color: var(--text);
+      white-space: pre-wrap;
+    }
+    .tag{font-size:12px; padding:6px 10px; border-radius:999px; border:1px solid var(--line)}
+    .tag.good{border-color: rgba(34,197,94,.55); background: rgba(34,197,94,.12)}
+    .tag.warn{border-color: rgba(245,158,11,.55); background: rgba(245,158,11,.12)}
+    .tag.bad{border-color: rgba(239,68,68,.55); background: rgba(239,68,68,.12)}
+    .hidden{display:none !important}
+  </style>
+</head>
+
+<body>
+<header>
+  <div class="wrap">
+    <div class="top">
+      <div class="brand">
+        <h1 id="hdrTitle"></h1>
+        <div class="sub" id="hdrSub"></div>
+      </div>
+      <div class="btns">
+        <button id="btnExam" class="primary" type="button">📝 Шалгалт</button>
+        <button id="btnPoints" type="button">🏁 Points</button>
+        <button id="btnNew" class="good" type="button">➕ Өөр хүүхэд шалгалт өгөх</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="grid">
+    <!-- EXAM -->
+    <section id="examView" class="card">
+      <h2>Шалгалт бөглөх</h2>
+      <div class="muted" id="instructions"></div>
+
+      <div class="notice">
+        ✅ Нэр заавал. ✅ Бүх тестийг бөглөөд “Submit” дарна. Дараа нь “Өөр хүүхэд” дарж дараагийн хүүхэд өгнө.
+      </div>
+
+      <div style="margin-top:12px" class="infoRow">
+        <div>
+          <label><strong>Нэр *</strong></label>
+          <input id="studentName" type="text" placeholder="Жишээ: Бат-Эрдэнэ" required />
+        </div>
+        <div>
+          <label><strong>Анги</strong></label>
+          <input id="studentClass" type="text" placeholder="Жишээ: 6A" />
+        </div>
+        <div>
+          <label><strong>Огноо</strong></label>
+          <input id="examDate" type="date" />
+        </div>
+      </div>
+
+      <div style="margin-top:12px" class="row">
+        <span class="pill">Тест бөглөсөн: <strong id="filledCount">0</strong>/<strong id="totalQs">0</strong></span>
+        <span class="pill">Сүүлд хадгалсан: <strong id="lastSaved">-</strong></span>
+      </div>
+
+      <form id="examForm" novalidate style="margin-top:10px">
+        <div id="questions"></div>
+
+        <div class="q" id="openSection">
+          <div class="qtitle" id="openTitle">B. ✍️ Бичих</div>
+
+          <label><strong id="openQ1Label"></strong></label>
+          <textarea id="open1" placeholder="Энд бичнэ..."></textarea>
+
+          <div style="height:10px"></div>
+
+          <label><strong id="openQ2Label"></strong></label>
+          <textarea id="open2" placeholder="Энд бичнэ..."></textarea>
+        </div>
+
+        <div class="scoreBox">
+          <button id="btnSubmit" class="primary" type="submit">✅ Submit</button>
+          <span class="muted">Submit дармагц хадгална. (Оноо сурагчид харагдахгүй)</span>
+        </div>
+      </form>
+    </section>
+
+    <!-- POINTS -->
+    <section id="pointsView" class="card hidden">
+      <h2>🏁 Points (Багш)</h2>
+      <div class="muted">Энд нэг төхөөрөмж дээр өгсөн бүх хүүхдийн үр дүн хадгалагдана.</div>
+
+      <div style="margin-top:10px" class="row">
+        <span class="pill">Нийт бүртгэл: <strong id="totalCount">0</strong></span>
+        <span class="pill">Дундаж оноо: <strong id="avgScore">-</strong></span>
+      </div>
+
+      <div style="margin-top:12px" class="list" id="resultsList"></div>
+    </section>
+  </div>
+</main>
+
+<script>
+/* ============================================================
+   ✅ CONFIG (TEMPLATE) — ЗӨВХӨН ЭНЭ ХЭСГИЙГ СОЛИОД Л БОЛНО
+   - Хэдэн ч тест нэмсэн автоматаар ажиллана
+   - answerKey-д зөвхөн байгаа асуултын n-д тааруулж өгнө
+============================================================ */
+const EXAM = {
+  examId: "grade6_unit1_flowchart_v1",
+  headerTitle: "6-р анги – Unit 1: Computational Thinking & Programming",
+  headerSub: "Front-end auto score · 1 төхөөрөмж дээр олон хүүхэд · localStorage хадгалалт",
+  instructionsText: "Заавар: Тест (нэг зөв хариулттай). Дараа нь 2 бичих даалгавар гүйцэтгэнэ.",
+  teacherPin: "9801",
+
+  openTitle: "B. ✍️ Бичих (2)",
+  openQ1: "17) Flowchart-ийн 4 хэлбэрийн нэр ба үүргийг тайлбарла.",
+  openQ2: "18) Програм бичсэний дараа яагаад systematic testing хийх шаардлагатай вэ?",
+
+  questions: [
+    {n:1, t:"Flowchart гэж юу вэ?", o:{A:"Өгөгдлийн сан",B:"Алгоритмыг дүрсээр үзүүлсэн диаграм",C:"Интерфейс",D:"Кодын алдаа"}},
+    {n:2, t:"Start/End хэлбэр:", o:{A:"Дөрвөлжин",B:"Зууван",C:"Алмаз",D:"Параллелограмм"}},
+    {n:3, t:"Process ямар үүрэгтэй вэ?", o:{A:"Сонголт",B:"Үйлдэл",C:"Эхлэл/төгсгөл",D:"Оролт/гаралт"}},
+    {n:4, t:"Input/Output хэлбэр:", o:{A:"Параллелограмм",B:"Алмаз",C:"Зууван",D:"Дөрвөлжин"}},
+    {n:5, t:"Decision асуулт:", o:{A:"Урт тайлбар",B:"Тийм / Үгүй",C:"Тоо",D:"Текст"}},
+    {n:6, t:"Sequence гэдэг нь:", o:{A:"Давталт",B:"Зөв дараалал",C:"Хадгалалт",D:"Сонголт"}},
+    {n:7, t:"Iteration гэдэг нь:", o:{A:"Устгах",B:"Давтах",C:"Сонгох",D:"Хадгалах"}},
+    {n:8, t:"“repeat” блок:", o:{A:"Selection",B:"Iteration",C:"Input",D:"Output"}},
+    {n:9, t:"Variable гэж:", o:{A:"Тоглоом",B:"Өгөгдөл хадгалах сав",C:"Сум",D:"Дүрс"}},
+    {n:10, t:"Integer аль нь вэ?", o:{A:"3.14",B:'"7"',C:"7",D:"seven"}},
+    {n:11, t:"Character аль нь вэ?", o:{A:'"Hello"',B:"'A'",C:"12",D:"2.5"}},
+    {n:12, t:"Condition аль ойлголт вэ?", o:{A:"Selection",B:"Database",C:"Spreadsheet",D:"Prototype"}},
+    {n:13, t:"Success criteria:", o:{A:"Алдаа олох",B:"Амжилтын шалгуур",C:"Интернэт",D:"Хувьсагч"}},
+    {n:14, t:"Systematic testing:", o:{A:"Санамсаргүй",B:"Төлөвлөгөөтэй",C:"Нэг удаа",D:"Багш шалгах"}},
+    {n:15, t:"Flowchart хаанаас эхэлдэг вэ?", o:{A:"End",B:"Start",C:"Дурын",D:"Decision"}},
+    {n:16, t:"Selection ихэвчлэн:", o:{A:"IF–THEN–ELSE",B:"REPEAT",C:"VARIABLE",D:"INPUT"}},
+  ],
+
+  answerKey: {
+    1:"B",2:"B",3:"B",4:"A",5:"B",6:"B",7:"B",8:"B",
+    9:"B",10:"C",11:"B",12:"A",13:"B",14:"B",15:"B",16:"A"
+  }
+};
+/* ===================== END CONFIG ===================== */
+
+const OUT_OF = EXAM.questions.length;
+const STORAGE_KEY = `ctp_exam_results_${EXAM.examId}`;
+
+function loadResults(){
+  try{ return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"); }
+  catch(e){ return []; }
+}
+function saveResults(arr){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
+}
+
+const examView = document.getElementById("examView");
+const pointsView = document.getElementById("pointsView");
+
+const btnExam = document.getElementById("btnExam");
+const btnPoints = document.getElementById("btnPoints");
+const btnNew = document.getElementById("btnNew");
+
+const questionsEl = document.getElementById("questions");
+const examForm = document.getElementById("examForm");
+
+const studentName = document.getElementById("studentName");
+const studentClass = document.getElementById("studentClass");
+const examDate = document.getElementById("examDate");
+
+const filledCount = document.getElementById("filledCount");
+const totalQs = document.getElementById("totalQs");
+const lastSaved = document.getElementById("lastSaved");
+
+const totalCount = document.getElementById("totalCount");
+const avgScore = document.getElementById("avgScore");
+const resultsList = document.getElementById("resultsList");
+
+function escapeHtml(s){
+  return String(s)
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+
+// Apply texts
+document.getElementById("hdrTitle").textContent = EXAM.headerTitle;
+document.getElementById("hdrSub").textContent = EXAM.headerSub || "";
+document.getElementById("instructions").textContent = EXAM.instructionsText || "";
+document.getElementById("openTitle").textContent = EXAM.openTitle || "B. ✍️ Бичих";
+document.getElementById("openQ1Label").textContent = EXAM.openQ1 || "Бичих 1";
+document.getElementById("openQ2Label").textContent = EXAM.openQ2 || "Бичих 2";
+totalQs.textContent = OUT_OF;
+
+function renderQuestions(){
+  questionsEl.innerHTML = "";
+  for(const q of EXAM.questions){
+    const wrap = document.createElement("div");
+    wrap.className = "q";
+    wrap.innerHTML = `
+      <div class="qtitle">${q.n}. ${escapeHtml(q.t)}</div>
+      <div class="opts">
+        ${Object.entries(q.o).map(([k,v]) => `
+          <label class="opt">
+            <input type="radio" name="q${q.n}" value="${k}" />
+            <div><strong>${k})</strong> ${escapeHtml(v)}</div>
+          </label>
+        `).join("")}
+      </div>
+    `;
+    questionsEl.appendChild(wrap);
+  }
+}
+
+function getSelectedAnswers(){
+  const answers = {};
+  for(const q of EXAM.questions){
+    const checked = document.querySelector(`input[name="q${q.n}"]:checked`);
+    answers[q.n] = checked ? checked.value : "";
+  }
+  return answers;
+}
+
+function computeScore(ans){
+  let score = 0;
+  for(const q of EXAM.questions){
+    const key = EXAM.answerKey[q.n];
+    if(key && ans[q.n] === key) score++;
+  }
+  return score;
+}
+
+function updateProgress(){
+  const ans = getSelectedAnswers();
+  const filled = Object.values(ans).filter(v=>v).length;
+  filledCount.textContent = filled;
+}
+
+function showExam(){
+  examView.classList.remove("hidden");
+  pointsView.classList.add("hidden");
+}
+function showPoints(){
+  examView.classList.add("hidden");
+  pointsView.classList.remove("hidden");
+  renderPoints();
+}
+
+function resetForm(){
+  examForm.reset();
+  studentName.value = "";
+  studentClass.value = "";
+  document.getElementById("open1").value = "";
+  document.getElementById("open2").value = "";
+  lastSaved.textContent = "-";
+  updateProgress();
+  studentName.focus();
+}
+
+function saveAttempt(){
+  const name = studentName.value.trim();
+  if(!name){
+    alert("Нэр заавал бөглөнө!");
+    studentName.focus();
+    return null;
+  }
+
+  const answers = getSelectedAnswers();
+
+  // ✅ Missing check = зөвхөн EXAM.questions дээр үндэслэнэ
+  const missing = [];
+  for(const q of EXAM.questions){
+    if(!answers[q.n]) missing.push(q.n);
+  }
+  if(missing.length){
+    alert("Дараах асуултууд дутуу байна: " + missing.join(", "));
+    return null;
+  }
+
+  const score = computeScore(answers);
+  const open1 = document.getElementById("open1").value.trim();
+  const open2 = document.getElementById("open2").value.trim();
+  const cls = studentClass.value.trim();
+  const date = examDate.value || new Date().toISOString().slice(0,10);
+
+  const record = {
+    id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random().toString(16).slice(2),
+    name,
+    class: cls,
+    date,
+    score,
+    outOf: OUT_OF,
+    answers,
+    open1,
+    open2,
+    ts: Date.now()
+  };
+
+  const all = loadResults();
+  all.push(record);
+  saveResults(all);
+
+  lastSaved.textContent = "✔";
+  return record;
+}
+
+function scoreTag(score){
+  const ratio = score / OUT_OF;
+  if(ratio >= 0.8) return `<span class="tag good">Сайн</span>`;
+  if(ratio >= 0.5) return `<span class="tag warn">Дунд</span>`;
+  return `<span class="tag bad">Сайжруулах</span>`;
+}
+
+function renderPoints(){
+  const all = loadResults().sort((a,b)=>b.ts-a.ts);
+  totalCount.textContent = all.length;
+
+  if(all.length){
+    const avg = all.reduce((s,x)=>s+x.score,0) / all.length;
+    avgScore.textContent = avg.toFixed(2) + `/${OUT_OF}`;
+  } else {
+    avgScore.textContent = "-";
+  }
+
+  resultsList.innerHTML = "";
+  if(!all.length){
+    resultsList.innerHTML = `<div class="muted">Одоогоор хадгалсан үр дүн алга байна.</div>`;
+    return;
+  }
+
+  for(const r of all){
+    const item = document.createElement("div");
+    item.className = "item";
+    item.innerHTML = `
+      <div class="itemTop">
+        <div>
+          <div class="itemName">${escapeHtml(r.name)} ${r.class ? `<span class="mini">(${escapeHtml(r.class)})</span>` : ""}</div>
+          <div class="mini">Огноо: ${escapeHtml(r.date)} · Бүртгэсэн: ${new Date(r.ts).toLocaleString()}</div>
+        </div>
+        <div style="display:flex; gap:8px; align-items:center">
+          <div style="font-size:26px;font-weight:900">${r.score}/${r.outOf}</div>
+          ${scoreTag(r.score)}
+        </div>
+      </div>
+      <div class="ans">
+        <div class="box"><strong>Бичих 1:</strong>\n${escapeHtml(r.open1 || "(хоосон)")}</div>
+        <div class="box"><strong>Бичих 2:</strong>\n${escapeHtml(r.open2 || "(хоосон)")}</div>
+      </div>
+    `;
+    resultsList.appendChild(item);
+  }
+}
+
+// Init
+renderQuestions();
+updateProgress();
+examDate.value = new Date().toISOString().slice(0,10);
+
+questionsEl.addEventListener("change", updateProgress);
+btnExam.addEventListener("click", showExam);
+
+btnPoints.addEventListener("click", ()=>{
+  const pin = prompt("Багшийн кодоо оруулна уу:");
+  if(pin === null) return;
+  if(String(pin).trim() !== EXAM.teacherPin){
+    alert("Код буруу байна!");
+    return;
+  }
+  showPoints();
+});
+
+btnNew.addEventListener("click", ()=>{
+  resetForm();
+  showExam();
+});
+
+examForm.addEventListener("submit", (e)=>{
+  e.preventDefault();
+  const rec = saveAttempt();
+  if(!rec) return;
+  alert("Шалгалт өгсөнд баярлалаа. Хариуг хадгалж авлаа ✅");
+});
+</script>
+</body>
+</html>
