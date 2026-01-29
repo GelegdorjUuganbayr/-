@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="mn">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Variable & Pseudocode Basics – Өөрөө сурах</title>
+
+  <style>
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background:#0f172a;
+      color:#e5e7eb;
+      line-height:1.6;
+    }
+    header{
+      padding:20px 16px;
+      background:#020617;
+      border-bottom:1px solid #1e293b;
+    }
+    h1{
+      font-size:22px;
+      margin:0 0 6px;
+    }
+    .subtitle{
+      font-size:14px;
+      color:#cbd5f5;
+    }
+    main{
+      max-width:900px;
+      margin:0 auto;
+      padding:16px;
+      display:grid;
+      gap:16px;
+    }
+    .card{
+      background:#020617;
+      border:1px solid #1e293b;
+      border-radius:14px;
+      padding:16px;
+    }
+    h2{
+      font-size:18px;
+      margin:0 0 10px;
+    }
+    p{
+      margin:6px 0;
+    }
+    ul{
+      margin:6px 0 0 18px;
+    }
+    li{
+      margin:6px 0;
+    }
+    .code{
+      background:#000;
+      border:1px solid #334155;
+      border-radius:10px;
+      padding:12px;
+      margin-top:8px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size:14px;
+      white-space:pre;
+      overflow-x:auto;
+    }
+    .note{
+      background:#0b1220;
+      border-left:4px solid #60a5fa;
+      padding:10px;
+      border-radius:10px;
+      margin-top:10px;
+      font-size:14px;
+    }
+    .task{
+      background:#020617;
+      border-left:4px solid #22c55e;
+      padding:12px;
+      border-radius:10px;
+      margin-top:10px;
+    }
+    footer{
+      max-width:900px;
+      margin:0 auto;
+      padding:16px;
+      font-size:13px;
+      color:#cbd5f5;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>Variable & Pseudocode Basics</h1>
+  <p class="subtitle">
+    Хүүхэд өөрөө уншаад, <b>дэвтэр дээрээ</b> ажиллаж сурах хуудас
+  </p>
+</header>
+
+<main>
+
+  <!-- VARIABLE -->
+  <section class="card">
+    <h2>1. Variable (Хувьсагч)</h2>
+    <p>
+      <b>Variable</b> гэдэг нь мэдээлэл хадгалах <b>нэртэй хайрцаг</b> юм.
+    </p>
+
+    <ul>
+      <li><b>name</b> – нэр хадгалах</li>
+      <li><b>age</b> – нас хадгалах</li>
+      <li><b>sum</b> – нийлбэр хадгалах</li>
+    </ul>
+
+    <div class="note">
+      Санах: Хайрцаг бүрт ойлгомжтой нэр өгвөл програм уншихад амархан.
+    </div>
+  </section>
+
+  <!-- INPUT / ASSIGNMENT / OUTPUT -->
+  <section class="card">
+    <h2>2. INPUT – ASSIGNMENT – OUTPUT</h2>
+
+    <p><b>INPUT</b> – хэрэглэгчээс мэдээлэл авах</p>
+    <div class="code">INPUT age
+INPUT name</div>
+
+    <p><b>ASSIGNMENT</b> – утга өгөх, бодох</p>
+    <div class="code">x = 5
+y = x + 1</div>
+
+    <p><b>OUTPUT (PRINT)</b> – хариуг дэлгэцэнд гаргах</p>
+    <div class="code">PRINT x
+PRINT "Hello"</div>
+
+    <div class="note">
+      "=" тэмдэг нь тэнцүү биш. Баруун талын утгыг зүүн талын хувьсагчид хийж байна.
+    </div>
+  </section>
+
+  <!-- PSEUDOCODE -->
+  <section class="card">
+    <h2>3. Pseudocode basics</h2>
+    <p>
+      Pseudocode бол компьютерийн хэл биш.  
+      Хүн ойлгохоор <b>алхамчилж бичсэн заавар</b>.
+    </p>
+
+    <div class="code">START
+INPUT a
+INPUT b
+sum = a + b
+PRINT sum
+END</div>
+
+    <div class="note">
+      Ихэнх бодлого дараах дарааллаар явна:  
+      <b>INPUT → ASSIGNMENT → OUTPUT</b>
+    </div>
+  </section>
+
+  <!-- TASKS -->
+  <section class="card">
+    <h2>Дэвтэр дээр хийх даалгавар</h2>
+
+    <div class="task">
+      <b>Даалгавар 1</b><br>
+      Доорх pseudocode-г дэвтэр дээрээ хуулж бич.
+      <div class="code">START
+INPUT name
+PRINT "Сайн уу, " + name
+END</div>
+      <p>
+        • Компьютер юуг асууж байна вэ?<br>
+        • Дэлгэцэнд юу гарч ирэх вэ?
+      </p>
+    </div>
+
+    <div class="task">
+      <b>Даалгавар 2</b><br>
+      Дараах кодыг дэвтэр дээр бичээд эцсийн утгыг ол.
+      <div class="code">x = 10
+y = x + 5
+x = y + 2</div>
+      <p>
+        • y хэд болсон бэ?<br>
+        • x хэд болсон бэ?
+      </p>
+    </div>
+
+    <div class="task">
+      <b>Даалгавар 3</b><br>
+      Дараах бодлогын pseudocode-г <b>өөрөө</b> бич.
+      <p>
+        Нэг тоо INPUT авна.  
+        2-оор үржүүлнэ.  
+        Хариуг PRINT хийнэ.
+      </p>
+    </div>
+
+  </section>
+  <!-- PRACTICE: 3 QUALITY PROBLEMS -->
+  <section class="card">
+    <h2>Дасгал бодлогууд (Бие даан ажиллах)</h2>
+
+    <div class="task">
+      <b>Бодлого 1</b><br>
+      Компьютер хэрэглэгчээс нэг утга асууна.<br>
+      Тэр утгыг 3-аар ихэсгэнэ.<br>
+      Гарсан үр дүнг дэлгэцэнд харуулна.
+      <p class="muted">
+        ➜ Алхамчилж бодоод pseudocode хэлбэрээр дэвтэр дээрээ бич.
+      </p>
+    </div>
+
+    <div class="task">
+      <b>Бодлого 2</b><br>
+      Доорх кодын <b>мөр бүр</b> юу хийж байгааг тайлбарла.<br>
+      Мөн эцэст нь дэлгэцэнд <b>ямар хариу</b> гарахыг ол.
+      <div class="code">START
+    x = 5
+    x = x * x
+    PRINT x
+END</div>
+      <p class="muted">
+        ➜ Мөр бүрийг тусад нь тайлбарлаж бич.
+      </p>
+    </div>
+
+    <div class="task">
+      <b>Бодлого 3</b><br>
+      Компьютер хэрэглэгчээс нэг тоо асууна.<br>
+      Тэр тооны <b>куб зэргийг</b> бодно.<br>
+      (Тооны куб зэрэг гэдэг нь тухайн тоог өөрөөр нь <b>3 удаа үржүүлэх</b> юм.)<br>
+      Гарсан үр дүнг дэлгэцэнд харуулна.
+    </div>
+  </section>
+
+</main>
+
+</body>
+</html>
