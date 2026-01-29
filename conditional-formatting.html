@@ -3,12 +3,11 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Lesson: Conditional Formatting — Self-study (Phone → Notebook)</title>
+  <title>Нөхцөлт формат — Дэвтэр дээр хийх хичээл</title>
   <style>
     :root{
       --bg:#0b1220; --card:#0f1a2f; --text:#eaf1ff; --muted:#a9b7d0;
       --accent:#7dd3fc; --border:rgba(255,255,255,.12);
-      --good:#34d399; --warn:#fbbf24;
     }
     *{box-sizing:border-box}
     body{
@@ -57,37 +56,11 @@
       background: rgba(125,211,252,.07);
       color:var(--muted);
     }
-    .callout b{color:var(--text)}
-    .steps{margin-top:10px; display:flex; flex-wrap:wrap; gap:8px;}
-    .steps span{
-      border:1px solid var(--border);
-      padding:6px 10px;
-      border-radius:999px;
-      font-size:12px;
-      color:var(--muted);
-      background: rgba(255,255,255,.02);
-    }
     .box{
       border:1px solid var(--border);
       border-radius:14px;
       padding:12px;
       background: rgba(255,255,255,.02);
-      margin-top:10px;
-    }
-    .check{
-      border-left:3px solid var(--good);
-      padding:10px 12px;
-      border-radius:12px;
-      background: rgba(52,211,153,.08);
-      color:var(--muted);
-      margin-top:10px;
-    }
-    .warn{
-      border-left:3px solid var(--warn);
-      padding:10px 12px;
-      border-radius:12px;
-      background: rgba(251,191,36,.08);
-      color:var(--muted);
       margin-top:10px;
     }
     .mini{font-size:12px; color:var(--muted)}
@@ -106,119 +79,113 @@
 <body>
 <header>
   <div class="wrap">
-    <h1>Lesson: Conditional Formatting (Self-study)</h1>
-    <p class="sub">📱 Phone дээр уншина → ✍️ Notebook дээр хийж дуусгана (компьютер хэрэггүй)</p>
+    <h1>Хичээл: Нөхцөлт формат (Conditional Formatting)</h1>
+    <p class="sub">📱 Утсаараа уншина → ✍️ Дэвтэр дээрээ хийж дуусгана (компьютер хэрэггүй)</p>
   </div>
 </header>
 
 <div class="wrap">
 
   <section class="card" id="start">
-    <span class="tag">Self-study</span><span class="tag">Notebook</span>
+    <span class="tag">Дэвтэр</span><span class="tag">Бие даалт</span>
     <h2>0) Яаж хийх вэ?</h2>
     <ul>
       <li>Энэ хуудсыг утсаараа унш.</li>
-      <li>Дэвтэр дээрээ гарчиг бич: <b>“Conditional Formatting”</b>.</li>
-      <li>Хэсэг бүрийн дараах <b>Tasks</b>-ийг дэвтэртээ хий.</li>
-      <li>Хичээл дуусахад чи: <b>“Тоон утгаас хамаарч cell-ийн өнгө өөрчлөгдөнө”</b> гэдгийг бүрэн ойлгоно.</li>
+      <li>Дэвтэр дээрээ гарчиг бич: <b>“Нөхцөлт формат”</b>.</li>
+      <li>Хэсэг бүрийн дараах <b>Даалгавар</b>-ыг дэвтэртээ хий.</li>
+      <li>Хичээл дуусахад чи: <b>“Тоон утгаас хамаарч нүдний (cell) өнгө өөрчлөгдөнө”</b> гэдгийг ойлгоно.</li>
     </ul>
-    <div class="callout"><b>Big idea:</b> Тоонууд олон үед “чухал” зүйлсийг өнгөөр хурдан ялгаж харуулах.</div>
+    <div class="callout"><b>Гол санаа:</b> Олон тоон дундаас чухал зүйлсийг өнгөөр хурдан ялгаж харахад тусална.</div>
   </section>
 
   <section class="card" id="idea">
-    <span class="tag">Big idea</span>
-    <h2>1) Basic idea (маш энгийнээр)</h2>
-    <p>Spreadsheet дээр тоо их байвал аль нь сайн/муу гэдгийг хурдан харахад хэцүү.</p>
-    <p>Тиймээс бид <b>rules</b> тавьдаг: тоо ямар байвал ямар өнгөтэй болох вэ?</p>
+    <span class="tag">Суурь ойлголт</span>
+    <h2>1) Нөхцөлт формат гэж юу вэ? (маш энгийнээр)</h2>
+    <p>Spreadsheet (хүснэгт) дээр тоо их байвал аль нь сайн/муу гэдгийг нэг дороос харахад хэцүү.</p>
+    <p>Тиймээс бид <b>дүрэм (rule)</b> тавьдаг: “Ямар тоо байвал ямар өнгөтэй харагдах вэ?”</p>
 
     <div class="box">
-      <p><b>Rule</b> = <b>Condition</b> + <b>Format</b></p>
-      <p class="mini">Жишээ: “If value &gt; 0 → green.”</p>
-    </div>
-
-    <div class="steps">
-      <span>Condition: true/false</span>
-      <span>true бол: format change</span>
-      <span>false бол: өөр rule ажиллаж болно</span>
+      <p><b>Дүрэм (rule)</b> = <b>Нөхцөл (condition)</b> + <b>Харагдац (format)</b></p>
+      <p class="mini">Жишээ: “Хэрвээ тоо 0-ээс их бол ногоон болго.”</p>
     </div>
 
     <div class="box">
-      <h3>✍️ Task 1 (Notebook)</h3>
+      <h3>✍️ Даалгавар 1 (Дэвтэр)</h3>
       <ol class="muted">
-        <li>“Rule = Condition + Format” гэж бич.</li>
-        <li>Өөрийн 2 rule зохиож бич. (Ж: score ≥ 90 бол …)</li>
+        <li>“Дүрэм = Нөхцөл + Харагдац” гэж бич.</li>
+        <li>Өөрийн 2 дүрэм зохиож бич. (Ж: оноо 90-ээс дээш бол …)</li>
       </ol>
     </div>
   </section>
 
   <section class="card" id="condition">
-    <span class="tag">Condition</span>
-    <h2>2) Condition гэж юу вэ?</h2>
-    <p><b>Condition</b> гэдэг нь “Yes/No” (true/false) гэж хариулдаг шалгалт.</p>
+    <span class="tag">Нөхцөл</span>
+    <h2>2) Нөхцөл (condition) гэж юу вэ?</h2>
+    <p><b>Нөхцөл (condition)</b> гэдэг нь “Тийм/Үгүй” гэж хариулдаг шалгалт.</p>
 
     <div class="box">
-      <p><b>Examples:</b></p>
+      <p><b>Жишээ асуултууд:</b></p>
       <ul class="muted">
-        <li>Is the value greater than 10?</li>
-        <li>Is the value equal to 0?</li>
-        <li>Is the value less than 0?</li>
+        <li>Энэ тоо 10-аас их үү?</li>
+        <li>Энэ тоо 0-тэй тэнцүү юу?</li>
+        <li>Энэ тоо 0-ээс бага юу?</li>
       </ul>
-      <p class="mini">Хариу нь дандаа: <b>true</b> эсвэл <b>false</b>.</p>
+      <p class="mini">Хариу нь 2 л байдаг: <b>тийм</b> эсвэл <b>үгүй</b>.</p>
     </div>
 
     <div class="box">
-      <h3>✍️ Task 2 (Notebook)</h3>
-      <p class="muted">Дараах condition-ууд true уу false юу гэж бич.</p>
+      <h3>✍️ Даалгавар 2 (Дэвтэр)</h3>
+      <p class="muted">Доорх өгүүлбэрүүд “тийм” үү, “үгүй” юу гэж бич.</p>
       <ol class="muted">
-        <li>Value = 12. “12 &gt; 10” → ?</li>
-        <li>Value = -3. “-3 &lt; 0” → ?</li>
-        <li>Value = 0. “0 = 0” → ?</li>
-        <li>Value = 7. “7 &lt;= 7” → ?</li>
+        <li>Утга = 12. “12 нь 10-аас их” → ?</li>
+        <li>Утга = -3. “-3 нь 0-ээс бага” → ?</li>
+        <li>Утга = 0. “0 нь 0-тэй тэнцүү” → ?</li>
+        <li>Утга = 7. “7 нь 7-оос их биш (7-оос бага эсвэл тэнцүү)” → ?</li>
       </ol>
     </div>
   </section>
 
   <section class="card" id="meaning">
-    <span class="tag">Meaning</span>
-    <h2>3) Colors (meaning)</h2>
-    <p>Colors нь утга илэрхийлж чадна. Жишээ нь:</p>
+    <span class="tag">Өнгөний утга</span>
+    <h2>3) Өнгө юу илэрхийлж болох вэ?</h2>
+    <p>Өнгө нь “юуг анзаарах хэрэгтэй вэ?” гэдгийг хурдан ойлгуулж чадна.</p>
     <div class="box">
       <ul class="muted">
-        <li><b>Red</b> → warning / problem</li>
-        <li><b>Green</b> → good / OK</li>
-        <li><b>Orange/Yellow</b> → special case (like 0)</li>
+        <li><b>Улаан</b> → асуудал / анхаар</li>
+        <li><b>Ногоон</b> → сайн / хэвийн</li>
+        <li><b>Шар/улбар</b> → онцгой тохиолдол (жишээ нь 0)</li>
       </ul>
-      <p class="mini">Чухал: чи өөрийн spreadsheet дээр “энэ өнгө юу гэсэн үг вэ?” гэдгийг тайлбарлаж өгдөг байх.</p>
+      <p class="mini">Жич: Нэг хүснэгт дээр өнгөнүүдийн утгыг тогтмол хэрэглэвэл илүү ойлгомжтой.</p>
     </div>
 
     <div class="box">
-      <h3>✍️ Task 3 (Notebook)</h3>
+      <h3>✍️ Даалгавар 3 (Дэвтэр)</h3>
       <p class="muted">Дэвтэр дээрээ бөглө:</p>
       <ul class="muted">
-        <li>Green = ________</li>
-        <li>Red = ________</li>
-        <li>Orange/Yellow = ________</li>
+        <li>Ногоон = ________</li>
+        <li>Улаан = ________</li>
+        <li>Шар/улбар = ________</li>
       </ul>
     </div>
   </section>
 
   <section class="card" id="classic">
-    <span class="tag">Classic example</span>
-    <h2>4) Classic example: Balance</h2>
-    <p>Нэг “Balance” гэсэн тоо байна гэж бодъё (income - costs).</p>
+    <span class="tag">Сонгодог жишээ</span>
+    <h2>4) Сонгодог жишээ: Баланс (Balance)</h2>
+    <p>“Баланс (balance)” гэдэг нь орлого − зарлага гэж төсөөлье.</p>
 
     <div class="box">
-      <p><b>We set 3 rules:</b></p>
+      <p><b>3 дүрэм тавья:</b></p>
       <ul class="muted">
-        <li>If balance <b>&gt; 0</b> → green</li>
-        <li>If balance <b>&lt; 0</b> → red</li>
-        <li>If balance <b>= 0</b> → orange</li>
+        <li>Хэрвээ баланс <b>0-ээс их</b> бол → <b>ногоон</b></li>
+        <li>Хэрвээ баланс <b>0-ээс бага</b> бол → <b>улаан</b></li>
+        <li>Хэрвээ баланс <b>0-тэй тэнцүү</b> бол → <b>шар/улбар</b></li>
       </ul>
     </div>
 
     <div class="box">
-      <h3>✍️ Task 4 (Notebook)</h3>
-      <p class="muted">Доорх 10 balance-г хараад ямар өнгө болохыг бич (green/red/orange).</p>
+      <h3>✍️ Даалгавар 4 (Дэвтэр)</h3>
+      <p class="muted">Доорх 10 баланс ямар өнгөтэй болох вэ? (ногоон/улаан/шар)</p>
       <ol class="muted">
         <li>1200 →</li>
         <li>-50 →</li>
@@ -231,89 +198,84 @@
         <li>700 →</li>
         <li>-300 →</li>
       </ol>
-      <div class="check"><b>Self-check:</b> &gt;0 green, &lt;0 red, =0 orange.</div>
     </div>
   </section>
 
   <section class="card" id="compare">
-    <span class="tag">Compare cells</span>
-    <h2>5) Conditional Formatting based on another cell</h2>
-    <p>Заримдаа 0-той биш, өөр нэг number (target)-тай харьцуулж өнгө өөрчилнө.</p>
+    <span class="tag">Харьцуулах</span>
+    <h2>5) Өөр нэг нүдтэй харьцуулж өнгө өөрчлөх</h2>
+    <p>Заримдаа 0-той биш, өөр нэг тоо (зорилт/target)-той харьцуулж өнгө өөрчилдөг.</p>
 
     <div class="box">
-      <p><b>Example:</b></p>
+      <p><b>Жишээ:</b></p>
       <ul class="muted">
-        <li>Sales = 2870</li>
-        <li>Target = 3000</li>
-        <li>If Sales ≥ Target → green</li>
-        <li>Else → red</li>
+        <li>Борлуулалт (sales) = 2870</li>
+        <li>Зорилт (target) = 3000</li>
+        <li>Хэрвээ борлуулалт ≥ зорилт бол → ногоон</li>
+        <li>Үгүй бол → улаан</li>
       </ul>
     </div>
 
     <div class="box">
-      <h3>✍️ Task 5 (Notebook)</h3>
-      <p class="muted">Rule: Sales ≥ Target → green, else red</p>
+      <h3>✍️ Даалгавар 5 (Дэвтэр)</h3>
+      <p class="muted">Дүрэм: Борлуулалт ≥ Зорилт бол ногоон, үгүй бол улаан.</p>
       <ol class="muted">
-        <li>Sales 2800, Target 3000 →</li>
-        <li>Sales 3500, Target 3000 →</li>
-        <li>Sales 3000, Target 3000 →</li>
-        <li>Sales 2999, Target 3000 →</li>
-        <li>Sales 0, Target 1 →</li>
+        <li>Борлуулалт 2800, Зорилт 3000 →</li>
+        <li>Борлуулалт 3500, Зорилт 3000 →</li>
+        <li>Борлуулалт 3000, Зорилт 3000 →</li>
+        <li>Борлуулалт 2999, Зорилт 3000 →</li>
+        <li>Борлуулалт 0, Зорилт 1 →</li>
       </ol>
     </div>
   </section>
 
-  <section class="card" id="write">
-    <span class="tag">Make your own</span>
-    <h2>6) Make your own rules (Notebook)</h2>
-    <p>Одоо өөрийн жишээгээр 3 rules зохио.</p>
+  <section class="card" id="make">
+    <span class="tag">Өөрөө зохиох</span>
+    <h2>6) Өөрийн 3 дүрэм зохио (Дэвтэр)</h2>
+    <p>Доороос нэг сэдэв сонгоод 3 дүрэм бич.</p>
 
     <div class="box">
-      <p class="muted"><b>Pick one:</b></p>
+      <p class="muted"><b>Сонгох санаанууд:</b></p>
       <ul class="muted">
-        <li><b>Score</b>: 90+ green, 60–89 yellow, 0–59 red</li>
-        <li><b>Exercise minutes</b>: 30+ green, 10–29 yellow, 0–9 red</li>
-        <li><b>Late minutes</b>: 0 green, 1–5 yellow, 6+ red</li>
+        <li><b>Оноо (score)</b>: 90+ ногоон, 60–89 шар, 0–59 улаан</li>
+        <li><b>Дасгалын минут</b>: 30+ ногоон, 10–29 шар, 0–9 улаан</li>
+        <li><b>Хоцорсон минут</b>: 0 ногоон, 1–5 шар, 6+ улаан</li>
       </ul>
 
       <div class="hr"></div>
-      <h3>✍️ Task 6 (Notebook)</h3>
+      <h3>✍️ Даалгавар 6 (Дэвтэр)</h3>
       <ol class="muted">
-        <li>If ________ → ________</li>
-        <li>If ________ → ________</li>
-        <li>If ________ → ________</li>
+        <li>Хэрвээ ________ бол → ________</li>
+        <li>Хэрвээ ________ бол → ________</li>
+        <li>Хэрвээ ________ бол → ________</li>
       </ol>
-    </div>
-
-    <div class="check">
-      <b>Self-check:</b> Each rule has (1) condition and (2) format.
     </div>
   </section>
 
   <section class="card" id="exit">
-    <span class="tag">Exit ticket</span>
-    <h2>7) Exit ticket (Notebook)</h2>
+    <span class="tag">Дүгнэлт</span>
+    <h2>7) Сүүлчийн 3 асуулт (Дэвтэр)</h2>
 
     <div class="box">
-      <h3>✍️ Task 7</h3>
+      <h3>✍️ Даалгавар 7</h3>
       <ol class="muted">
-        <li>Conditional formatting гэж юу вэ? (1 sentence)</li>
-        <li>Rule гэж юу вэ? (1 sentence)</li>
-        <li>Write 1 rule example.</li>
+        <li>Нөхцөлт формат (conditional formatting) гэж юу вэ? (1 өгүүлбэр)</li>
+        <li>Дүрэм (rule) гэж юу вэ? (1 өгүүлбэр)</li>
+        <li>1 дүрмийн жишээ бич.</li>
       </ol>
     </div>
 
     <div class="callout">
-      <b>Done!</b> Хэрвээ чи энэ 3-ыг өөрөө бичиж чадвал — багшгүйгээр хичээлээ хийж чадсан байна.
+      <b>Дууслаа.</b> Энэ 3-ыг өөрийн үгээр бичиж чадвал хичээлээ ойлгосон гэсэн үг.
     </div>
 
     <p class="mini" style="margin-top:10px">
-      Suggested file name: <span class="kbd">conditional_formatting_selfstudy.html</span>
+      Санал болгож буй файл нэр: <span class="kbd">nohtsolt_format_devtger.html</span>
     </p>
   </section>
 
   <p class="mini" style="text-align:center; opacity:.9; margin-top:14px">
-    © Self-study lesson — phone reading + notebook tasks
+    © Дэвтэр дээр хийх бие даалт — нөхцөлт формат
   </p>
 
 </div>
