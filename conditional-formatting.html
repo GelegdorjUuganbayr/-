@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="mn">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Lesson: Conditional Formatting — Self-study (Phone → Notebook)</title>
+  <style>
+    :root{
+      --bg:#0b1220; --card:#0f1a2f; --text:#eaf1ff; --muted:#a9b7d0;
+      --accent:#7dd3fc; --border:rgba(255,255,255,.12);
+      --good:#34d399; --warn:#fbbf24;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      background: linear-gradient(180deg, var(--bg), #070b14);
+      color:var(--text);
+      line-height:1.6;
+    }
+    header{
+      position:sticky; top:0; z-index:10;
+      background: rgba(11,18,32,.85);
+      backdrop-filter: blur(10px);
+      border-bottom:1px solid var(--border);
+    }
+    .wrap{max-width:980px; margin:0 auto; padding:14px 14px 50px;}
+    h1{font-size:18px; margin:0}
+    .sub{margin:6px 0 0; color:var(--muted); font-size:13px}
+    .card{
+      background: rgba(15,26,47,.72);
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:14px;
+      margin-top:12px;
+    }
+    .tag{
+      display:inline-block;
+      font-size:12px;
+      padding:3px 8px;
+      border:1px solid var(--border);
+      border-radius:999px;
+      color:var(--muted);
+      margin-right:8px;
+    }
+    h2{font-size:16px; margin:0 0 8px}
+    h3{font-size:14px; margin:12px 0 6px; color:var(--accent)}
+    p{margin:8px 0}
+    ul{margin:8px 0 0 18px}
+    li{margin:6px 0}
+    .muted{color:var(--muted)}
+    .callout{
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid rgba(125,211,252,.25);
+      background: rgba(125,211,252,.07);
+      color:var(--muted);
+    }
+    .callout b{color:var(--text)}
+    .steps{margin-top:10px; display:flex; flex-wrap:wrap; gap:8px;}
+    .steps span{
+      border:1px solid var(--border);
+      padding:6px 10px;
+      border-radius:999px;
+      font-size:12px;
+      color:var(--muted);
+      background: rgba(255,255,255,.02);
+    }
+    .box{
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:12px;
+      background: rgba(255,255,255,.02);
+      margin-top:10px;
+    }
+    .check{
+      border-left:3px solid var(--good);
+      padding:10px 12px;
+      border-radius:12px;
+      background: rgba(52,211,153,.08);
+      color:var(--muted);
+      margin-top:10px;
+    }
+    .warn{
+      border-left:3px solid var(--warn);
+      padding:10px 12px;
+      border-radius:12px;
+      background: rgba(251,191,36,.08);
+      color:var(--muted);
+      margin-top:10px;
+    }
+    .mini{font-size:12px; color:var(--muted)}
+    .kbd{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size:12px;
+      padding:1px 6px;
+      border:1px solid var(--border);
+      border-radius:8px;
+      background: rgba(255,255,255,.03);
+    }
+    .hr{height:1px; background:var(--border); margin:12px 0;}
+  </style>
+</head>
+
+<body>
+<header>
+  <div class="wrap">
+    <h1>Lesson: Conditional Formatting (Self-study)</h1>
+    <p class="sub">📱 Phone дээр уншина → ✍️ Notebook дээр хийж дуусгана (компьютер хэрэггүй)</p>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <section class="card" id="start">
+    <span class="tag">Self-study</span><span class="tag">Notebook</span>
+    <h2>0) Яаж хийх вэ?</h2>
+    <ul>
+      <li>Энэ хуудсыг утсаараа унш.</li>
+      <li>Дэвтэр дээрээ гарчиг бич: <b>“Conditional Formatting”</b>.</li>
+      <li>Хэсэг бүрийн дараах <b>Tasks</b>-ийг дэвтэртээ хий.</li>
+      <li>Хичээл дуусахад чи: <b>“Тоон утгаас хамаарч cell-ийн өнгө өөрчлөгдөнө”</b> гэдгийг бүрэн ойлгоно.</li>
+    </ul>
+    <div class="callout"><b>Big idea:</b> Тоонууд олон үед “чухал” зүйлсийг өнгөөр хурдан ялгаж харуулах.</div>
+  </section>
+
+  <section class="card" id="idea">
+    <span class="tag">Big idea</span>
+    <h2>1) Basic idea (маш энгийнээр)</h2>
+    <p>Spreadsheet дээр тоо их байвал аль нь сайн/муу гэдгийг хурдан харахад хэцүү.</p>
+    <p>Тиймээс бид <b>rules</b> тавьдаг: тоо ямар байвал ямар өнгөтэй болох вэ?</p>
+
+    <div class="box">
+      <p><b>Rule</b> = <b>Condition</b> + <b>Format</b></p>
+      <p class="mini">Жишээ: “If value &gt; 0 → green.”</p>
+    </div>
+
+    <div class="steps">
+      <span>Condition: true/false</span>
+      <span>true бол: format change</span>
+      <span>false бол: өөр rule ажиллаж болно</span>
+    </div>
+
+    <div class="box">
+      <h3>✍️ Task 1 (Notebook)</h3>
+      <ol class="muted">
+        <li>“Rule = Condition + Format” гэж бич.</li>
+        <li>Өөрийн 2 rule зохиож бич. (Ж: score ≥ 90 бол …)</li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="card" id="condition">
+    <span class="tag">Condition</span>
+    <h2>2) Condition гэж юу вэ?</h2>
+    <p><b>Condition</b> гэдэг нь “Yes/No” (true/false) гэж хариулдаг шалгалт.</p>
+
+    <div class="box">
+      <p><b>Examples:</b></p>
+      <ul class="muted">
+        <li>Is the value greater than 10?</li>
+        <li>Is the value equal to 0?</li>
+        <li>Is the value less than 0?</li>
+      </ul>
+      <p class="mini">Хариу нь дандаа: <b>true</b> эсвэл <b>false</b>.</p>
+    </div>
+
+    <div class="box">
+      <h3>✍️ Task 2 (Notebook)</h3>
+      <p class="muted">Дараах condition-ууд true уу false юу гэж бич.</p>
+      <ol class="muted">
+        <li>Value = 12. “12 &gt; 10” → ?</li>
+        <li>Value = -3. “-3 &lt; 0” → ?</li>
+        <li>Value = 0. “0 = 0” → ?</li>
+        <li>Value = 7. “7 &lt;= 7” → ?</li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="card" id="meaning">
+    <span class="tag">Meaning</span>
+    <h2>3) Colors (meaning)</h2>
+    <p>Colors нь утга илэрхийлж чадна. Жишээ нь:</p>
+    <div class="box">
+      <ul class="muted">
+        <li><b>Red</b> → warning / problem</li>
+        <li><b>Green</b> → good / OK</li>
+        <li><b>Orange/Yellow</b> → special case (like 0)</li>
+      </ul>
+      <p class="mini">Чухал: чи өөрийн spreadsheet дээр “энэ өнгө юу гэсэн үг вэ?” гэдгийг тайлбарлаж өгдөг байх.</p>
+    </div>
+
+    <div class="box">
+      <h3>✍️ Task 3 (Notebook)</h3>
+      <p class="muted">Дэвтэр дээрээ бөглө:</p>
+      <ul class="muted">
+        <li>Green = ________</li>
+        <li>Red = ________</li>
+        <li>Orange/Yellow = ________</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="card" id="classic">
+    <span class="tag">Classic example</span>
+    <h2>4) Classic example: Balance</h2>
+    <p>Нэг “Balance” гэсэн тоо байна гэж бодъё (income - costs).</p>
+
+    <div class="box">
+      <p><b>We set 3 rules:</b></p>
+      <ul class="muted">
+        <li>If balance <b>&gt; 0</b> → green</li>
+        <li>If balance <b>&lt; 0</b> → red</li>
+        <li>If balance <b>= 0</b> → orange</li>
+      </ul>
+    </div>
+
+    <div class="box">
+      <h3>✍️ Task 4 (Notebook)</h3>
+      <p class="muted">Доорх 10 balance-г хараад ямар өнгө болохыг бич (green/red/orange).</p>
+      <ol class="muted">
+        <li>1200 →</li>
+        <li>-50 →</li>
+        <li>0 →</li>
+        <li>35 →</li>
+        <li>-999 →</li>
+        <li>1 →</li>
+        <li>-1 →</li>
+        <li>0 →</li>
+        <li>700 →</li>
+        <li>-300 →</li>
+      </ol>
+      <div class="check"><b>Self-check:</b> &gt;0 green, &lt;0 red, =0 orange.</div>
+    </div>
+  </section>
+
+  <section class="card" id="compare">
+    <span class="tag">Compare cells</span>
+    <h2>5) Conditional Formatting based on another cell</h2>
+    <p>Заримдаа 0-той биш, өөр нэг number (target)-тай харьцуулж өнгө өөрчилнө.</p>
+
+    <div class="box">
+      <p><b>Example:</b></p>
+      <ul class="muted">
+        <li>Sales = 2870</li>
+        <li>Target = 3000</li>
+        <li>If Sales ≥ Target → green</li>
+        <li>Else → red</li>
+      </ul>
+    </div>
+
+    <div class="box">
+      <h3>✍️ Task 5 (Notebook)</h3>
+      <p class="muted">Rule: Sales ≥ Target → green, else red</p>
+      <ol class="muted">
+        <li>Sales 2800, Target 3000 →</li>
+        <li>Sales 3500, Target 3000 →</li>
+        <li>Sales 3000, Target 3000 →</li>
+        <li>Sales 2999, Target 3000 →</li>
+        <li>Sales 0, Target 1 →</li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="card" id="write">
+    <span class="tag">Make your own</span>
+    <h2>6) Make your own rules (Notebook)</h2>
+    <p>Одоо өөрийн жишээгээр 3 rules зохио.</p>
+
+    <div class="box">
+      <p class="muted"><b>Pick one:</b></p>
+      <ul class="muted">
+        <li><b>Score</b>: 90+ green, 60–89 yellow, 0–59 red</li>
+        <li><b>Exercise minutes</b>: 30+ green, 10–29 yellow, 0–9 red</li>
+        <li><b>Late minutes</b>: 0 green, 1–5 yellow, 6+ red</li>
+      </ul>
+
+      <div class="hr"></div>
+      <h3>✍️ Task 6 (Notebook)</h3>
+      <ol class="muted">
+        <li>If ________ → ________</li>
+        <li>If ________ → ________</li>
+        <li>If ________ → ________</li>
+      </ol>
+    </div>
+
+    <div class="check">
+      <b>Self-check:</b> Each rule has (1) condition and (2) format.
+    </div>
+  </section>
+
+  <section class="card" id="exit">
+    <span class="tag">Exit ticket</span>
+    <h2>7) Exit ticket (Notebook)</h2>
+
+    <div class="box">
+      <h3>✍️ Task 7</h3>
+      <ol class="muted">
+        <li>Conditional formatting гэж юу вэ? (1 sentence)</li>
+        <li>Rule гэж юу вэ? (1 sentence)</li>
+        <li>Write 1 rule example.</li>
+      </ol>
+    </div>
+
+    <div class="callout">
+      <b>Done!</b> Хэрвээ чи энэ 3-ыг өөрөө бичиж чадвал — багшгүйгээр хичээлээ хийж чадсан байна.
+    </div>
+
+    <p class="mini" style="margin-top:10px">
+      Suggested file name: <span class="kbd">conditional_formatting_selfstudy.html</span>
+    </p>
+  </section>
+
+  <p class="mini" style="text-align:center; opacity:.9; margin-top:14px">
+    © Self-study lesson — phone reading + notebook tasks
+  </p>
+
+</div>
+</body>
+</html>
