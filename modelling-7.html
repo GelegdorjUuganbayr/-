@@ -1,0 +1,676 @@
+<!doctype html>
+<html lang="mn">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Managing Data 2.2 — Modelling (Өөрөө уншаад, дэвтэр дээр хийх хичээл)</title>
+  <style>
+    :root{
+      --bg:#0b1220; --card:#0f1a2f; --text:#eaf1ff; --muted:#a9b7d0;
+      --accent:#7dd3fc; --border:rgba(255,255,255,.14);
+      --good:#34d399; --warn:#fbbf24; --bad:#fb7185;
+      --shadow: 0 10px 24px rgba(0,0,0,.35);
+      --radius: 18px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: radial-gradient(1200px 700px at 20% -10%, rgba(125,211,252,.18), transparent 55%),
+                  radial-gradient(900px 600px at 90% 10%, rgba(52,211,153,.12), transparent 55%),
+                  linear-gradient(180deg, var(--bg), #070b14);
+      color:var(--text);
+      line-height:1.6;
+    }
+    header{
+      position: sticky; top:0; z-index:10;
+      background: rgba(11,18,32,.82);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+    }
+    .wrap{max-width: 980px; margin:0 auto; padding: 14px 16px;}
+    .title{
+      display:flex; align-items:flex-start; justify-content:space-between; gap:12px;
+    }
+    h1{font-size: clamp(18px, 2.4vw, 26px); margin:0}
+    .sub{color:var(--muted); margin-top:4px; font-size: 14px}
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:8px 10px; border:1px solid var(--border);
+      border-radius: 999px; color:var(--muted); font-size: 12px;
+      background: rgba(255,255,255,.04);
+      white-space: nowrap;
+    }
+    main{padding: 18px 0 44px}
+    .grid{
+      display:grid; gap:14px;
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 860px){
+      .grid{grid-template-columns: 1.15fr .85fr;}
+    }
+    .card{
+      background: rgba(15,26,47,.72);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .card .hd{
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(255,255,255,.03);
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+    }
+    .card .hd h2{margin:0; font-size: 16px}
+    .card .bd{padding: 14px 16px}
+    .k{color:var(--accent); font-weight: 650}
+    .muted{color:var(--muted)}
+    .callout{
+      border:1px dashed rgba(125,211,252,.55);
+      background: rgba(125,211,252,.08);
+      padding: 12px 12px;
+      border-radius: 14px;
+      margin: 10px 0;
+    }
+    .ok{border-color: rgba(52,211,153,.55); background: rgba(52,211,153,.08)}
+    .warn{border-color: rgba(251,191,36,.55); background: rgba(251,191,36,.08)}
+    .bad{border-color: rgba(251,113,133,.55); background: rgba(251,113,133,.08)}
+    ul,ol{margin: 8px 0 10px 18px}
+    li{margin: 6px 0}
+    details{
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 10px 12px;
+      background: rgba(255,255,255,.03);
+      margin: 10px 0;
+    }
+    summary{cursor:pointer; font-weight: 650}
+    .tag{
+      display:inline-block;
+      padding: 3px 9px;
+      border-radius: 999px;
+      border:1px solid var(--border);
+      font-size: 12px;
+      color: var(--muted);
+      background: rgba(255,255,255,.03);
+      margin-right: 6px;
+      margin-top: 6px;
+    }
+    .table{
+      width:100%;
+      border-collapse: collapse;
+      overflow:hidden;
+      border-radius: 14px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.02);
+      margin: 10px 0;
+    }
+    .table th,.table td{
+      padding: 10px 10px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      vertical-align: top;
+      font-size: 14px;
+    }
+    .table th{color: var(--muted); font-weight:650; text-align:left; background: rgba(255,255,255,.03)}
+    .table tr:last-child td{border-bottom: none}
+    .step{
+      display:flex; gap:10px; align-items:flex-start;
+      padding: 10px 10px; border:1px solid var(--border);
+      border-radius: 14px; background: rgba(255,255,255,.02);
+      margin: 10px 0;
+    }
+    .num{
+      flex: 0 0 auto;
+      width: 28px; height: 28px; border-radius: 10px;
+      display:grid; place-items:center;
+      color: #06101a;
+      background: var(--accent);
+      font-weight: 800;
+      margin-top: 2px;
+    }
+    .small{font-size: 13px}
+    .hr{height:1px; background: rgba(255,255,255,.12); margin: 12px 0}
+    .footer{
+      margin-top: 18px;
+      border-top: 1px solid var(--border);
+      padding-top: 14px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .copybox{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+      font-size: 12.5px;
+      background: rgba(0,0,0,.25);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 14px;
+      padding: 10px 12px;
+      overflow:auto;
+      color: #dbeafe;
+      margin: 10px 0;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+
+<body>
+<header>
+  <div class="wrap">
+    <div class="title">
+      <div>
+        <h1>Managing Data — 2.2 Modelling</h1>
+        <div class="sub">Өөрөө унш → дэвтэр дээр хий → шаардлагатай үед ChatGPT-ээс асууж гүнзгийрүүл</div>
+      </div>
+      <div class="pill">⏱ 35–45 мин • ✍️ Дэвтэр • 🧠 Сэтгэх чадвар</div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <div class="grid">
+
+      <!-- LEFT: MAIN LESSON -->
+      <section class="card">
+        <div class="hd">
+          <h2>1) Суралцах зорилго</h2>
+          <span class="tag">2.2</span><span class="tag">Model</span><span class="tag">Simulator</span>
+        </div>
+        <div class="bd">
+          <ul>
+            <li><span class="k">Model system</span> гэж юу болох, яагаад хэрэглэдгийг ойлгох</li>
+            <li>Өөр өөр <span class="k">model</span>-ийн төрлүүд: <span class="k">spreadsheet model</span>, <span class="k">simulator</span></li>
+            <li>Өгөгдөл (data) ашиглаад <span class="k">өөр өөр нөхцөл/сценари</span> туршиж үзэх ойлголт</li>
+            <li>Model системийг <span class="k">эрүүл мэнд</span>, <span class="k">үйлдвэрлэл</span>, <span class="k">худалдаа</span>-д ашиглах жишээг тайлбарлах</li>
+          </ul>
+
+          <div class="callout ok">
+            <b>Чухал санаа:</b> Модел гэдэг нь бодит амьдралыг <b>жижигрүүлж / хялбарчилж</b> дүрсэлсэн хувилбар.
+            Тэр модел дээрээ өгөгдөл (data)-өө өөрчлөөд <b>үр дүн (outcome)</b> яаж өөрчлөгдөхийг харна.
+          </div>
+        </div>
+      </section>
+
+      <!-- RIGHT: QUICK NAV -->
+      <aside class="card">
+        <div class="hd">
+          <h2>Хурдан санах булан</h2>
+          <span class="pill">📌 Түлхүүр үг</span>
+        </div>
+        <div class="bd">
+          <div class="tag">model</div>
+          <div class="tag">modelling</div>
+          <div class="tag">scenario</div>
+          <div class="tag">outcome</div>
+          <div class="tag">simulator</div>
+          <div class="tag">mimic</div>
+          <div class="tag">spreadsheet model</div>
+
+          <div class="hr"></div>
+
+          <details>
+            <summary>Үгсийн маш энгийн тайлбар</summary>
+            <ul class="small">
+              <li><b>model</b> — бодит зүйл/нөхцөлийг төлөөлсөн “хялбар хувилбар”</li>
+              <li><b>modelling</b> — модел дээр өгөгдлөө өөрчлөөд үр дүнг турших</li>
+              <li><b>scenario</b> — боломжит өөр нөхцөл (“хэрвээ тэгвэл яах вэ?”)</li>
+              <li><b>outcome</b> — гарч буй үр дүн</li>
+              <li><b>simulator</b> — бодит байдлыг дуурайж ажилладаг программ/систем</li>
+              <li><b>mimic</b> — дуурайх, ижилхэн аашлах</li>
+            </ul>
+          </details>
+
+          <div class="callout warn">
+            <b>Сурах арга:</b> Хэрэв хэсэг ойлгомжгүй бол шууд ChatGPT-ээс асуугаарай. Доор “асуух загвар” бэлдсэн.
+          </div>
+        </div>
+      </aside>
+
+      <!-- MAIN CONTENT: THEORY -->
+      <section class="card">
+        <div class="hd"><h2>2) Онол — Модел систем гэж юу вэ?</h2><span class="pill">📖 Онол</span></div>
+        <div class="bd">
+          <p>
+            Байгууллагууд (эмнэлэг, үйлдвэр, дэлгүүр г.м) өдөр бүр шийдвэр гаргах хэрэгтэй болдог.
+            Тэр шийдвэрээ зөв гаргахын тулд <span class="k">өгөгдөл (data)</span> цуглуулж, шинжилдэг.
+          </p>
+          <p>
+            Заримдаа бодит амьдрал дээр шууд туршилт хийх нь <b>аюултай</b>, <b>үнэтэй</b>, эсвэл <b>боломжгүй</b> байдаг.
+            Тиймээс <span class="k">model system</span> ашигладаг.
+          </p>
+
+          <div class="callout">
+            <b>Компьютер модел</b> = бодит амьдралын систем/нөхцөл байдлын <b>дүрслэл</b>.
+            Модел дээр <b>өөрчлөлт</b> хийж үзээд, бодит амьдралд юу тохиолдохыг <b>таамаглаж</b> болдог.
+          </div>
+
+          <details>
+            <summary>Spreadsheet model гэж юу вэ?</summary>
+            <p class="muted small">
+              Spreadsheet model бол хүснэгт програм (spreadsheet) дээр бүтээгдсэн модел.
+              Ихэвчлэн 3 хэсэгтэй:
+            </p>
+            <ul class="small">
+              <li><b>Data</b> — оруулж байгаа тоо, үнэ, хэмжээ зэрэг өөрчлөгдөж болох утгууд</li>
+              <li><b>Labels</b> — “Тасалбарын борлуулалт”, “Нийт зардал” гэх мэт тайлбар бичвэрүүд</li>
+              <li><b>Calculations</b> — тооцоолол (жишээ: Нийт = хэсгүүдийн нийлбэр)</li>
+            </ul>
+          </details>
+
+          <div class="callout ok">
+            <b>Гол логик:</b> Data-г өөрчилбөл → Calculation-ын үр дүн өөрчлөгдөнө → өөр scenario-г шалгаж байна гэсэн үг.
+          </div>
+        </div>
+      </section>
+
+      <!-- UNPLUGGED TASKS -->
+      <section class="card">
+        <div class="hd"><h2>3) Unplugged даалгавар A — Төрсөн өдрийн хоол (өгөгдөл ашиглан шийдвэр гаргах)</h2><span class="pill">✍️ Дэвтэр</span></div>
+        <div class="bd">
+          <p class="muted">Доорх хүснэгт бол гэр бүлийн “таалагддаг/таалагддаггүй” хоолны өгөгдөл.</p>
+
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Нэр</th>
+                <th>Дуртай хоол</th>
+                <th>Дургүй хоол</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Carlos</td>
+                <td>salad, pizza, noodles</td>
+                <td>pasta, carrots</td>
+              </tr>
+              <tr>
+                <td>Sue</td>
+                <td>pasta, carrots, ice cream</td>
+                <td>seafood, pizza</td>
+              </tr>
+              <tr>
+                <td>Gabriel</td>
+                <td>seafood, salad, chicken</td>
+                <td>chocolate, couscous</td>
+              </tr>
+              <tr>
+                <td>Sebastian</td>
+                <td>chicken, salad, pasta</td>
+                <td>peas, seafood</td>
+              </tr>
+              <tr>
+                <td>Anika</td>
+                <td>pizza, chicken burger</td>
+                <td>couscous, chicken, chocolate</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="step">
+            <div class="num">1</div>
+            <div>
+              <b>Дэвтэр дээр:</b> “Төрсөн өдрийн хоол” гэж гарчиг тавиад
+              <ul>
+                <li>Боломжит 3 үндсэн хоол + 2 амттан санал болго.</li>
+                <li>Хүн бүрийн <b>дургүй хоол</b>-ыг харгалзаад “юуг заавал зайлсхийх вэ?” гэдгийг жагсаа.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="num">2</div>
+            <div>
+              <b>Яагаад гэдгийг тайлбарла:</b>
+              <ul>
+                <li>Өгөгдөл (data) хоол төлөвлөхөд яаж тусалсан бэ?</li>
+                <li>Өгөгдөл дотор юу <b>чухал</b> байсан бэ? (жишээ: “дургүй” гэдэг нь хориг)</li>
+                <li>Чи ямар дүрэм ашиглаад шийдвэр гаргасан бэ? (жишээ: “олонх дургүй бол хасна”)</li>
+              </ul>
+            </div>
+          </div>
+
+          <details>
+            <summary>ChatGPT-ээс асууж болох асуултын загвар</summary>
+            <div class="copybox">Би дараах өгөгдлөөр төрсөн өдрийн хоол төлөвлөж байна. Хүн бүрийн дургүй хоолыг зөрчихгүйгээр 3 меню санал болгоод, яагаад гэдгийг тайлбарла.
+(Дараа нь хүснэгтийг хуулж өгнө.)</div>
+          </details>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd"><h2>4) Онол — Spreadsheet моделийн “3 зүйл”</h2><span class="pill">📖 Онол</span></div>
+        <div class="bd">
+          <p>
+            Spreadsheet моделийг хамгийн энгийнээр хэлбэл:
+            <span class="k">Labels + Data + Calculations</span>.
+          </p>
+
+          <div class="callout warn">
+            <b>Санамж:</b> Чи компьютергүй байсан ч тооцооллын “дүрмийг” дэвтэр дээр бичиж чадна.
+            Энэ нь “формулыг ойлгож байна” гэсэн үг.
+          </div>
+
+          <div class="step">
+            <div class="num">1</div>
+            <div>
+              <b>Labels</b> — гарчиг, тайлбар бичвэрүүд. (Ж: “Ticket sales”, “Total costs”)
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="num">2</div>
+            <div>
+              <b>Data</b> — өөрчлөгдөж болох бодит тоонууд. (Ж: 2050, 350, 470…)
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="num">3</div>
+            <div>
+              <b>Calculations</b> — data дээр хийсэн тооцоолол. (Ж: Total sales = Ticket + Merchandise + Refreshment)
+            </div>
+          </div>
+
+          <details>
+            <summary>Дэвтэр дээрх жижиг шалгалт (2–3 минут)</summary>
+            <ol class="small">
+              <li>“Нийт орлого” гэдэг нь аль төрөл вэ? (Label / Data / Calculation)</li>
+              <li>“$2,050” гэдэг нь аль төрөл вэ?</li>
+              <li>“Ticket + Merchandise + Refreshment” гэдэг нь аль төрөл вэ?</li>
+            </ol>
+          </details>
+        </div>
+      </section>
+
+      <!-- UNPLUGGED ACTIVITY 2.2: calculations -->
+      <section class="card">
+        <div class="hd"><h2>5) Unplugged даалгавар B — “Нийт” тооцооллыг labels-ээр бичих</h2><span class="pill">✍️ Дэвтэр</span></div>
+        <div class="bd">
+          <p class="muted">
+            Spreadsheet дээр “Total” гэсэн нүднүүд нь ихэвчлэн <b>тооцооллын үр дүн</b> байдаг.
+            Компьютергүй үед чи “утга”-аар биш, <b>labels</b>-ээр нь томьёо бичээд ойлгож болно.
+          </p>
+
+          <div class="callout">
+            Жишээ: <b>Total sales</b> = Ticket sales + Merchandise sales + Refreshment sales
+          </div>
+
+          <div class="step">
+            <div class="num">1</div>
+            <div>
+              <b>Дэвтэр дээр:</b> Доорх 2 томьёог зөв бич.
+              <ul>
+                <li><b>Total costs</b> = (аль аль зардлуудын нийлбэр вэ?)</li>
+                <li><b>Balance</b> = (орлого ба зардлын ямар холбоо вэ?)</li>
+              </ul>
+              <div class="muted small">Санамж: Balance гэдэг нь “үлдэгдэл/ашиг” шиг ойлгож болно.</div>
+            </div>
+          </div>
+
+          <details>
+            <summary>ChatGPT-ээс тусламж авах загвар</summary>
+            <div class="copybox">“Total costs” болон “Balance” гэсэн хоёр тооцооллыг labels ашиглаад яаж зөв бичих вэ? 
+Жишээ нь: Total sales = Ticket sales + Merchandise sales + Refreshment sales шиг.</div>
+          </details>
+
+          <div class="step">
+            <div class="num">2</div>
+            <div>
+              <b>Сэтгэх асуулт:</b> Хэрвээ “Building hire” өсвөл Total costs яах вэ? Balance яах вэ?
+              <div class="muted small">Хариуг тоогоор биш, “өснө/буурна” гэж логикоор тайлбарла.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Modelling concept -->
+      <section class="card">
+        <div class="hd"><h2>6) Онол — Modelling гэж яг юу вэ?</h2><span class="pill">📖 Онол</span></div>
+        <div class="bd">
+          <p>
+            Нэгэнт модел (labels + data + calculations) бэлэн боллоо гэж бодъё.
+            Тэгвэл бид data-г <b>өөрчилж</b>, гарч буй outcome-г харна.
+            Үүнийг <span class="k">modelling</span> гэдэг.
+          </p>
+
+          <div class="callout ok">
+            <b>“Хэрвээ … бол яах вэ?”</b> гэсэн асуулт болгонд modelling хэрэгтэй.
+            Жишээ: “Тасалбарын борлуулалт муудвал ашиг хэрхэн өөрчлөгдөх вэ?”
+          </div>
+
+          <details>
+            <summary>Дэвтэр дээрх жижиг даалгавар (Scenario)</summary>
+            <ol class="small">
+              <li>Драмын клубын жишээн дээр 3 өөр scenario зохио. (ж: “тасалбар өснө”, “түрээс өснө”…)</li>
+              <li>Тус бүр дээр “Balance өсөх/буурах” гэдгийг логикоор тайлбарла.</li>
+            </ol>
+          </details>
+        </div>
+      </section>
+
+      <!-- Spreadsheet formulas & functions -->
+      <section class="card">
+        <div class="hd"><h2>7) Онол — Spreadsheet тооцоолол (Формула ба Функц)</h2><span class="pill">📖 Онол</span></div>
+        <div class="bd">
+          <p>
+            Spreadsheet дээр бүх тооцоолол <span class="k">=</span>-ээр эхэлдэг.
+          </p>
+
+          <div class="callout">
+            <b>Формула (formula)</b> — энгийн тооцоо: +, −, ×, ÷ ашиглана. <br/>
+            <b>Функц (function)</b> — бэлэн “ухаалаг” команд. Ж: SUM(), COUNT()
+          </div>
+
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Жишээ</th>
+                <th>Юу хийдэг вэ?</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>=E4+6</td>
+                <td>Нэмнэ</td>
+              </tr>
+              <tr>
+                <td>=120-B4</td>
+                <td>Хасна</td>
+              </tr>
+              <tr>
+                <td>=E4*0.8</td>
+                <td>Үржүүлнэ</td>
+              </tr>
+              <tr>
+                <td>=E4/12</td>
+                <td>Хуваана</td>
+              </tr>
+              <tr>
+                <td>=SUM(E4:E8)</td>
+                <td>Тухайн хүрээний бүх тоонуудыг нийлбэрлэнэ</td>
+              </tr>
+              <tr>
+                <td>=COUNT(E4:E8)</td>
+                <td>Тоотой нүд хэд байгааг тоолно</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <details>
+            <summary>Дэвтэр дээрх дасгал (5 минут)</summary>
+            <ol class="small">
+              <li>“Өдөрт 2500₮ хуримтлуулбал 12 өдөрт хэд болох вэ?” гэдгийг spreadsheet маягаар 2 өөрөөр бич (формула маягаар, үгээр тайлбарлаад).</li>
+              <li>SUM функц ямар үед хэрэгтэй вэ? Жишээ 2 бич.</li>
+            </ol>
+          </details>
+
+          <details>
+            <summary>ChatGPT-ээс асуух загвар</summary>
+            <div class="copybox">Формула ба функцын ялгааг 7-р ангийн хүүхдийн хэлээр, 3 жишээтэй тайлбарлаад өгөөч. 
+Мөн SUM, COUNT хоёрын ялгааг бодит амьдралын жишээгээр хэл.</div>
+          </details>
+        </div>
+      </section>
+
+      <!-- Simulators -->
+      <section class="card">
+        <div class="hd"><h2>8) Онол — Simulator гэж юу вэ? (дуурайж турших систем)</h2><span class="pill">🧪 Simulator</span></div>
+        <div class="bd">
+          <p>
+            <span class="k">Simulator</span> бол бодит амьдралын нөхцөлийг <b>дуурайлган</b> гаргаж өгдөг компьютер систем.
+            Энэ нь судалгаа хийх, хүмүүсийг сургах үед маш хэрэгтэй.
+          </p>
+
+          <details>
+            <summary>Жишээ 1 — Нисгэгчийн сургалтын симулятор</summary>
+            <ul class="small">
+              <li>Аюулгүй: бодит онгоц сүйрүүлэх эрсдэлгүй</li>
+              <li>Хүнд нөхцөл туршина: шуурга, салхи, ослын үе</li>
+              <li>Хямд: түлш, баг, онгоцны зардал бага</li>
+            </ul>
+          </details>
+
+          <details>
+            <summary>Жишээ 2 — Эрүүл мэнд (health)</summary>
+            <ul class="small">
+              <li>Мэс заслын дадлага: бодит хүн дээр туршихгүй</li>
+              <li>Гамшгийн үед төлөвлөлт: эмч, түргэн, нөөц хаашаа илгээх вэ?</li>
+              <li>Эмнэлгийн зохион байгуулалт: өрөөнүүдийн байрлалыг туршиж үзэх</li>
+            </ul>
+          </details>
+
+          <details>
+            <summary>Жишээ 3 — Үйлдвэрлэл (manufacturing)</summary>
+            <ul class="small">
+              <li>Бүтээгдэхүүний загварын туршилт: цаг/мөнгө хэмнэнэ</li>
+              <li>Жишээ: Машин 0–80 км/ц хүрэх хугацааг загвараар турших</li>
+            </ul>
+          </details>
+
+          <details>
+            <summary>Жишээ 4 — Худалдаа (retail)</summary>
+            <ul class="small">
+              <li>Худалдааны төвийн зохион байгуулалт</li>
+              <li>Хүмүүсийн урсгал хаана түгжирч болохыг олж харна</li>
+            </ul>
+          </details>
+
+          <div class="callout warn">
+            <b>Чанарт нөлөөлөх зүйл:</b> Симулятор сайн ажиллахын тулд
+            <b>өгөгдөл (data)</b> нь хангалттай, зөв байх ёстой. Мөн дүрэм (rules) нь сайн бичигдсэн байх хэрэгтэй.
+          </div>
+        </div>
+      </section>
+
+      <!-- Unplugged activity 2.3 driving simulator -->
+      <section class="card">
+        <div class="hd"><h2>9) Unplugged даалгавар C — Жолооны симуляторт ямар өгөгдөл хэрэгтэй вэ?</h2><span class="pill">✍️ Дэвтэр</span></div>
+        <div class="bd">
+          <div class="step">
+            <div class="num">1</div>
+            <div>
+              <b>Жагсаалт гарга:</b> “Жолооны симулятор” бодит мэт ажиллахын тулд ямар өгөгдөл мэдэх хэрэгтэй вэ?
+              <div class="muted small">Жишээ: хурд, замын тэмдэг, цаг агаар… (аль болох олныг бод)</div>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="num">2</div>
+            <div>
+              <b>Яагаад зөв өгөгдөл чухал вэ?</b> гэж 3 өгүүлбэрээр тайлбарла.
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="num">3</div>
+            <div>
+              <b>Сул тал:</b> Симулятороор жолоо сургах 3 сул талыг бич.
+              <div class="muted small">Санамж: бодит мэдрэмж, бодит эрсдэл, бодит замын нөхцөл…</div>
+            </div>
+          </div>
+
+          <details>
+            <summary>ChatGPT-ээс асуух загвар</summary>
+            <div class="copybox">Жолооны симулятор хийхэд хэрэгтэй өгөгдлүүдийг 3 ангилалд хувааж жагсаагаад өгөөч:
+(1) Машинтай холбоотой, (2) Орчин/замтай холбоотой, (3) Жолоочийн үйлдэлтэй холбоотой.
+Мөн буруу өгөгдөл орвол ямар буруу үр дүн гарахыг жишээгээр тайлбарла.</div>
+          </details>
+        </div>
+      </section>
+
+      <!-- Optional: interior design simulator (paper-based) -->
+      <section class="card">
+        <div class="hd"><h2>10) Unplugged даалгавар D — Өрөөний зохион байгуулалт (симуляторын сэтгэлгээ)</h2><span class="pill">✍️ Дэвтэр</span></div>
+        <div class="bd">
+          <p class="muted">
+            Компьютергүй байсан ч “симулятор шиг” сэтгэж болно: өрөөг дээрээс нь харсан зураг (план) зурж,
+            тавилгын хэмжээг ойролцоогоор тэмдэглээд байрлуулж үзнэ.
+          </p>
+
+          <div class="callout">
+            <b>Нөхцөл:</b> Өрөө 5м × 4.5м. Баруун хананд том цонх, зүүн хананы голд хаалга (дотогш онгойдог).
+            2 том буйдан, 1 ottoman, 1 сандал, задгай зуух, TV тавиур, том номын тавиур, 3 жижиг ширээ багтаах хүсэлтэй.
+          </div>
+
+          <div class="step">
+            <div class="num">1</div>
+            <div>
+              <b>Дэвтэр дээр:</b> 5×4.5 хэмжээтэй тэгш өнцөгт зур (квадрат нүдтэй дэвтэр байвал 1 нүд=0.5м гэж үзэж болно).
+              Цонх, хаалганы байрлалыг тэмдэглэ.
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="num">2</div>
+            <div>
+              <b>Дүрэм зохио:</b> Хүн алхах “зам” үлдэх ёстой. Хаалга онгойх зай хэрэгтэй. Цонхыг хааж болохгүй.
+              Эдгээрийг 3–5 дүрмээр бич.
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="num">3</div>
+            <div>
+              <b>Турш:</b> Тавилгуудыг байрлуулж 2 өөр layout зур.
+              Аль layout илүү “боломжтой” байна вэ? Яагаад?
+            </div>
+          </div>
+
+          <details>
+            <summary>ChatGPT-ээс асуух загвар</summary>
+            <div class="copybox">5м×4.5м өрөөнд дараах тавилгуудыг багтаах гэж байна. Хаалга дотогш онгойдог, баруун хананд цонхтой.
+(тавилгын жагсаалтыг бич)
+2 өөр зохион байгуулалтын санаа өгөөд, алхах зай ба ашиглалтын дүрмүүдийг тайлбарлаж өгөөч.</div>
+          </details>
+        </div>
+      </section>
+
+      <!-- SUMMARY -->
+      <section class="card">
+        <div class="hd"><h2>11) Дүгнэлт — Өөрийгөө шалгах checklist</h2><span class="pill">✅ Checklist</span></div>
+        <div class="bd">
+          <ul>
+            <li>Би <span class="k">model system</span> гэж юу болох, яагаад ашигладгийг тайлбарлаж чадна.</li>
+            <li>Би <span class="k">spreadsheet model</span>-ийн 3 хэсгийг (labels/data/calculations) ялгаж чадна.</li>
+            <li>Би data-г өөрчлөөд өөр outcome авахыг <span class="k">modelling</span> гэдгийг мэднэ.</li>
+            <li>Би <span class="k">simulator</span> гэж юу болох, ямар салбарт хэрэглэх жишээ хэлж чадна.</li>
+            <li>Би симуляторт хэрэгтэй өгөгдлийг логикоор жагсааж чадна.</li>
+          </ul>
+
+          <div class="callout ok">
+            <b>Энэ хичээлийг 1 өгүүлбэрээр:</b> “Өгөгдөл ашиглаад модел дээр ‘хэрвээ тэгвэл?’ гэж туршиж үзэх нь modelling.”
+          </div>
+
+          <div class="footer">
+            <b>Багшийн тэмдэглэл (хэрэгтэй бол):</b> Энэ хуудасны бүх даалгавар дэвтэр дээр хийгдэнэ.
+            Сурагч ойлгохгүй үед “асуух загвар”-аар ChatGPT-ээс асууж, тайлбар/жишээгээ нөхөж бичих боломжтой.
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</main>
+
+</body>
+</html>
