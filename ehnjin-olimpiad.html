@@ -1,0 +1,605 @@
+<!doctype html>
+<html lang="mn">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Pseudocode гарын авлага — FOR / WHILE / ARRAY (7-р анги)</title>
+  <style>
+    :root{
+      --bg:#0b1220;
+      --card:#0f1a2f;
+      --text:#eaf1ff;
+      --muted:#a9b7d0;
+      --accent:#7dd3fc;
+      --accent2:#34d399;
+      --border:rgba(255,255,255,.12);
+      --warn:#fbbf24;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+    }
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: radial-gradient(1200px 700px at 20% 0%, #14264a 0%, var(--bg) 45%, #070b14 100%);
+      color: var(--text);
+      line-height:1.65;
+    }
+    a{ color: var(--accent); text-decoration:none; }
+    a:hover{ text-decoration:underline; }
+
+    header{
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(11,18,32,.85);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+    }
+    .wrap{
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 18px 16px;
+    }
+    .top{
+      display:flex;
+      gap:14px;
+      align-items:center;
+      justify-content:space-between;
+      flex-wrap:wrap;
+    }
+    .title{
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+      min-width: 260px;
+    }
+    h1{
+      margin:0;
+      font-size: clamp(20px, 3.5vw, 28px);
+      letter-spacing:.2px;
+    }
+    .subtitle{
+      margin:0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .chips{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+    .chip{
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.04);
+      padding:6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+    .chip strong{ color: var(--text); font-weight:600; }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+      margin-top: 16px;
+    }
+    @media(min-width: 920px){
+      .grid{
+        grid-template-columns: 320px 1fr;
+        align-items:start;
+      }
+    }
+
+    nav{
+      position: relative;
+      border: 1px solid var(--border);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    nav .navhdr{
+      padding: 14px 14px 10px 14px;
+      border-bottom:1px solid var(--border);
+      background: rgba(0,0,0,.12);
+    }
+    nav .navhdr .small{
+      color: var(--muted);
+      font-size: 12px;
+      margin: 0;
+    }
+    nav ul{
+      list-style:none;
+      padding: 10px;
+      margin:0;
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+    }
+    nav a{
+      display:block;
+      padding:10px 10px;
+      border-radius: 12px;
+      border:1px solid transparent;
+      color: var(--text);
+      font-size: 14px;
+    }
+    nav a:hover{
+      background: rgba(125,211,252,.08);
+      border-color: rgba(125,211,252,.25);
+      text-decoration:none;
+    }
+
+    main{
+      display:flex;
+      flex-direction:column;
+      gap: 14px;
+    }
+    section{
+      border: 1px solid var(--border);
+      background: linear-gradient(180deg, rgba(15,26,47,.92), rgba(15,26,47,.72));
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    section .sec-h{
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(0,0,0,.12);
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      justify-content:space-between;
+      flex-wrap:wrap;
+    }
+    section h2{
+      margin:0;
+      font-size: 18px;
+      letter-spacing:.2px;
+    }
+    section .hint{
+      margin:0;
+      color: var(--muted);
+      font-size: 12px;
+      max-width: 520px;
+    }
+    section .sec-b{
+      padding: 14px 16px 16px 16px;
+    }
+    p{ margin: 10px 0; }
+    ul, ol{ margin: 10px 0 10px 20px; }
+    li{ margin: 6px 0; }
+
+    .callout{
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.04);
+      padding: 12px 12px;
+      border-radius: 14px;
+      margin: 12px 0;
+    }
+    .callout strong{ color: var(--accent2); }
+
+    .warn{
+      border-color: rgba(251,191,36,.35);
+      background: rgba(251,191,36,.08);
+    }
+    .warn strong{ color: var(--warn); }
+
+    pre{
+      margin: 10px 0;
+      padding: 12px 12px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: rgba(0,0,0,.35);
+      overflow:auto;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.03);
+    }
+    code{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+      font-size: 13px;
+    }
+
+    .two{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-top: 10px;
+    }
+    @media(min-width: 720px){
+      .two{ grid-template-columns: 1fr 1fr; }
+    }
+
+    .mini{
+      border:1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px 12px;
+      background: rgba(255,255,255,.035);
+    }
+    .mini h3{
+      margin:0 0 6px 0;
+      font-size: 15px;
+    }
+    .mini p{
+      margin: 6px 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    footer{
+      color: var(--muted);
+      font-size: 12px;
+      padding: 18px 16px 28px 16px;
+      text-align:center;
+    }
+
+    .kbd{
+      display:inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.04);
+      font-size: 12px;
+      color: var(--muted);
+      vertical-align: middle;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="wrap">
+      <div class="top">
+        <div class="title">
+          <h1>Pseudocode гарын авлага</h1>
+          <p class="subtitle">FOR / WHILE / ARRAY — 7-р ангийн олимпиадын зөөлөн бэлтгэл</p>
+        </div>
+        <div class="chips" aria-label="quick info">
+          <div class="chip"><strong>Зорилго:</strong> ойлгох → бодлого</div>
+          <div class="chip"><strong>Хэрэгсэл:</strong> дэвтэр ✏️</div>
+          <div class="chip"><strong>Хариу түлхүүр:</strong> байхгүй</div>
+          <div class="chip"><strong>Хугацаа:</strong> 40–60 мин</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <div class="grid">
+
+      <nav>
+        <div class="navhdr">
+          <p class="small">Доторх хэсгүүд (товшоод очно)</p>
+        </div>
+        <ul>
+          <li><a href="#s0">0) Pseudocode гэж юу вэ?</a></li>
+          <li><a href="#s1">1) Хувьсагч (variable)</a></li>
+          <li><a href="#s2">2) INPUT / PRINT</a></li>
+          <li><a href="#s3">3) IF нөхцөл</a></li>
+          <li><a href="#s4">4) FOR давталт + STEP</a></li>
+          <li><a href="#s5">5) WHILE давталт</a></li>
+          <li><a href="#s6">6) ARRAY (массив)</a></li>
+          <li><a href="#s7">7) Шалгах хуудас</a></li>
+          <li><a href="#s8">8) Дасгал (дэвтэр дээр)</a></li>
+        </ul>
+      </nav>
+
+      <main>
+
+        <section id="s0">
+          <div class="sec-h">
+            <h2>0) Pseudocode гэж юу вэ?</h2>
+            <p class="hint">“Код биш, гэхдээ код шиг” бичдэг алхамчилсан заавар.</p>
+          </div>
+          <div class="sec-b">
+            <p><b>Pseudocode</b> = хүний хэлтэй ойр, гэхдээ <b>мөр мөрөөр тодорхой</b> бичдэг заавар.</p>
+
+            <div class="callout">
+              <strong>Яагаад хэрэгтэй вэ?</strong><br/>
+              Эхлээд “юу хийх вэ?” гэдгийг ойлгоно → дараа нь Python/C руу амархан шилжинэ.
+            </div>
+
+            <div class="mini">
+              <h3>Гол дүрэм (маш энгийн)</h3>
+              <ol>
+                <li>Нэг мөр = нэг үйлдэл</li>
+                <li>Дотогшоо зай авах (indent) = “энэ нь дотор нь” гэсэн үг</li>
+                <li>Том/жижиг үсэг хамаагүй (гэхдээ тогтвортой бичвэл гоё)</li>
+              </ol>
+            </div>
+          </div>
+        </section>
+
+        <section id="s1">
+          <div class="sec-h">
+            <h2>1) Хувьсагч (variable)</h2>
+            <p class="hint">Тоон утгыг хадгалах “хайрцаг”.</p>
+          </div>
+          <div class="sec-b">
+            <p><span class="kbd">=</span> тэмдэг нь “тэнцүү” биш. Энэ нь <b>утга оноож байна</b> гэсэн санаа.</p>
+            <pre><code>x = 5
+y = 10
+sum = x + y
+PRINT sum</code></pre>
+          </div>
+        </section>
+
+        <section id="s2">
+          <div class="sec-h">
+            <h2>2) INPUT / PRINT</h2>
+            <p class="hint">INPUT = хэрэглэгчээс авна, PRINT = дэлгэцэнд гаргана.</p>
+          </div>
+          <div class="sec-b">
+            <div class="two">
+              <div class="mini">
+                <h3>INPUT (авах)</h3>
+                <pre><code>INPUT n</code></pre>
+                <p>“n гэсэн хувьсагч руу хэрэглэгчийн оруулсан утгыг хий.”</p>
+              </div>
+              <div class="mini">
+                <h3>PRINT (гаргах)</h3>
+                <pre><code>PRINT n
+PRINT "Hello"</code></pre>
+                <p>“Дэлгэцэнд харуул.”</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="s3">
+          <div class="sec-h">
+            <h2>3) IF нөхцөл</h2>
+            <p class="hint">Нөхцөл үнэн/худал эсэхээс хамаарч өөр өөр үйлдэл хийнэ.</p>
+          </div>
+          <div class="sec-b">
+            <p>Бүтэц:</p>
+            <pre><code>IF нөхцөл THEN
+    хийх зүйл
+ELSE
+    өөр хийх зүйл
+END IF</code></pre>
+
+            <p>Жишээ: n тоо эерэг үү?</p>
+            <pre><code>INPUT n
+IF n &gt; 0 THEN
+    PRINT "positive"
+ELSE
+    PRINT "not positive"
+END IF</code></pre>
+          </div>
+        </section>
+
+        <section id="s4">
+          <div class="sec-h">
+            <h2>4) FOR давталт + STEP</h2>
+            <p class="hint">FOR = тоолон давтах. STEP = хэдээр нэмэгдэх/бууруулах вэ?</p>
+          </div>
+          <div class="sec-b">
+            <div class="callout">
+              <strong>FOR</strong> нь “тоо тоолж давт” гэсэн санаа.<br/>
+              Жишээ нь: 1-ээс 10 хүртэл, эсвэл 10-аас 1 хүртэл.
+            </div>
+
+            <h3 style="margin:12px 0 6px 0; font-size:15px;">4.1 Энгийн FOR (алхам 1)</h3>
+            <pre><code>FOR i = 1 TO 5
+    PRINT i
+END FOR</code></pre>
+            <p>Гаралт: <span class="kbd">1 2 3 4 5</span></p>
+
+            <h3 style="margin:12px 0 6px 0; font-size:15px;">4.2 STEP (алхам) тохируулах</h3>
+            <p>1-ээс 10 хүртэл 2-оор нэмэгдүүл:</p>
+            <pre><code>FOR i = 1 TO 10 STEP 2
+    PRINT i
+END FOR</code></pre>
+            <p>Гаралт: <span class="kbd">1 3 5 7 9</span></p>
+
+            <p>10-аас 1 хүртэл бууруул (reverse):</p>
+            <pre><code>FOR i = 10 TO 1 STEP -1
+    PRINT i
+END FOR</code></pre>
+
+
+            <h3 style="margin:12px 0 6px 0; font-size:15px;">4.3 FOR дотор “юу болж байна?” (алхамчилж ойлгох)</h3>
+            <pre><code>FOR i = 1 TO 4
+    PRINT i
+END FOR</code></pre>
+            <ul>
+              <li>i = 1 → хэвлэнэ</li>
+              <li>i = 2 → хэвлэнэ</li>
+              <li>i = 3 → хэвлэнэ</li>
+              <li>i = 4 → хэвлэнэ</li>
+              <li>i = 5 болох гэж оролдоно → 4-өөс хэтэрсэн тул STOP</li>
+            </ul>
+          </div>
+        </section>
+
+        <section id="s5">
+          <div class="sec-h">
+            <h2>5) WHILE давталт</h2>
+            <p class="hint">WHILE = нөхцөл үнэн үед давт.</p>
+          </div>
+          <div class="sec-b">
+            <p>Бүтэц:</p>
+            <pre><code>WHILE нөхцөл
+    хийх зүйл
+END WHILE</code></pre>
+
+            <p>Жишээ: 1-ээс 5 хүртэл хэвлэх</p>
+            <pre><code>i = 1
+WHILE i &lt;= 5
+    PRINT i
+    i = i + 1
+END WHILE</code></pre>
+
+            <div class="callout warn">
+              <strong>Анхаар:</strong> WHILE дотор тоолуурыг өөрчлөх мөр байхгүй бол давталт зогсохгүй!
+            </div>
+
+            <p>Жишээ: хэрэглэгч 0 оруулах хүртэл нэмж яв</p>
+            <pre><code>sum = 0
+INPUT x
+WHILE x != 0
+    sum = sum + x
+    INPUT x
+END WHILE
+PRINT sum</code></pre>
+          </div>
+        </section>
+
+        <section id="s6">
+          <div class="sec-h">
+            <h2>6) ARRAY (массив)</h2>
+            <p class="hint">Олон утгыг нэг нэр дор хадгалах “тавцан”. Индексээр хандана.</p>
+          </div>
+          <div class="sec-b">
+            <div class="callout">
+              <strong>ARRAY</strong> = олон тоо хадгална.<br/>
+              <b>a[1]</b>, <b>a[2]</b> гэх мэтээр дугаараар нь авна.
+            </div>
+
+            <h3 style="margin:12px 0 6px 0; font-size:15px;">6.1 Зарлах (declare)</h3>
+            <pre><code>DECLARE a[5]</code></pre>
+            <p>“a гэдэг нэртэй 5 ширхэг утга хадгална.”</p>
+
+            <div class="callout warn">
+              <strong>Санамж:</strong> Зарим бодлогод индекс 0-ээс эхэлдэг. Энэ гарын авлагад ойлгоход амар гэж <b>1-ээс</b> эхлүүлж бичлээ.
+            </div>
+
+            <h3 style="margin:12px 0 6px 0; font-size:15px;">6.2 Утга оноох (гараар)</h3>
+            <pre><code>a[1] = 10
+a[2] = 7
+a[3] = 9
+a[4] = 3
+a[5] = 8</code></pre>
+
+            <h3 style="margin:12px 0 6px 0; font-size:15px;">6.3 FOR ашиглаад array унших</h3>
+            <pre><code>DECLARE a[5]
+FOR i = 1 TO 5
+    INPUT a[i]
+END FOR</code></pre>
+
+            <h3 style="margin:12px 0 6px 0; font-size:15px;">6.4 Нийлбэр (sum)</h3>
+            <pre><code>DECLARE a[5]
+FOR i = 1 TO 5
+    INPUT a[i]
+END FOR
+
+sum = 0
+FOR i = 1 TO 5
+    sum = sum + a[i]
+END FOR
+
+PRINT sum</code></pre>
+
+            <h3 style="margin:12px 0 6px 0; font-size:15px;">6.5 Хамгийн их (max)</h3>
+            <pre><code>DECLARE a[5]
+FOR i = 1 TO 5
+    INPUT a[i]
+END FOR
+
+max = a[1]
+FOR i = 2 TO 5
+    IF a[i] &gt; max THEN
+        max = a[i]
+    END IF
+END FOR
+
+PRINT max</code></pre>
+
+            <h3 style="margin:12px 0 6px 0; font-size:15px;">6.6 Хамгийн бага (min)</h3>
+            <pre><code>min = a[1]
+FOR i = 2 TO 5
+    IF a[i] &lt; min THEN
+        min = a[i]
+    END IF
+END FOR
+
+PRINT min</code></pre>
+          </div>
+        </section>
+
+        <section id="s7">
+          <div class="sec-h">
+            <h2>7) Шалгах хуудас (алдаа гарахаас сэргийлэх)</h2>
+            <p class="hint">Бодлого бодохдоо “энэ 3-ыг” үргэлж шалга.</p>
+          </div>
+          <div class="sec-b">
+            <div class="two">
+              <div class="mini">
+                <h3>FOR дээр</h3>
+                <ul>
+                  <li>Эхлэх утга зөв үү?</li>
+                  <li>Төгсгөлийн утга зөв үү?</li>
+                  <li>STEP зөв үү?</li>
+                  <li>Индекс/тоолуур хэтрэхгүй юу?</li>
+                </ul>
+              </div>
+              <div class="mini">
+                <h3>WHILE дээр</h3>
+                <ul>
+                  <li>Нөхцөл нэг өдөр худлаа болох уу?</li>
+                  <li>Дотор нь тоолуур/утга өөрчлөгдөж байна уу?</li>
+                  <li>STOP хийх боломж байна уу?</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="mini" style="margin-top:12px;">
+              <h3>ARRAY дээр</h3>
+              <ul>
+                <li>Индекс хэтрэхгүй юу? (1..N)</li>
+                <li>max/min эхлүүлэхдээ <b>a[1]</b>-ийг зөв ашигласан уу?</li>
+                <li>sum-аа 0-оос эхлүүлсэн үү?</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <section id="s8">
+          <div class="sec-h">
+            <h2>8) Дасгал (дэвтэр дээр хий)</h2>
+            <p class="hint">Хариу түлхүүр байхгүй. Өөрөө бодоод, шалгуулна.</p>
+          </div>
+          <div class="sec-b">
+            <div class="two">
+              <div class="mini">
+                <h3>Дасгал A — FOR + STEP</h3>
+                <ol>
+                  <li>1-ээс 20 хүртэл 3-аар нэмэгдүүлж хэвлэ</li>
+                  <li>50-аас 10 хүртэл 5-аар бууруулж хэвлэ</li>
+                </ol>
+              </div>
+              <div class="mini">
+                <h3>Дасгал B — WHILE</h3>
+                <ol>
+                  <li>1-ээс эхлээд 2-оор нэмсээр 20-оос хэтрэх хүртэл хэвлэ</li>
+                  <li>Хэрэглэгч -1 оруулах хүртэл тоонуудыг уншаад нийлбэрийг гарга</li>
+                </ol>
+              </div>
+            </div>
+
+            <div class="mini" style="margin-top:12px;">
+              <h3>Дасгал C — ARRAY</h3>
+              <ol>
+                <li>N тоо уншаад <b>нийлбэр, max, min</b> гарга</li>
+                <li>N тоо дундаас <b>0</b> хэд байгааг тоол</li>
+              </ol>
+            </div>
+
+            <div class="callout" style="margin-top:12px;">
+              <strong>Зөвлөгөө:</strong> Дасгалаа хийхдээ эхлээд pseudocode-оо “ярианы хэлээр” нэг өгүүлбэрээр тайлбарлаад, дараа нь мөр мөрөөр нь бичээрэй.
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+
+    <footer>
+      Энэ хуудас нь утсаар уншихад тохиромжтой (mobile friendly).<br/>
+      Хүсвэл дараагийн хуудсыг “1-р бүлэг: Array бодлогууд (10 бодлого)” гэж үргэлжлүүлж өгч болно.
+    </footer>
+  </div>
+</body>
+</html>
