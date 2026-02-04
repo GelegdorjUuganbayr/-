@@ -1,0 +1,615 @@
+<!doctype html>
+<html lang="mn">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Worksheet — IF / IF-ELSE / ELIF (Онол + 3 бодлого)</title>
+  <style>
+    :root{
+      --bg:#0b1220;
+      --paper:#0f1a2f;
+      --text:#eaf1ff;
+      --muted:#a9b7d0;
+      --accent:#7dd3fc;
+      --accent2:#34d399;
+      --border:rgba(255,255,255,.14);
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius:18px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      background: radial-gradient(1200px 700px at 20% 0%, #14264a 0%, var(--bg) 55%);
+      color:var(--text);
+      line-height:1.65;
+    }
+    header{
+      position:sticky; top:0; z-index:10;
+      background: rgba(11,18,32,.86);
+      backdrop-filter: blur(10px);
+      border-bottom:1px solid var(--border);
+    }
+    .wrap{max-width:980px; margin:0 auto; padding:16px;}
+    h1{
+      margin:6px 0 2px;
+      font-size: clamp(18px, 4vw, 26px);
+      letter-spacing:.2px;
+    }
+    .subtitle{margin:0; color:var(--muted); font-size:14px}
+    .toolbar{
+      margin-top:10px;
+      display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between;
+    }
+    .pill{
+      display:inline-flex; gap:8px; align-items:center;
+      padding:8px 10px; border:1px solid var(--border);
+      border-radius:999px; color:var(--muted);
+      font-size:13px;
+      background: rgba(255,255,255,.04);
+      user-select:none;
+    }
+    .btn{
+      appearance:none; border:1px solid var(--border);
+      background: rgba(255,255,255,.06);
+      color:var(--text);
+      border-radius: 14px;
+      padding:10px 12px;
+      cursor:pointer;
+      font-weight:650;
+      font-size:14px;
+    }
+    .btn:hover{background: rgba(255,255,255,.09);}
+    main{padding:14px 0 38px;}
+
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border:1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      margin-bottom:14px;
+    }
+    .cardHead{
+      padding:16px 16px 10px;
+      border-bottom:1px solid var(--border);
+      display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between;
+    }
+    .titleRow{display:flex; gap:10px; align-items:center; flex-wrap:wrap;}
+    .badge{
+      font-size:12px;
+      padding:4px 8px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      color:var(--muted);
+      background: rgba(255,255,255,.04);
+    }
+    .sectionTitle{margin:0; font-size:16px; font-weight:800}
+    .cardBody{padding:14px 16px 16px;}
+    .twoCol{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:14px;
+    }
+    @media (min-width: 880px){
+      .twoCol{grid-template-columns: 1.05fr .95fr;}
+    }
+    .block{
+      border:1px solid var(--border);
+      background: rgba(0,0,0,.18);
+      border-radius: 16px;
+      padding:14px;
+    }
+    h2{font-size:15px; margin:0 0 8px}
+    p{margin:8px 0;}
+    .muted{color:var(--muted)}
+    pre{
+      margin:10px 0 0;
+      padding:12px;
+      border-radius:14px;
+      background: rgba(0,0,0,.35);
+      border:1px solid var(--border);
+      overflow:auto;
+      font-size: 13px;
+      line-height:1.45;
+    }
+    code{font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;}
+    .rule{
+      height:1px; background: var(--border);
+      margin:12px 0;
+    }
+    .tasks{display:flex; flex-direction:column; gap:12px;}
+    .task{
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.03);
+      border-radius:16px;
+      padding:12px;
+    }
+    .taskTitle{
+      display:flex; justify-content:space-between; gap:10px; align-items:flex-start;
+      margin-bottom:6px;
+    }
+    .taskNum{font-weight:900; color:var(--accent)}
+    .lines{
+      margin-top:10px;
+      border-radius:14px;
+      border:1px dashed rgba(255,255,255,.18);
+      background: rgba(0,0,0,.18);
+      padding:10px 12px;
+    }
+    .line{
+      height:16px;
+      border-bottom:1px solid rgba(255,255,255,.16);
+      margin:10px 0 0;
+    }
+    .line:first-child{margin-top:0}
+    .tip{
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px dashed rgba(125,211,252,.45);
+      background: rgba(125,211,252,.08);
+    }
+    .tip b{color:var(--accent)}
+    .footerNote{
+      margin-top:14px;
+      padding:12px 14px;
+      border-radius:16px;
+      border:1px solid var(--border);
+      background: rgba(0,0,0,.16);
+      color:var(--muted);
+      font-size: 13px;
+    }
+
+    /* Tables */
+    .tableWrap{
+      overflow:auto;
+      border-radius: 16px;
+      border:1px solid var(--border);
+      background: rgba(0,0,0,.20);
+    }
+    table{
+      width:100%;
+      border-collapse: collapse;
+      min-width: 560px;
+    }
+    th, td{
+      padding:10px 12px;
+      border-bottom:1px solid rgba(255,255,255,.10);
+      vertical-align: top;
+      font-size: 14px;
+    }
+    th{
+      text-align:left;
+      color: var(--text);
+      background: rgba(255,255,255,.05);
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+    td code{font-size: 13px;}
+    .noteSmall{
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 10px;
+    }
+
+    /* PRINT */
+    @media print{
+      header, .toolbar, .noPrint{display:none !important;}
+      body{background:#fff; color:#000;}
+      .wrap{max-width:100%; padding:0;}
+      .card{box-shadow:none; border:1px solid #ccc; border-radius:10px; margin:10px 0;}
+      .block{background:#fff; border:1px solid #ddd;}
+      .muted{color:#333;}
+      pre{background:#f7f7f7; border:1px solid #ddd;}
+      .task{background:#fff;}
+      .lines{background:#fff; border:1px dashed #bbb;}
+      .tip{background:#f1f8ff; border:1px dashed #9cc;}
+      .taskNum{color:#000;}
+      .tableWrap{border:1px solid #ddd; background:#fff;}
+      th{background:#f2f2f2; color:#000;}
+      th, td{border-bottom:1px solid #ddd;}
+      .noteSmall{color:#333;}
+    }
+  </style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <h1>Worksheet — IF / IF–ELSE / ELIF (Pseudocode)</h1>
+    <p class="subtitle">Дэвтэр дээр ажиллах дасгал</p>
+
+    <div class="toolbar">
+      <div class="pill">✍️ Заавар: Доорх бодлогуудын pseudocode-оо <b>дэвтэр дээр</b> бичнэ.</div>
+      <button class="btn" type="button" onclick="window.print()">Хэвлэх / PDF</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- Comparison operators -->
+  <section class="card">
+    <div class="cardHead">
+      <div class="titleRow">
+        <span class="badge">Туслах хүснэгт</span>
+        <h3 class="sectionTitle">🧩 Харьцуулах операторууд</h3>
+      </div>
+      <span class="badge">IF дотор ашиглана</span>
+    </div>
+    <div class="cardBody">
+      <div class="block">
+        <p class="muted">Нөхцөл бичихдээ хэрэглэнэ. Жишээ: <code>IF x &gt; 5 THEN</code></p>
+
+        <div class="tableWrap" role="region" aria-label="Харьцуулах операторуудын хүснэгт" tabindex="0">
+          <table>
+            <thead>
+              <tr>
+                <th>Оператор</th>
+                <th>Үгээр хэлбэл</th>
+                <th>Жишээ (уншлага)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>==</code></td>
+                <td>“тэнцүү бол”</td>
+                <td><code>x == 10</code> → “x нь 10-той тэнцүү бол”</td>
+              </tr>
+              <tr>
+                <td><code>!=</code></td>
+                <td>“тэнцүү биш бол”</td>
+                <td><code>x != 0</code> → “x нь 0-той тэнцүү биш бол”</td>
+              </tr>
+              <tr>
+                <td><code>&gt;</code></td>
+                <td>“их бол”</td>
+                <td><code>score &gt; 50</code> → “оноо 50-аас их бол”</td>
+              </tr>
+              <tr>
+                <td><code>&lt;</code></td>
+                <td>“бага бол”</td>
+                <td><code>age &lt; 18</code> → “нас 18-аас бага бол”</td>
+              </tr>
+              <tr>
+                <td><code>&gt;=</code></td>
+                <td>“их буюу тэнцүү бол”</td>
+                <td><code>money &gt;= 5000</code> → “мөнгө 5000-аас их буюу тэнцүү бол”</td>
+              </tr>
+              <tr>
+                <td><code>&lt;=</code></td>
+                <td>“бага буюу тэнцүү бол”</td>
+                <td><code>temp &lt;= 0</code> → “температур 0-ээс бага буюу тэнцүү бол”</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p class="noteSmall">
+          ⚠️ Анхаар: Энэ worksheet дээр тэнцүү шалгахдаа <code>==</code>-г стандарт болголоо.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Arithmetic operators -->
+  <section class="card">
+    <div class="cardHead">
+      <div class="titleRow">
+        <span class="badge">Туслах хүснэгт</span>
+        <h3 class="sectionTitle">🧮 Арифметик операторууд</h3>
+      </div>
+      <span class="badge">Тоо бодоход</span>
+    </div>
+    <div class="cardBody">
+      <div class="block">
+        <p class="muted">Тоо тооцоолохдоо хэрэглэнэ. Жишээ: <code>total = a + b</code></p>
+
+        <div class="tableWrap" role="region" aria-label="Арифметик операторуудын хүснэгт" tabindex="0">
+          <table>
+            <thead>
+              <tr>
+                <th>Оператор</th>
+                <th>Үгээр хэлбэл</th>
+                <th>Жишээ (уншлага)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>+</code></td>
+                <td>Нэмэх</td>
+                <td><code>a + b</code> → “a дээр b-г нэмнэ”</td>
+              </tr>
+              <tr>
+                <td><code>-</code></td>
+                <td>Хасах</td>
+                <td><code>a - b</code> → “a-гаас b-г хасна”</td>
+              </tr>
+              <tr>
+                <td><code>*</code></td>
+                <td>Үржүүлэх</td>
+                <td><code>a * b</code> → “a-г b-ээр үржүүлнэ”</td>
+              </tr>
+              <tr>
+                <td><code>/</code></td>
+                <td>Хуваах</td>
+                <td><code>a / b</code> → “a-г b-д хуваана”</td>
+              </tr>
+              <tr>
+                <td><code>%</code></td>
+                <td>Үлдэгдэл (мод)</td>
+                <td><code>a % b</code> → “a-г b-д хуваахад үлдэх үлдэгдэл”</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p class="noteSmall">
+          💡 <code>%</code> нь тэгш/сондгой шалгахад их ашиглагдана. (Жишээ: “2-т хуваахад үлдэгдэл 0 бол…”)
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 1 -->
+  <section class="card">
+    <div class="cardHead">
+      <div class="titleRow">
+        <span class="badge">1-р хэсэг</span>
+        <h3 class="sectionTitle">🟢 IF Statement</h3>
+      </div>
+      <span class="badge">1 нөхцөл → 1 шийдвэр</span>
+    </div>
+
+    <div class="cardBody">
+      <div class="twoCol">
+        <div class="block">
+          <h2>📖 Онол</h2>
+          <p><b>IF</b> = “Хэрвээ”. Нөхцөл <b>үнэн</b> бол доторх үйлдэл ажиллана. Худал бол алгасна.</p>
+          <pre><code>IF нөхцөл THEN
+    үйлдэл
+END IF</code></pre>
+
+          <div class="rule"></div>
+          <p class="muted">Жишээ:</p>
+          <pre><code>START
+    x = 7
+    IF x нь 0-ээс их бол THEN
+        PRINT "Positive"
+    END IF
+END</code></pre>
+
+          <div class="tip">
+            <b>Санаа:</b> Нөхцөлөө эхлээд <b>үгээр</b> бодоод, дараа нь оператор болгон хөрвүүлээрэй.
+          </div>
+        </div>
+
+        <div class="block">
+          <h2>✍️ 3 бодлого (Дэвтэр дээр)</h2>
+
+          <div class="tasks">
+            <div class="task">
+              <div class="taskTitle">
+                <div><span class="taskNum">Бодлого 1</span> — Том тоо эсэх</div>
+              </div>
+              <p class="muted">Тоог ав. Хэрвээ тоо <b>100-аас их</b> бол <b>“Big number”</b> гэж хэвлэ.</p>
+              <div class="lines" aria-label="Бичих зай">
+                <div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div>
+              </div>
+            </div>
+
+            <div class="task">
+              <div class="taskTitle">
+                <div><span class="taskNum">Бодлого 2</span> — Насанд хүрсэн эсэх</div>
+              </div>
+              <p class="muted">Нас ав. Хэрвээ нас <b>18-аас их буюу тэнцүү</b> бол <b>“Adult”</b> гэж хэвлэ.</p>
+              <div class="lines">
+                <div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div>
+              </div>
+            </div>
+
+            <div class="task">
+              <div class="taskTitle">
+                <div><span class="taskNum">Бодлого 3</span> — Төгс оноо</div>
+              </div>
+              <p class="muted">Дүн ав. Хэрвээ дүн <b>100-тай тэнцүү</b> бол <b>“Perfect score”</b> гэж хэвлэ.</p>
+              <div class="lines">
+                <div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 2 -->
+  <section class="card">
+    <div class="cardHead">
+      <div class="titleRow">
+        <span class="badge">2-р хэсэг</span>
+        <h3 class="sectionTitle">🔵 IF – ELSE Statement</h3>
+      </div>
+      <span class="badge">2 сонголт</span>
+    </div>
+
+    <div class="cardBody">
+      <div class="twoCol">
+        <div class="block">
+          <h2>📖 Онол</h2>
+          <p><b>IF–ELSE</b> = “Хэрвээ … бол / Үгүй бол”. 2 сонголттой үед ашиглана.</p>
+          <pre><code>IF нөхцөл THEN
+    үйлдэл (үнэн үед)
+ELSE
+    үйлдэл (худал үед)
+END IF</code></pre>
+
+          <div class="rule"></div>
+          <p class="muted">Жишээ:</p>
+          <pre><code>START
+    score = 45
+    IF оноо 50-аас их буюу тэнцүү бол THEN
+        PRINT "Pass"
+    ELSE
+        PRINT "Fail"
+    END IF
+END</code></pre>
+
+          <div class="tip">
+            <b>Санаа:</b> 2 сонголттой үед ELSE нь “үгүй бол” гэж ойлгоно.
+          </div>
+        </div>
+
+        <div class="block">
+          <h2>✍️ 3 бодлого (Дэвтэр дээр)</h2>
+
+          <div class="tasks">
+            <div class="task">
+              <div class="taskTitle">
+                <div><span class="taskNum">Бодлого 1</span> — Тэгш/Сондгой</div>
+              </div>
+              <p class="muted">Тоог ав. Хэрвээ тоог 2-т хуваахад <b>үлдэгдэл 0</b> бол “Even”, үгүй бол “Odd” гэж гарга.</p>
+              <div class="lines">
+                <div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div>
+              </div>
+            </div>
+
+            <div class="task">
+              <div class="taskTitle">
+                <div><span class="taskNum">Бодлого 2</span> — Мөнгө хүрэх эсэх</div>
+              </div>
+              <p class="muted">Мөнгө ав. Хэрвээ мөнгө <b>5000-аас их буюу тэнцүү</b> бол “Buy food”, үгүй бол “No money”.</p>
+              <div class="lines">
+                <div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div>
+              </div>
+            </div>
+
+            <div class="task">
+              <div class="taskTitle">
+                <div><span class="taskNum">Бодлого 3</span> — Нууц үг</div>
+              </div>
+              <p class="muted">Нууц үг ав. Хэрвээ оруулсан нууц үг <b>1234-тэй тэнцүү</b> бол “Access OK”, үгүй бол “Wrong password”.</p>
+              <div class="lines">
+                <div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 3 -->
+  <section class="card">
+    <div class="cardHead">
+      <div class="titleRow">
+        <span class="badge">3-р хэсэг</span>
+        <h3 class="sectionTitle">🟣 IF – ELIF – ELSE Statement</h3>
+      </div>
+      <span class="badge">Олон сонголт</span>
+    </div>
+
+    <div class="cardBody">
+      <div class="twoCol">
+        <div class="block">
+          <h2>📖 Онол</h2>
+          <p><b>ELIF</b> = “Үгүй бол хэрвээ”. Олон нөхцөл шалгах үед хэрэглэнэ.</p>
+          <p class="muted">Дээрээс доош шалгана. Эхний үнэн таарах үед зогсоно.</p>
+
+          <pre><code>IF нөхцөл1 THEN
+    үйлдэл1
+ELIF нөхцөл2 THEN
+    үйлдэл2
+ELIF нөхцөл3 THEN
+    үйлдэл3
+ELSE
+    үйлдэл4
+END IF</code></pre>
+
+          <div class="rule"></div>
+          <p class="muted">Жишээ (Үнэлгээ):</p>
+          <pre><code>START
+    INPUT score
+    IF оноо 90-ээс их буюу тэнцүү бол THEN
+        PRINT "A"
+    ELIF оноо 70-аас их буюу тэнцүү бол THEN
+        PRINT "B"
+    ELIF оноо 50-аас их буюу тэнцүү бол THEN
+        PRINT "C"
+    ELSE
+        PRINT "F"
+    END IF
+END</code></pre>
+
+          <div class="tip">
+            <b>Санаа:</b> Үнэлгээ зэрэглэл дээр <b>ихээс нь бага руу</b> шалгавал логик алдаа багатай.
+          </div>
+        </div>
+
+        <div class="block">
+          <h2>✍️ 3 бодлого (Дэвтэр дээр)</h2>
+
+          <div class="tasks">
+            <div class="task">
+              <div class="taskTitle">
+                <div><span class="taskNum">Бодлого 1</span> — Температур</div>
+              </div>
+              <p class="muted">
+                Температур ав. Дараах байдлаар ангилж хэвлэ:
+                <br>0-ээс <b>бага</b> бол “Cold”
+                <br>20-оос <b>бага</b> бол “Cool”
+                <br>30-аас <b>бага</b> бол “Warm”
+                <br>бусад тохиолдолд “Hot”
+              </p>
+              <div class="lines">
+                <div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div>
+              </div>
+            </div>
+
+            <div class="task">
+              <div class="taskTitle">
+                <div><span class="taskNum">Бодлого 2</span> — Насны ангилал</div>
+              </div>
+              <p class="muted">
+                Нас ав. Дараах байдлаар ангилж хэвлэ:
+                <br>7-оос <b>бага</b> бол “Kid”
+                <br>18-аас <b>бага</b> бол “Student”
+                <br>60-аас <b>бага</b> бол “Worker”
+                <br>бусад тохиолдолд “Old”
+              </p>
+              <div class="lines">
+                <div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div>
+              </div>
+            </div>
+
+            <div class="task">
+              <div class="taskTitle">
+                <div><span class="taskNum">Бодлого 3</span> — Үнэлгээ (A–F)</div>
+              </div>
+              <p class="muted">
+                Оноо ав. Дараах дүрмээр үнэлгээ хэвлэ:
+                <br>90-ээс <b>их буюу тэнцүү</b> бол A
+                <br>80-аас <b>их буюу тэнцүү</b> бол B
+                <br>70-аас <b>их буюу тэнцүү</b> бол C
+                <br>60-аас <b>их буюу тэнцүү</b> бол D
+                <br>бусад тохиолдолд F
+              </p>
+              <div class="lines">
+                <div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+</main>
+</body>
+</html>
