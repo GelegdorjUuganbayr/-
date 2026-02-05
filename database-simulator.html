@@ -1,0 +1,786 @@
+<!doctype html>
+<html lang="mn">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Mini Database Simulator — Хүүхдэд зориулсан</title>
+  <style>
+    :root{
+      --bg:#0b1220;
+      --card:#0f1a2f;
+      --text:#eaf1ff;
+      --muted:#a9b7d0;
+      --accent:#7dd3fc;
+      --good:#34d399;
+      --warn:#fbbf24;
+      --bad:#fb7185;
+      --border:rgba(255,255,255,.12);
+      --shadow: 0 12px 34px rgba(0,0,0,.35);
+      --radius:16px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      background: radial-gradient(1000px 700px at 15% 0%, #162b55 0%, var(--bg) 55%);
+      color:var(--text);
+      line-height:1.55;
+    }
+    header{
+      position:sticky; top:0; z-index:5;
+      backdrop-filter: blur(10px);
+      background: rgba(11,18,32,.72);
+      border-bottom: 1px solid var(--border);
+    }
+    .wrap{max-width:1100px; margin:0 auto; padding:14px 14px 28px;}
+    .title{
+      display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+    }
+    .badge{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:6px 10px; border:1px solid var(--border);
+      border-radius:999px; color:var(--muted);
+      background: rgba(255,255,255,.04);
+      font-size:12px;
+    }
+    h1{font-size:18px; margin:0;}
+    .grid{
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap:14px;
+      margin-top:14px;
+    }
+    @media (max-width: 900px){
+      .grid{grid-template-columns:1fr}
+    }
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border:1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .card h2{
+      margin:0; padding:12px 14px;
+      font-size:14px;
+      border-bottom:1px solid var(--border);
+      color: var(--accent);
+      display:flex; justify-content:space-between; align-items:center;
+      gap:10px;
+    }
+    .card .content{padding:14px;}
+    .muted{color:var(--muted)}
+    .row{display:grid; grid-template-columns: 1fr 1fr; gap:10px;}
+    @media (max-width: 520px){ .row{grid-template-columns:1fr} }
+    label{display:block; font-size:12px; color:var(--muted); margin-bottom:6px;}
+    input, select, textarea{
+      width:100%;
+      padding:11px 12px;
+      border-radius: 12px;
+      border:1px solid var(--border);
+      background: rgba(0,0,0,.22);
+      color: var(--text);
+      outline:none;
+    }
+    input:focus, select:focus, textarea:focus{
+      border-color: rgba(125,211,252,.6);
+      box-shadow: 0 0 0 3px rgba(125,211,252,.14);
+    }
+    .btns{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;}
+    button{
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      padding:10px 12px;
+      border-radius: 12px;
+      cursor:pointer;
+      font-weight:600;
+    }
+    button:hover{background: rgba(255,255,255,.10)}
+    .primary{border-color: rgba(125,211,252,.6); background: rgba(125,211,252,.15)}
+    .good{border-color: rgba(52,211,153,.55); background: rgba(52,211,153,.14)}
+    .warn{border-color: rgba(251,191,36,.55); background: rgba(251,191,36,.14)}
+    .bad{border-color: rgba(251,113,133,.55); background: rgba(251,113,133,.14)}
+    .tiny{font-size:12px; padding:8px 10px; border-radius: 10px;}
+    .help{
+      margin-top:10px; padding:10px 12px;
+      border:1px dashed rgba(255,255,255,.18);
+      border-radius: 12px;
+      background: rgba(0,0,0,.18);
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .log{
+      max-height: 210px;
+      overflow:auto;
+      padding:10px 12px;
+      border-radius: 12px;
+      border:1px solid var(--border);
+      background: rgba(0,0,0,.22);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 12px;
+      color: #d9e6ff;
+    }
+    .log .ok{color: var(--good)}
+    .log .no{color: var(--bad)}
+    .log .hi{color: var(--warn)}
+    .toolbar{
+      display:flex; gap:10px; flex-wrap:wrap;
+      padding: 12px 14px;
+      border-bottom:1px solid var(--border);
+      background: rgba(0,0,0,.14);
+    }
+    .toolbar .field{flex: 1 1 180px;}
+    table{
+      width:100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    th, td{
+      padding:10px 10px;
+      border-bottom:1px solid rgba(255,255,255,.10);
+      vertical-align: top;
+    }
+    th{
+      text-align:left;
+      color: var(--muted);
+      font-weight:700;
+      position:sticky;
+      top:0;
+      background: rgba(15,26,47,.92);
+      backdrop-filter: blur(10px);
+      z-index:1;
+    }
+    .pill{
+      display:inline-block;
+      padding:2px 8px;
+      border-radius: 999px;
+      border:1px solid var(--border);
+      color: var(--muted);
+      font-size: 12px;
+      background: rgba(255,255,255,.04);
+    }
+    .actions{display:flex; gap:8px; flex-wrap:wrap;}
+    .foot{
+      margin-top:14px;
+      display:flex; gap:10px; flex-wrap:wrap; align-items:center;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .kbd{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.05);
+      padding:2px 6px; border-radius: 8px;
+      color: #eaf1ff;
+    }
+    .divider{height:1px; background: rgba(255,255,255,.10); margin:12px 0;}
+    .toast{
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius: 12px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.20);
+      color: var(--muted);
+      display:none;
+    }
+    .toast.show{display:block}
+  </style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="title">
+      <h1>Mini Database Simulator</h1>
+      <span class="badge">DB = хүснэгт + бичлэг (record) + талбар (field) + дүрэм (validation)</span>
+      <span class="badge">Mobile friendly ✅</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="grid">
+    <!-- LEFT: TABLE -->
+    <section class="card">
+      <h2>
+        <span>📋 “Сурагчид” хүснэгт (Table: Students)</span>
+        <span class="pill" id="countPill">0 record</span>
+      </h2>
+
+      <div class="toolbar">
+        <div class="field">
+          <label for="q">Хайлт (нэр / анги / email / ID)</label>
+          <input id="q" placeholder="ж: bat, 7A, 102..." />
+        </div>
+        <div class="field">
+          <label for="gradeFilter">Анги (Filter)</label>
+          <select id="gradeFilter">
+            <option value="">Бүгд</option>
+            <option>6A</option><option>6B</option>
+            <option>7A</option><option>7B</option>
+            <option>8A</option><option>8B</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="sortBy">Эрэмбэлэх (Sort)</label>
+          <select id="sortBy">
+            <option value="id-asc">ID ↑</option>
+            <option value="id-desc">ID ↓</option>
+            <option value="name-asc">Нэр A→Я</option>
+            <option value="name-desc">Нэр Я→A</option>
+            <option value="score-desc">Оноо ↓</option>
+            <option value="score-asc">Оноо ↑</option>
+            <option value="age-asc">Нас ↑</option>
+            <option value="age-desc">Нас ↓</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="overflow:auto; max-height: 420px;">
+        <table>
+          <thead>
+            <tr>
+              <th style="min-width:90px;">ID (unique)</th>
+              <th style="min-width:170px;">Нэр</th>
+              <th style="min-width:90px;">Анги</th>
+              <th style="min-width:90px;">Нас</th>
+              <th style="min-width:110px;">Оноо</th>
+              <th style="min-width:220px;">Email</th>
+              <th style="min-width:170px;">Үйлдэл</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+
+      <div class="content">
+        <div class="btns">
+          <button class="tiny warn" id="seedBtn">🎲 Жишээ өгөгдөл үүсгэх</button>
+          <button class="tiny" id="clearBtn">🧹 Бүгдийг цэвэрлэх</button>
+          <button class="tiny good" id="exportBtn">⬇️ CSV Export</button>
+          <button class="tiny" id="importBtn">⬆️ CSV Import</button>
+        </div>
+        <div class="foot">
+          <span>Санамж: Validation гэдэг нь “утга зөв үү?” шалгалт.</span>
+          <span>Unique гэдэг нь “давтагдах ёсгүй”.</span>
+          <span class="kbd">ID</span> давхцвал нэмэхгүй.</span>
+        </div>
+        <div class="toast" id="toast"></div>
+      </div>
+    </section>
+
+    <!-- RIGHT: FORM + LOG -->
+    <aside class="card">
+      <h2>➕ Бичлэг нэмэх / засах (Record form)</h2>
+      <div class="content">
+        <div class="row">
+          <div>
+            <label for="sid">ID (тоо, давхцахгүй)</label>
+            <input id="sid" type="number" placeholder="ж: 101" />
+          </div>
+          <div>
+            <label for="sgrade">Анги</label>
+            <select id="sgrade">
+              <option value="">Сонгох...</option>
+              <option>6A</option><option>6B</option>
+              <option>7A</option><option>7B</option>
+              <option>8A</option><option>8B</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row" style="margin-top:10px;">
+          <div>
+            <label for="sname">Нэр (хамгийн багадаа 2 үсэг)</label>
+            <input id="sname" placeholder="ж: Бат" />
+          </div>
+          <div>
+            <label for="sage">Нас (6–20)</label>
+            <input id="sage" type="number" placeholder="ж: 13" />
+          </div>
+        </div>
+
+        <div class="row" style="margin-top:10px;">
+          <div>
+            <label for="sscore">Оноо (0–100)</label>
+            <input id="sscore" type="number" placeholder="ж: 85" />
+          </div>
+          <div>
+            <label for="semail">Email (жишээ: a@b.com)</label>
+            <input id="semail" placeholder="j: bat7a@school.mn" />
+          </div>
+        </div>
+
+        <div class="btns">
+          <button class="primary" id="saveBtn">💾 Save (INSERT/UPDATE)</button>
+          <button id="resetBtn">↩️ Form цэвэрлэх</button>
+        </div>
+
+        <div class="help">
+          <b>Хүүхдэд хэлэх санаа:</b><br/>
+          • “Энэ хүснэгт бол database-ийн нэг хүснэгт (table).”<br/>
+          • “Нэг мөр = нэг бичлэг (record).”<br/>
+          • “Багананууд = талбарууд (fields).”<br/>
+          • “Дүрэм зөрчвөл database зөвшөөрөхгүй (validation/constraint).”
+        </div>
+
+        <div class="divider"></div>
+
+        <h2 style="padding:0; border:none; margin:0 0 10px; color:var(--accent); font-size:14px;">
+          🧪 Query log (Өгөгдөл дээр асуулга хийх мэт)
+        </h2>
+        <div class="log" id="log"></div>
+
+        <div class="foot">
+          <span class="kbd">Search</span> = SELECT шиг
+          <span class="kbd">Save</span> = INSERT/UPDATE шиг
+          <span class="kbd">Delete</span> = DELETE шиг
+        </div>
+      </div>
+    </aside>
+  </div>
+</main>
+
+<input type="file" id="fileInput" accept=".csv" style="display:none;" />
+
+<script>
+  // ---------------------------
+  //  In-memory "database"
+  // ---------------------------
+  let db = []; // array of records {id, name, grade, age, score, email}
+  let editingId = null;
+
+  const el = (id) => document.getElementById(id);
+  const tbody = el("tbody");
+  const logBox = el("log");
+  const toast = el("toast");
+
+  const q = el("q");
+  const gradeFilter = el("gradeFilter");
+  const sortBy = el("sortBy");
+
+  const sid = el("sid");
+  const sname = el("sname");
+  const sgrade = el("sgrade");
+  const sage = el("sage");
+  const sscore = el("sscore");
+  const semail = el("semail");
+
+  function now(){
+    const d = new Date();
+    const hh = String(d.getHours()).padStart(2,"0");
+    const mm = String(d.getMinutes()).padStart(2,"0");
+    const ss = String(d.getSeconds()).padStart(2,"0");
+    return `${hh}:${mm}:${ss}`;
+  }
+
+  function log(type, msg){
+    const line = document.createElement("div");
+    line.className = type;
+    line.textContent = `[${now()}] ${msg}`;
+    logBox.appendChild(line);
+    logBox.scrollTop = logBox.scrollHeight;
+  }
+
+  function showToast(msg, kind=""){
+    toast.textContent = msg;
+    toast.className = "toast show";
+    toast.style.borderColor =
+      kind==="ok" ? "rgba(52,211,153,.55)" :
+      kind==="bad" ? "rgba(251,113,133,.55)" :
+      kind==="hi" ? "rgba(251,191,36,.55)" :
+      "rgba(255,255,255,.14)";
+    setTimeout(()=> toast.className = "toast", 2200);
+  }
+
+  function normalize(str){ return (str ?? "").toString().trim().toLowerCase(); }
+
+  function isValidEmail(v){
+    // simple & kid-friendly: something@something.something
+    const s = (v ?? "").trim();
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s);
+  }
+
+  function validateRecord(rec, {allowSameId=false}={}){
+    // ID: required, integer, unique
+    if (rec.id === "" || rec.id === null || rec.id === undefined) return "ID оруулна уу.";
+    const idNum = Number(rec.id);
+    if (!Number.isInteger(idNum) || idNum <= 0) return "ID нь эерэг бүхэл тоо байх ёстой.";
+
+    const exists = db.some(r => r.id === idNum);
+    if (exists && !allowSameId) return "ID давхцаж байна (unique дүрэм зөрчигдлөө).";
+
+    // Name
+    if (!rec.name || rec.name.trim().length < 2) return "Нэр хамгийн багадаа 2 тэмдэгттэй байна.";
+
+    // Grade
+    if (!rec.grade) return "Анги сонгоно уу.";
+
+    // Age 6-20
+    const ageNum = Number(rec.age);
+    if (!Number.isFinite(ageNum) || ageNum < 6 || ageNum > 20) return "Нас 6–20 хооронд байх ёстой.";
+
+    // Score 0-100
+    const scoreNum = Number(rec.score);
+    if (!Number.isFinite(scoreNum) || scoreNum < 0 || scoreNum > 100) return "Оноо 0–100 хооронд байх ёстой.";
+
+    // Email
+    if (!rec.email || !isValidEmail(rec.email)) return "Email буруу байна (ж: a@b.com).";
+
+    return null;
+  }
+
+  function getView(){
+    const term = normalize(q.value);
+    const gf = gradeFilter.value;
+
+    let rows = db.slice();
+
+    // Filter
+    if (gf) rows = rows.filter(r => r.grade === gf);
+
+    // Search (SELECT ... WHERE ...)
+    if (term){
+      rows = rows.filter(r => {
+        return (
+          normalize(r.id).includes(term) ||
+          normalize(r.name).includes(term) ||
+          normalize(r.grade).includes(term) ||
+          normalize(r.email).includes(term)
+        );
+      });
+    }
+
+    // Sort
+    const s = sortBy.value;
+    const [key, dir] = s.split("-");
+    const mult = (dir === "desc") ? -1 : 1;
+
+    rows.sort((a,b)=>{
+      if (key==="id") return (a.id - b.id) * mult;
+      if (key==="score") return (a.score - b.score) * mult;
+      if (key==="age") return (a.age - b.age) * mult;
+      if (key==="name"){
+        return a.name.localeCompare(b.name, "mn") * mult;
+      }
+      return 0;
+    });
+
+    return rows;
+  }
+
+  function render(){
+    const view = getView();
+
+    tbody.innerHTML = "";
+    for (const r of view){
+      const tr = document.createElement("tr");
+
+      tr.innerHTML = `
+        <td><span class="pill">${r.id}</span></td>
+        <td>${escapeHtml(r.name)}</td>
+        <td>${escapeHtml(r.grade)}</td>
+        <td>${r.age}</td>
+        <td>${r.score}</td>
+        <td>${escapeHtml(r.email)}</td>
+        <td>
+          <div class="actions">
+            <button class="tiny" data-act="edit" data-id="${r.id}">✏️ Edit</button>
+            <button class="tiny bad" data-act="del" data-id="${r.id}">🗑️ Delete</button>
+          </div>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    }
+
+    el("countPill").textContent = `${db.length} record`;
+    log("hi", `SELECT: view=${view.length}, filter="${gradeFilter.value||"—"}", search="${q.value||"—"}", sort="${sortBy.value}"`);
+  }
+
+  function escapeHtml(s){
+    return (s ?? "").toString()
+      .replaceAll("&","&amp;")
+      .replaceAll("<","&lt;")
+      .replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;")
+      .replaceAll("'","&#039;");
+  }
+
+  function resetForm(){
+    editingId = null;
+    sid.value = "";
+    sname.value = "";
+    sgrade.value = "";
+    sage.value = "";
+    sscore.value = "";
+    semail.value = "";
+    sid.disabled = false;
+    el("saveBtn").textContent = "💾 Save (INSERT/UPDATE)";
+  }
+
+  function fillForm(r){
+    editingId = r.id;
+    sid.value = r.id;
+    sname.value = r.name;
+    sgrade.value = r.grade;
+    sage.value = r.age;
+    sscore.value = r.score;
+    semail.value = r.email;
+    sid.disabled = true; // in DB, primary key often shouldn't change
+    el("saveBtn").textContent = "💾 Update (UPDATE)";
+  }
+
+  function upsertFromForm(){
+    const rec = {
+      id: sid.value === "" ? "" : Number(sid.value),
+      name: sname.value.trim(),
+      grade: sgrade.value,
+      age: sage.value === "" ? "" : Number(sage.value),
+      score: sscore.value === "" ? "" : Number(sscore.value),
+      email: semail.value.trim()
+    };
+
+    if (editingId === null){
+      // INSERT
+      const err = validateRecord(rec);
+      if (err){
+        log("no", `INSERT FAILED: ${err}`);
+        showToast(err, "bad");
+        return;
+      }
+      db.push(rec);
+      log("ok", `INSERT OK: id=${rec.id}`);
+      showToast("Нэмэгдлээ (INSERT OK)", "ok");
+      resetForm();
+      render();
+    } else {
+      // UPDATE
+      const idx = db.findIndex(r => r.id === editingId);
+      if (idx === -1){
+        log("no", `UPDATE FAILED: id=${editingId} олдсонгүй`);
+        showToast("Засах бичлэг олдсонгүй.", "bad");
+        resetForm();
+        render();
+        return;
+      }
+      // allowSameId=true because it's the same record
+      const err = validateRecord(rec, {allowSameId:true});
+      if (err){
+        log("no", `UPDATE FAILED: ${err}`);
+        showToast(err, "bad");
+        return;
+      }
+      db[idx] = { ...rec, id: editingId };
+      log("ok", `UPDATE OK: id=${editingId}`);
+      showToast("Засагдлаа (UPDATE OK)", "ok");
+      resetForm();
+      render();
+    }
+  }
+
+  function deleteById(id){
+    const n0 = db.length;
+    db = db.filter(r => r.id !== id);
+    const n1 = db.length;
+    if (n1 < n0){
+      log("ok", `DELETE OK: id=${id}`);
+      showToast(`Устгалаа (id=${id})`, "hi");
+    } else {
+      log("no", `DELETE FAILED: id=${id} олдсонгүй`);
+      showToast("Устгах бичлэг олдсонгүй.", "bad");
+    }
+    render();
+  }
+
+  function seed(){
+    // clear and add demo data
+    db = [
+      {id:101, name:"Бат", grade:"7A", age:13, score:88, email:"bat7a@school.mn"},
+      {id:102, name:"Сараа", grade:"7A", age:13, score:92, email:"saraa7a@school.mn"},
+      {id:103, name:"Тэмүүжин", grade:"7B", age:14, score:76, email:"temuujin7b@school.mn"},
+      {id:201, name:"Номин", grade:"8A", age:14, score:95, email:"nomin8a@school.mn"},
+      {id:202, name:"Энхжин", grade:"8B", age:15, score:67, email:"enkhjin8b@school.mn"}
+    ];
+    resetForm();
+    log("ok", "SEED: demo өгөгдөл үүсгэлээ.");
+    showToast("Жишээ өгөгдөл бэлэн!", "ok");
+    render();
+  }
+
+  function clearAll(){
+    db = [];
+    resetForm();
+    log("hi", "CLEAR: бүх record устгагдлаа.");
+    showToast("Цэвэрлэгдлээ.", "hi");
+    render();
+  }
+
+  function toCSV(rows){
+    const header = ["id","name","grade","age","score","email"];
+    const esc = (v) => {
+      const s = (v ?? "").toString();
+      // quote if needed
+      if (/[",\n]/.test(s)) return `"${s.replaceAll('"','""')}"`;
+      return s;
+    };
+    const lines = [];
+    lines.push(header.join(","));
+    for (const r of rows){
+      lines.push([
+        r.id, esc(r.name), esc(r.grade), r.age, r.score, esc(r.email)
+      ].join(","));
+    }
+    return lines.join("\n");
+  }
+
+  function downloadText(filename, text){
+    const blob = new Blob([text], {type:"text/csv;charset=utf-8"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  }
+
+  function exportCSV(){
+    const csv = toCSV(db);
+    downloadText("students_db.csv", csv);
+    log("ok", `EXPORT: CSV (${db.length} record)`);
+    showToast("CSV татагдлаа.", "ok");
+  }
+
+  function parseCSV(text){
+    // simple CSV parser for this demo (handles quotes)
+    const rows = [];
+    let i=0, field="", inQuotes=false, row=[];
+    const pushField = ()=>{ row.push(field); field=""; };
+    const pushRow = ()=>{ rows.push(row); row=[]; };
+
+    while (i < text.length){
+      const c = text[i];
+
+      if (inQuotes){
+        if (c === '"'){
+          if (text[i+1] === '"'){ field += '"'; i += 2; continue; }
+          inQuotes = false; i++; continue;
+        }
+        field += c; i++; continue;
+      } else {
+        if (c === '"'){ inQuotes = true; i++; continue; }
+        if (c === ','){ pushField(); i++; continue; }
+        if (c === '\n'){ pushField(); pushRow(); i++; continue; }
+        if (c === '\r'){ i++; continue; }
+        field += c; i++; continue;
+      }
+    }
+    // last field
+    pushField();
+    pushRow();
+    return rows.filter(r => r.length > 1 && r.some(x => (x??"").trim() !== ""));
+  }
+
+  function importCSVText(text){
+    const rows = parseCSV(text);
+    if (rows.length < 2){
+      showToast("CSV хоосон эсвэл буруу байна.", "bad");
+      log("no", "IMPORT FAILED: CSV parse error/empty");
+      return;
+    }
+    const header = rows[0].map(h => normalize(h));
+    const needed = ["id","name","grade","age","score","email"];
+    for (const k of needed){
+      if (!header.includes(k)){
+        showToast(`CSV header дутуу: ${k}`, "bad");
+        log("no", `IMPORT FAILED: missing header ${k}`);
+        return;
+      }
+    }
+
+    let ok=0, bad=0;
+    const hIndex = Object.fromEntries(header.map((h,idx)=>[h,idx]));
+
+    for (let r=1; r<rows.length; r++){
+      const line = rows[r];
+      const rec = {
+        id: Number(line[hIndex.id]),
+        name: (line[hIndex.name] ?? "").trim(),
+        grade: (line[hIndex.grade] ?? "").trim(),
+        age: Number(line[hIndex.age]),
+        score: Number(line[hIndex.score]),
+        email: (line[hIndex.email] ?? "").trim()
+      };
+
+      const err = validateRecord(rec);
+      if (err){
+        bad++;
+        log("no", `IMPORT SKIP (row ${r+1}): ${err}`);
+        continue;
+      }
+      // unique constraint again
+      if (db.some(x => x.id === rec.id)){
+        bad++;
+        log("no", `IMPORT SKIP (row ${r+1}): ID давхцав (id=${rec.id})`);
+        continue;
+      }
+      db.push(rec);
+      ok++;
+    }
+
+    showToast(`Import дууслаа: OK=${ok}, SKIP=${bad}`, ok>0 ? "ok" : "hi");
+    log("ok", `IMPORT DONE: OK=${ok}, SKIP=${bad}`);
+    render();
+  }
+
+  // ---------------------------
+  //  Events
+  // ---------------------------
+  q.addEventListener("input", ()=>render());
+  gradeFilter.addEventListener("change", ()=>render());
+  sortBy.addEventListener("change", ()=>render());
+
+  el("saveBtn").addEventListener("click", upsertFromForm);
+  el("resetBtn").addEventListener("click", resetForm);
+
+  el("seedBtn").addEventListener("click", seed);
+  el("clearBtn").addEventListener("click", clearAll);
+  el("exportBtn").addEventListener("click", exportCSV);
+
+  el("importBtn").addEventListener("click", ()=> el("fileInput").click());
+  el("fileInput").addEventListener("change", async (e)=>{
+    const f = e.target.files?.[0];
+    if (!f) return;
+    const text = await f.text();
+    importCSVText(text);
+    e.target.value = "";
+  });
+
+  tbody.addEventListener("click", (e)=>{
+    const btn = e.target.closest("button");
+    if (!btn) return;
+    const id = Number(btn.getAttribute("data-id"));
+    const act = btn.getAttribute("data-act");
+    if (act === "edit"){
+      const r = db.find(x => x.id === id);
+      if (!r){
+        showToast("Засах бичлэг олдсонгүй.", "bad");
+        return;
+      }
+      fillForm(r);
+      log("hi", `EDIT MODE: id=${id} (Form дээр өгөгдөл орлоо)`);
+      showToast("Засах горим (Edit mode).", "hi");
+    } else if (act === "del"){
+      if (confirm(`id=${id} бичлэгийг устгах уу?`)){
+        deleteById(id);
+      }
+    }
+  });
+
+  // Initial
+  log("hi", "System: Энэ бол memory доторх жижиг DB симулятор (browser дээр).");
+  log("hi", "Tip: 🎲 Жишээ өгөгдөл үүсгэх → дараа нь хайлт/фильтер/эрэмбэлэлт хийж үз.");
+  render();
+</script>
+</body>
+</html>
