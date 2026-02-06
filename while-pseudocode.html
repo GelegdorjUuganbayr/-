@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+    <meta charset="UTF-8">
+    <title>While давталт – Онол ба Дасгал</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 30px;
+            background-color: #f9f9f9;
+        }
+        h1, h2 {
+            color: #2c3e50;
+        }
+        .box {
+            background: #ffffff;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-left: 5px solid #3498db;
+        }
+        pre {
+            background: #eee;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>While давталт (Pseudocode)</h1>
+
+<div class="box">
+    <h2>1. While давталтын онол</h2>
+    <p>
+        <b>While давталт</b> нь өгөгдсөн нөхцөл үнэн (true) байх хугацаанд
+        үйлдлүүдийг дахин дахин гүйцэтгэдэг.
+    </p>
+    <p>
+        Нөхцөл эхэнд шалгагддаг тул анхнаасаа худал байвал
+        давталт огт ажиллахгүй.
+    </p>
+</div>
+
+<div class="box">
+    <h2>2. While давталтын ерөнхий хэлбэр</h2>
+    <pre>
+WHILE (нөхцөл) DO
+    үйлдлүүд
+END WHILE
+    </pre>
+</div>
+
+<div class="box">
+    <h2>3. Жишээ 1: 1-ээс 5 хүртэл тоо хэвлэх</h2>
+    <pre>
+i = 1
+WHILE (i <= 5) DO
+    PRINT i
+    i = i + 1
+END WHILE
+    </pre>
+</div>
+
+<div class="box">
+    <h2>4. Жишээ 2: Эерэг тоо оруулах хүртэл асуух</h2>
+    <pre>
+INPUT x
+WHILE (x <= 0) DO
+    PRINT "Эерэг тоо оруулна уу"
+    INPUT x
+END WHILE
+    </pre>
+</div>
+
+<div class="box">
+    <h2>5. Дасгалууд</h2>
+
+    <p><b>Дасгал 1.</b> 10-аас 1 хүртэлх тоонуудыг буурахаар хэвлэх while давталтын pseudocode бич.</p>
+
+    <p><b>Дасгал 2.</b> Хэрэглэгч 0 оруулах хүртэл оруулсан тоонуудын нийлбэрийг ол.</p>
+
+    <p><b>Дасгал 3.</b> n тоо өгөгдөхөд 1-ээс n хүртэлх тэгш тоонуудыг хэвлэ.</p>
+</div>
+
+<div class="box">
+    <h2>6. Анхаарах зүйлс</h2>
+    <ul>
+        <li>Давталтыг зогсоох нөхцөл заавал хэрэгтэй</li>
+        <li>Хувьсагчийн утга давталт дотор өөрчлөгдөж байгаа эсэхийг шалга</li>
+        <li>Эс тэгвээс infinite loop үүснэ</li>
+    </ul>
+</div>
+
+</body>
+</html>
