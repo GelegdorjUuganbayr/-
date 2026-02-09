@@ -1,0 +1,880 @@
+<!doctype html>
+<html lang="mn">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Statistical Investigation Simulator — Managing Data 2.1</title>
+  <style>
+    :root{
+      --bg:#0b1220; --card:#0f1a2f; --text:#eaf1ff; --muted:#a9b7d0;
+      --accent:#7dd3fc; --border:rgba(255,255,255,.12);
+      --good:#34d399; --bad:#fb7185; --shadow:0 10px 26px rgba(0,0,0,.35);
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:linear-gradient(180deg,var(--bg),#070b14);color:var(--text);line-height:1.55}
+    header{position:sticky;top:0;z-index:10;background:rgba(11,18,32,.9);backdrop-filter:blur(10px);border-bottom:1px solid var(--border)}
+    .wrap{max-width:980px;margin:0 auto;padding:14px}
+    h1{margin:0;font-size:clamp(16px,3.6vw,22px)}
+    .sub{color:var(--muted);font-size:13px;margin-top:4px}
+    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+    .card{background:rgba(15,26,47,.92);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow);padding:14px;margin:12px 0}
+    .grid{display:grid;gap:12px}
+    .two{display:grid;gap:12px;grid-template-columns:1fr}
+    @media(min-width:900px){.two{grid-template-columns:1.1fr .9fr}}
+    .pill{display:inline-flex;gap:8px;align-items:center;padding:6px 10px;border-radius:999px;border:1px solid var(--border);background:rgba(255,255,255,.03);color:var(--muted);font-size:12px}
+    .muted{color:var(--muted);font-size:13px}
+    .k{font-weight:800}
+    select,input[type="text"],input[type="number"],textarea{
+      width:100%;padding:10px 12px;border-radius:12px;border:1px solid var(--border);
+      background:rgba(255,255,255,.03);color:var(--text);outline:none;font-size:14px
+    }
+    textarea{min-height:90px;resize:vertical}
+    button{
+      border:1px solid var(--border);background:rgba(255,255,255,.06);color:var(--text);
+      padding:10px 12px;border-radius:12px;cursor:pointer;font-weight:800
+    }
+    button.primary{border-color:rgba(125,211,252,.55);background:rgba(125,211,252,.12)}
+    button:disabled{opacity:.55;cursor:not-allowed}
+    .stepbar{display:flex;gap:6px;flex-wrap:wrap}
+    .step{padding:6px 10px;border-radius:999px;border:1px solid var(--border);background:rgba(255,255,255,.03);color:var(--muted);font-size:12px}
+    .step.on{border-color:rgba(125,211,252,.55);color:var(--text)}
+    .qtitle{font-weight:900;margin:0 0 8px 0}
+    .hint{color:var(--muted);font-size:12px;margin-top:6px}
+    .box{border:1px dashed var(--border);border-radius:14px;padding:12px;background:rgba(255,255,255,.03)}
+    table{width:100%;border-collapse:collapse;font-size:13px}
+    th,td{padding:8px;border-bottom:1px solid var(--border);text-align:left;vertical-align:top}
+    .right{text-align:right}
+    .mini{font-size:12px;color:var(--muted)}
+    canvas{width:100%;height:260px;border:1px solid var(--border);border-radius:12px;background:rgba(255,255,255,.02)}
+    .tag{display:inline-flex;align-items:center;padding:3px 10px;border-radius:999px;border:1px solid var(--border);background:rgba(255,255,255,.03);color:var(--muted);font-size:12px}
+    .ok{color:var(--good)} .bad{color:var(--bad)}
+    .hidden{display:none}
+  </style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="row">
+      <div>
+        <h1>Судалгаа хийх Simulation — Managing Data 2.1 (Capturing data)</h1>
+        <div class="sub">Төлөвлөх → Өгөгдөл цуглуулах → Шинжлэх → Дүгнэх</div>
+      </div>
+      <div class="stepbar" id="stepbar"></div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="card">
+    <div class="row">
+      <span class="pill">📌 Зорилго: өөрсдөө судалгаагаа төлөвлөж, өгөгдөл цуглуулж, график/тооцоогоор дүгнэлт гаргах</span>
+      <span class="pill">📱 Утсанд тохиромжтой</span>
+    </div>
+  </section>
+
+  <section class="two">
+    <section class="card" id="panel">
+      <!-- dynamic step content -->
+    </section>
+
+    <aside class="card">
+      <div class="qtitle">Товч лавлах</div>
+      <div class="grid">
+        <div class="box">
+          <div class="k">Өгөгдлийн төрөл</div>
+          <div class="mini">
+            <b>Categorical</b> = ангилал/төрөл (ундаа, өнгө) <br>
+            <b>Discrete</b> = тоологдох бүхэл тоо (хүмүүсийн тоо) <br>
+            <b>Continuous</b> = хэмжилт, бутархай байж болно (температур, жин, зай)
+          </div>
+        </div>
+        <div class="box">
+          <div class="k">Хэрэгсэл</div>
+          <div class="mini">
+            <b>Data logger</b> → хугацааны явцад автоматаар хэмжинэ <br>
+            <b>Spreadsheet</b> → хүснэгт, тооцоо, график <br>
+            <b>Database</b> → хайлт/шүүлт (criteria) <br>
+            <b>Form</b> → асуулт бөглүүлж өгөгдөл цуглуулна (validation хэрэглэж болно)
+          </div>
+        </div>
+        <div class="box">
+          <div class="k">Санамж</div>
+          <div class="mini">
+            Continuous формд: <b>хэзээ</b>, <b>хаана</b>, <b>нэгж</b>, <b>нарийвчлал</b> (1–2 орны бутархай) тодорхой бич.
+          </div>
+        </div>
+      </div>
+    </aside>
+  </section>
+
+  <section class="card">
+    <div class="row">
+      <button id="prevBtn">◀ Өмнөх</button>
+      <button class="primary" id="nextBtn">Дараах ▶</button>
+    </div>
+  </section>
+</main>
+
+<script>
+/* ---------- Steps ---------- */
+const STEPS = [
+  {id:"pick", name:"1) Сэдэв"},
+  {id:"plan", name:"2) Төлөвлөгөө"},
+  {id:"collect", name:"3) Цуглуулах"},
+  {id:"analyze", name:"4) Шинжлэх"},
+  {id:"conclude", name:"5) Дүгнэлт"}
+];
+
+const INVESTIGATIONS = [
+  {
+    key:"temp",
+    title:"Ангийн температур (өдрийн турш)",
+    type:"continuous",
+    defaultUnit:"°C",
+    defaultPrecision:1,
+    defaultFrequency: "Хичээл бүрийн төгсгөл",
+    recommendedTool:"Data logger эсвэл термометр + хүснэгт",
+    generator: () => {
+      // typical school day time points
+      const times = ["08:30","09:10","09:50","10:30","11:10","11:50","12:30","13:10","13:50","14:30","15:10"];
+      const base = rand(18.5, 22.0);
+      const peak = rand(23.0, 27.0);
+      const peakIndex = Math.floor(rand(4, 8));
+      return times.map((t,i)=>{
+        const d = Math.abs(i-peakIndex);
+        const temp = (peak - d*rand(0.4,0.9)) + rand(-0.3,0.3);
+        const val = clamp(temp, 16, 30);
+        return {x:t, y:val};
+      });
+    }
+  },
+  {
+    key:"plane",
+    title:"Цаасан онгоц хамгийн хол нисэх үү? (3 удаа)",
+    type:"continuous",
+    defaultUnit:"м",
+    defaultPrecision:2,
+    defaultFrequency:"Хүн бүр 3 удаа",
+    recommendedTool:"Рулет/метр + хүснэгт",
+    generator: () => {
+      const students = defaultStudents();
+      return students.map(s=>{
+        const skill = rand(4, 18); // base meters *0.1
+        const a = clamp((skill/10)+rand(-0.35,0.35), 0.5, 4.5);
+        const b = clamp((skill/10)+rand(-0.35,0.35), 0.5, 4.5);
+        const c = clamp((skill/10)+rand(-0.35,0.35), 0.5, 4.5);
+        return {name:s, t1:a, t2:b, t3:c};
+      });
+    }
+  },
+  {
+    key:"bag",
+    title:"Сургуулийн цүнхний жин (анги дотор)",
+    type:"continuous",
+    defaultUnit:"кг",
+    defaultPrecision:1,
+    defaultFrequency:"Нэг удаа (ижил нөхцөлөөр)",
+    recommendedTool:"Жин + хүснэгт",
+    generator: () => {
+      const students = defaultStudents();
+      return students.map(s=>{
+        const w = clamp(rand(1.8, 6.8) + rand(-0.4,0.4), 1.2, 9.5);
+        return {name:s, w};
+      });
+    }
+  },
+  {
+    key:"drink",
+    title:"Цайны газрын хамгийн алдартай ундаа",
+    type:"categorical",
+    defaultUnit:"—",
+    defaultPrecision:0,
+    defaultFrequency:"Нэг удаа (асуулга)",
+    recommendedTool:"Online form/Questionnaire + хүснэгт",
+    generator: () => {
+      const options = ["Ус","Жүүс","Цай","Кола","Сүү"];
+      const students = defaultStudents();
+      return students.map(s=>{
+        const pick = weightedPick(options, [28,20,18,22,12]);
+        return {name:s, drink:pick};
+      });
+    }
+  }
+];
+
+const state = {
+  stepIndex: 0,
+  invKey: "temp",
+  // planning
+  question: "",
+  who: "Манай анги",
+  where: "Сургууль/анги",
+  when: "",
+  frequency: "",
+  unit: "",
+  precision: 1,
+  tool: "",
+  // data
+  data: null,
+  // analysis
+  filterValue: "",
+  // conclusion
+  conclusion: ""
+};
+
+const $ = (id)=>document.getElementById(id);
+
+function renderStepbar(){
+  const bar = $("stepbar");
+  bar.innerHTML = "";
+  STEPS.forEach((s,i)=>{
+    const el = document.createElement("span");
+    el.className = "step" + (i===state.stepIndex ? " on" : "");
+    el.textContent = s.name;
+    bar.appendChild(el);
+  });
+}
+renderStepbar();
+
+/* ---------- Render Panel ---------- */
+function currentInv(){ return INVESTIGATIONS.find(x=>x.key===state.invKey); }
+
+function render(){
+  renderStepbar();
+  $("prevBtn").disabled = state.stepIndex===0;
+  $("nextBtn").textContent = state.stepIndex===STEPS.length-1 ? "Дуусгах" : "Дараах ▶";
+
+  const step = STEPS[state.stepIndex].id;
+  const inv = currentInv();
+  const panel = $("panel");
+
+  if(step==="pick"){
+    panel.innerHTML = `
+      <div class="qtitle">1) Судалгааны сэдвээ сонго</div>
+      <div class="grid">
+        <div>
+          <div class="muted">Сэдэв</div>
+          <select id="invSel">
+            ${INVESTIGATIONS.map(x=>`<option value="${x.key}" ${x.key===state.invKey?"selected":""}>${escapeHTML(x.title)}</option>`).join("")}
+          </select>
+          <div class="hint">Сонгосны дараа төлөвлөгөө хэсэгт асуултаа яг таг болгоно.</div>
+        </div>
+        <div class="box">
+          <div class="k">Сонгосон сэдвийн мэдээлэл</div>
+          <div class="mini">
+            <div>Өгөгдлийн төрөл: <span class="tag">${inv.type}</span></div>
+            <div style="margin-top:6px">Зөвлөмж хэрэгсэл: <b>${escapeHTML(inv.recommendedTool)}</b></div>
+          </div>
+        </div>
+      </div>
+    `;
+    $("invSel").addEventListener("change", (e)=>{
+      state.invKey = e.target.value;
+      const inv2 = currentInv();
+      // reset defaults
+      state.unit = inv2.defaultUnit;
+      state.precision = inv2.defaultPrecision;
+      state.frequency = inv2.defaultFrequency;
+      state.tool = inv2.recommendedTool;
+      state.question = "";
+      state.when = "";
+      state.data = null;
+      state.conclusion = "";
+      render();
+    });
+    return;
+  }
+
+  if(step==="plan"){
+    panel.innerHTML = `
+      <div class="qtitle">2) Төлөвлөгөө (асуултаа яг таг болго)</div>
+      <div class="grid">
+        <div class="box">
+          <div class="mini"><b>Сэдэв:</b> ${escapeHTML(inv.title)}</div>
+          <div class="mini"><b>Өгөгдлийн төрөл:</b> <span class="tag">${inv.type}</span></div>
+        </div>
+
+        <div>
+          <div class="muted">Судалгааны гол асуулт (1 өгүүлбэр)</div>
+          <textarea id="question" placeholder="Ж: Манай анги өдөрт хамгийн халуун үе нь хэдэн цагт вэ?">${escapeHTML(state.question||"")}</textarea>
+          <div class="hint">Асуулт нь яг хэмжих/асуух зүйлээ заасан байх хэрэгтэй.</div>
+        </div>
+
+        <div class="two">
+          <div>
+            <div class="muted">Хэнээс/юунаас (Who)</div>
+            <input id="who" type="text" value="${escapeHTML(state.who)}" />
+          </div>
+          <div>
+            <div class="muted">Хаана (Where)</div>
+            <input id="where" type="text" value="${escapeHTML(state.where)}" />
+          </div>
+        </div>
+
+        <div class="two">
+          <div>
+            <div class="muted">Хэзээ (When)</div>
+            <input id="when" type="text" placeholder="Ж: Даваа–Баасан 12:00 цагт" value="${escapeHTML(state.when||"")}" />
+          </div>
+          <div>
+            <div class="muted">Хэдэн удаа/давтамж (Frequency)</div>
+            <input id="freq" type="text" value="${escapeHTML(state.frequency || inv.defaultFrequency)}" />
+          </div>
+        </div>
+
+        <div class="two">
+          <div>
+            <div class="muted">Нэгж (Unit)</div>
+            <input id="unit" type="text" value="${escapeHTML(state.unit || inv.defaultUnit)}" />
+          </div>
+          <div>
+            <div class="muted">Нарийвчлал (бутархай орны тоо)</div>
+            <input id="prec" type="number" min="0" max="3" step="1" value="${Number.isFinite(state.precision)?state.precision:inv.defaultPrecision}" />
+          </div>
+        </div>
+
+        <div>
+          <div class="muted">Ямар хэрэгсэл/арга (Tool)</div>
+          <input id="tool" type="text" value="${escapeHTML(state.tool || inv.recommendedTool)}" />
+        </div>
+
+        <div class="box">
+          <div class="k">Form/Validation санаа</div>
+          <div class="mini" id="validationHint"></div>
+        </div>
+      </div>
+    `;
+
+    $("validationHint").innerHTML = buildValidationHint(inv);
+
+    // bind
+    $("question").addEventListener("input",(e)=>state.question=e.target.value.trim());
+    $("who").addEventListener("input",(e)=>state.who=e.target.value.trim());
+    $("where").addEventListener("input",(e)=>state.where=e.target.value.trim());
+    $("when").addEventListener("input",(e)=>state.when=e.target.value.trim());
+    $("freq").addEventListener("input",(e)=>state.frequency=e.target.value.trim());
+    $("unit").addEventListener("input",(e)=>state.unit=e.target.value.trim());
+    $("prec").addEventListener("input",(e)=>state.precision=clampInt(e.target.value,0,3));
+    $("tool").addEventListener("input",(e)=>state.tool=e.target.value.trim());
+    return;
+  }
+
+  if(step==="collect"){
+    panel.innerHTML = `
+      <div class="qtitle">3) Өгөгдөл цуглуулах (simulation)</div>
+      <div class="grid">
+        <div class="box">
+          <div class="mini"><b>Асуулт:</b> ${escapeHTML(state.question || "—")}</div>
+          <div class="mini"><b>Tool:</b> ${escapeHTML(state.tool || inv.recommendedTool)}</div>
+        </div>
+
+        <div class="row">
+          <button class="primary" id="genBtn">Өгөгдөл үүсгэх</button>
+          <button id="clearBtn">Цэвэрлэх</button>
+          <span class="pill">Нэгж: <b>${escapeHTML(state.unit || inv.defaultUnit)}</b></span>
+          <span class="pill">Нарийвчлал: <b>${Number.isFinite(state.precision)?state.precision:inv.defaultPrecision}</b></span>
+        </div>
+
+        <div class="box">
+          <div class="k">Data table</div>
+          <div id="tableArea" class="mini">Өгөгдөл алга.</div>
+        </div>
+
+        <div class="box">
+          <div class="k">CSV (хуулж ав)</div>
+          <textarea id="csvArea" readonly placeholder="Өгөгдөл үүсгэсний дараа энд CSV гарна."></textarea>
+        </div>
+      </div>
+    `;
+
+    $("genBtn").addEventListener("click", ()=>{
+      state.data = inv.generator();
+      renderCollectTable(inv);
+    });
+    $("clearBtn").addEventListener("click", ()=>{
+      state.data = null;
+      render();
+    });
+
+    // render if already exists
+    if(state.data) renderCollectTable(inv);
+    return;
+  }
+
+  if(step==="analyze"){
+    panel.innerHTML = `
+      <div class="qtitle">4) Шинжлэх (toоцоо + график)</div>
+      <div class="grid">
+        <div class="box">
+          <div class="mini"><b>Өгөгдлийн төрөл:</b> <span class="tag">${inv.type}</span></div>
+          <div class="mini"><b>Нэгж:</b> ${escapeHTML(state.unit||inv.defaultUnit)}</div>
+        </div>
+
+        <div class="box" id="analysisBox"></div>
+
+        <div class="box">
+          <div class="k">График</div>
+          <canvas id="chart" width="900" height="260"></canvas>
+          <div class="hint">Утсан дээр ч харагдана. (Ердийн canvas chart)</div>
+        </div>
+
+        <div class="box" id="filterBox"></div>
+      </div>
+    `;
+
+    if(!state.data){
+      $("analysisBox").innerHTML = `<div class="bad">Өгөгдөл алга. “Цуглуулах” хэсэг дээр өгөгдөл үүсгээд ир.</div>`;
+      $("filterBox").innerHTML = `<div class="muted">Өгөгдөл байхгүй тул шүүлт хийх боломжгүй.</div>`;
+      clearCanvas($("chart"));
+      return;
+    }
+
+    runAnalysis(inv);
+    return;
+  }
+
+  if(step==="conclude"){
+    panel.innerHTML = `
+      <div class="qtitle">5) Дүгнэлт бич</div>
+      <div class="grid">
+        <div class="box">
+          <div class="mini"><b>Асуулт:</b> ${escapeHTML(state.question || "—")}</div>
+          <div class="mini"><b>Өгөгдлийн төрөл:</b> <span class="tag">${inv.type}</span></div>
+        </div>
+
+        <div>
+          <div class="muted">Дүгнэлт (3–5 өгүүлбэр)</div>
+          <textarea id="conc" placeholder="Ж: Дундаж температур ... Хамгийн өндөр нь ... үед байсан. Үүний шалтгаан нь ... байж магадгүй. Дараагийн удаа ...">${escapeHTML(state.conclusion||"")}</textarea>
+          <div class="hint">Дүгнэлтдээ: (1) гол үр дүн, (2) баталгаа (тоо/график), (3) боломжит шалтгаан, (4) сайжруулах санал.</div>
+        </div>
+
+        <div class="box">
+          <div class="k">Export</div>
+          <div class="row">
+            <button id="copyPlanBtn">Төлөвлөгөөг хуул</button>
+            <button id="copyConcBtn">Дүгнэлтийг хуул</button>
+          </div>
+          <div class="hint" id="copyMsg" style="display:none"></div>
+        </div>
+      </div>
+    `;
+
+    $("conc").addEventListener("input",(e)=>state.conclusion=e.target.value);
+
+    $("copyPlanBtn").addEventListener("click", async ()=>{
+      const txt = buildPlanText();
+      await copyText(txt);
+      showCopy("Төлөвлөгөө хуулсан.");
+    });
+    $("copyConcBtn").addEventListener("click", async ()=>{
+      await copyText(state.conclusion||"");
+      showCopy("Дүгнэлт хуулсан.");
+    });
+    return;
+  }
+}
+
+function buildValidationHint(inv){
+  if(inv.type==="categorical"){
+    return `Categorical өгөгдөл: <b>сонголттой</b> (multiple choice) асуулт тохиромжтой. Ж: “Дуртай ундаа” → сонголтууд.`;
+  }
+  return `Continuous өгөгдөл: зөвхөн <b>тоо</b> оруулах, боломжит <b>диапазон</b> тогтоох, ${escapeHTML(state.unit||inv.defaultUnit)} <b>нэгж</b> заах, <b>${Number.isFinite(state.precision)?state.precision:inv.defaultPrecision}</b> орны бутархайгаар хүлээн авах гэх мэт validation тавьж болно.`;
+}
+
+/* ---------- Collect Table + CSV ---------- */
+function renderCollectTable(inv){
+  const area = $("tableArea");
+  const csvArea = $("csvArea");
+  if(!state.data){
+    area.textContent = "Өгөгдөл алга.";
+    csvArea.value = "";
+    return;
+  }
+
+  let html = "";
+  let csv = "";
+
+  if(inv.key==="temp"){
+    html = `<table><thead><tr><th>Цаг</th><th class="right">Температур (${escapeHTML(state.unit||"°C")})</th></tr></thead><tbody>${
+      state.data.map(r=>`<tr><td>${escapeHTML(r.x)}</td><td class="right">${fmt(r.y)}</td></tr>`).join("")
+    }</tbody></table>`;
+    csv = "time,temperature\n" + state.data.map(r=>`${r.x},${fmtRaw(r.y)}`).join("\n");
+  }
+
+  if(inv.key==="plane"){
+    html = `<table><thead><tr><th>Нэр</th><th class="right">1 (${escapeHTML(state.unit||"м")})</th><th class="right">2</th><th class="right">3</th></tr></thead><tbody>${
+      state.data.map(r=>`<tr><td>${escapeHTML(r.name)}</td><td class="right">${fmt(r.t1)}</td><td class="right">${fmt(r.t2)}</td><td class="right">${fmt(r.t3)}</td></tr>`).join("")
+    }</tbody></table>`;
+    csv = "name,try1,try2,try3\n" + state.data.map(r=>`${safeCSV(r.name)},${fmtRaw(r.t1)},${fmtRaw(r.t2)},${fmtRaw(r.t3)}`).join("\n");
+  }
+
+  if(inv.key==="bag"){
+    html = `<table><thead><tr><th>Нэр</th><th class="right">Жин (${escapeHTML(state.unit||"кг")})</th></tr></thead><tbody>${
+      state.data.map(r=>`<tr><td>${escapeHTML(r.name)}</td><td class="right">${fmt(r.w)}</td></tr>`).join("")
+    }</tbody></table>`;
+    csv = "name,weight\n" + state.data.map(r=>`${safeCSV(r.name)},${fmtRaw(r.w)}`).join("\n");
+  }
+
+  if(inv.key==="drink"){
+    html = `<table><thead><tr><th>Нэр</th><th>Ундаа</th></tr></thead><tbody>${
+      state.data.map(r=>`<tr><td>${escapeHTML(r.name)}</td><td>${escapeHTML(r.drink)}</td></tr>`).join("")
+    }</tbody></table>`;
+    csv = "name,drink\n" + state.data.map(r=>`${safeCSV(r.name)},${safeCSV(r.drink)}`).join("\n");
+  }
+
+  area.innerHTML = html;
+  csvArea.value = csv;
+}
+
+/* ---------- Analysis ---------- */
+function runAnalysis(inv){
+  const analysisBox = $("analysisBox");
+  const filterBox = $("filterBox");
+  const canvas = $("chart");
+  clearCanvas(canvas);
+
+  if(inv.key==="temp"){
+    const ys = state.data.map(r=>r.y);
+    const min = Math.min(...ys), max = Math.max(...ys), avg = mean(ys);
+    const minT = state.data[ys.indexOf(min)].x;
+    const maxT = state.data[ys.indexOf(max)].x;
+
+    analysisBox.innerHTML = `
+      <div class="k">Тооцоо</div>
+      <div class="mini">Дундаж: <b>${fmt(avg)}</b> ${escapeHTML(state.unit||"°C")}</div>
+      <div class="mini">Хамгийн бага: <b>${fmt(min)}</b> (${escapeHTML(minT)})</div>
+      <div class="mini">Хамгийн их: <b>${fmt(max)}</b> (${escapeHTML(maxT)})</div>
+      <div class="mini">Хэлбэлзэл (max-min): <b>${fmt(max-min)}</b></div>
+    `;
+    drawLine(canvas, state.data.map(r=>r.x), ys, `Температур (${escapeHTML(state.unit||"°C")})`);
+    filterBox.innerHTML = `<div class="muted">Continuous өгөгдөл дээр шүүлт (criteria)-ийн оронд “хамгийн их/бага”, “дундаж” гэх мэт дүгнэлт хийж болно.</div>`;
+  }
+
+  if(inv.key==="plane"){
+    const rows = state.data.map(r=>{
+      const best = Math.max(r.t1,r.t2,r.t3);
+      const avg = (r.t1+r.t2+r.t3)/3;
+      return {name:r.name, best, avg};
+    });
+    rows.sort((a,b)=>b.best-a.best);
+    const bestOne = rows[0];
+
+    analysisBox.innerHTML = `
+      <div class="k">Тооцоо</div>
+      <div class="mini">Хүн бүрийн “best” (3 оролдлогын хамгийн их) ба “average” тооцлоо.</div>
+      <div class="mini">Хамгийн сайн: <b>${escapeHTML(bestOne.name)}</b> — best <b>${fmt(bestOne.best)}</b> ${escapeHTML(state.unit||"м")}</div>
+      <div class="mini">Санал: best-ээр эрэмбэлэх нь “хамгийн хол ниссэн” асуултад тохиромжтой.</div>
+    `;
+
+    const labels = rows.slice(0,8).map(r=>r.name);
+    const vals = rows.slice(0,8).map(r=>r.best);
+    drawBar(canvas, labels, vals, `Best зай (${escapeHTML(state.unit||"м")})`);
+
+    filterBox.innerHTML = `
+      <div class="k">Criteria (шүүлт)</div>
+      <div class="mini">Ж: best ≥ тодорхой утга</div>
+      <div class="row" style="margin-top:8px">
+        <input id="thresh" type="number" step="0.1" placeholder="Ж: 2.5" style="max-width:220px">
+        <button id="applyThresh" class="primary">Шүүх</button>
+      </div>
+      <div id="threshOut" class="mini" style="margin-top:10px"></div>
+    `;
+
+    $("applyThresh").addEventListener("click", ()=>{
+      const th = parseFloat($("thresh").value);
+      if(!Number.isFinite(th)){ $("threshOut").innerHTML = `<span class="bad">Тоон босго оруул.</span>`; return; }
+      const hit = rows.filter(r=>r.best >= th);
+      $("threshOut").innerHTML = hit.length
+        ? `<b>${hit.length}</b> хүн best ≥ ${fmt(th)}: ${hit.map(x=>escapeHTML(x.name)).join(", ")}`
+        : `Ийм хүн олдсонгүй.`;
+    });
+  }
+
+  if(inv.key==="bag"){
+    const rows = state.data.map(r=>r.w);
+    const min = Math.min(...rows), max = Math.max(...rows), avg = mean(rows);
+    const maxName = state.data[rows.indexOf(max)].name;
+    const minName = state.data[rows.indexOf(min)].name;
+
+    analysisBox.innerHTML = `
+      <div class="k">Тооцоо</div>
+      <div class="mini">Дундаж жин: <b>${fmt(avg)}</b> ${escapeHTML(state.unit||"кг")}</div>
+      <div class="mini">Хамгийн хүнд: <b>${escapeHTML(maxName)}</b> — <b>${fmt(max)}</b></div>
+      <div class="mini">Хамгийн хөнгөн: <b>${escapeHTML(minName)}</b> — <b>${fmt(min)}</b></div>
+      <div class="mini">Хэлбэлзэл: <b>${fmt(max-min)}</b></div>
+    `;
+
+    // bar chart top 8 heaviest
+    const sorted = state.data.slice().sort((a,b)=>b.w-a.w).slice(0,8);
+    drawBar(canvas, sorted.map(x=>x.name), sorted.map(x=>x.w), `Жин (${escapeHTML(state.unit||"кг")})`);
+
+    filterBox.innerHTML = `
+      <div class="k">Criteria (шүүлт)</div>
+      <div class="mini">Ж: жин ≥ босго</div>
+      <div class="row" style="margin-top:8px">
+        <input id="wth" type="number" step="0.1" placeholder="Ж: 5.0" style="max-width:220px">
+        <button id="applyW" class="primary">Шүүх</button>
+      </div>
+      <div id="wOut" class="mini" style="margin-top:10px"></div>
+    `;
+    $("applyW").addEventListener("click", ()=>{
+      const th = parseFloat($("wth").value);
+      if(!Number.isFinite(th)){ $("wOut").innerHTML = `<span class="bad">Тоон босго оруул.</span>`; return; }
+      const hit = state.data.filter(r=>r.w >= th);
+      $("wOut").innerHTML = hit.length
+        ? `<b>${hit.length}</b> хүн жин ≥ ${fmt(th)}: ${hit.map(x=>escapeHTML(x.name)).join(", ")}`
+        : `Ийм хүн олдсонгүй.`;
+    });
+  }
+
+  if(inv.key==="drink"){
+    // count categories
+    const counts = {};
+    state.data.forEach(r=>counts[r.drink]=(counts[r.drink]||0)+1);
+    const items = Object.entries(counts).sort((a,b)=>b[1]-a[1]);
+    const top = items[0];
+
+    analysisBox.innerHTML = `
+      <div class="k">Тооцоо</div>
+      <div class="mini">Нийт хариулт: <b>${state.data.length}</b></div>
+      <div class="mini">Хамгийн олон: <b>${escapeHTML(top[0])}</b> — <b>${top[1]}</b> хүн</div>
+    `;
+    drawBar(canvas, items.map(x=>x[0]), items.map(x=>x[1]), "Сонголтын тоо");
+
+    filterBox.innerHTML = `
+      <div class="k">Criteria (шүүлт)</div>
+      <div class="mini">Ж: ундаа = “Ус” гэх мэтээр шүүх</div>
+      <div class="row" style="margin-top:8px">
+        <select id="drinkSel" style="max-width:260px">
+          ${items.map(x=>`<option value="${escapeAttr(x[0])}">${escapeHTML(x[0])}</option>`).join("")}
+        </select>
+        <button id="applyDrink" class="primary">Шүүх</button>
+      </div>
+      <div id="drinkOut" class="mini" style="margin-top:10px"></div>
+    `;
+    $("applyDrink").addEventListener("click", ()=>{
+      const v = $("drinkSel").value;
+      const hit = state.data.filter(r=>r.drink===v).map(r=>r.name);
+      $("drinkOut").innerHTML = hit.length
+        ? `<b>${hit.length}</b> хүн "${escapeHTML(v)}" сонгосон: ${hit.map(n=>escapeHTML(n)).join(", ")}`
+        : `Олдсонгүй.`;
+    });
+  }
+}
+
+/* ---------- Charts (simple canvas) ---------- */
+function clearCanvas(c){
+  const ctx = c.getContext("2d");
+  ctx.clearRect(0,0,c.width,c.height);
+  ctx.fillStyle = "rgba(255,255,255,.02)";
+  ctx.fillRect(0,0,c.width,c.height);
+}
+
+function drawAxes(ctx, w, h){
+  const pad = 46;
+  ctx.strokeStyle = "rgba(255,255,255,.15)";
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(pad, 12);
+  ctx.lineTo(pad, h-pad);
+  ctx.lineTo(w-12, h-pad);
+  ctx.stroke();
+  return {pad};
+}
+
+function drawLine(canvas, labels, values, title){
+  const ctx = canvas.getContext("2d");
+  clearCanvas(canvas);
+  const w=canvas.width, h=canvas.height;
+  const {pad} = drawAxes(ctx,w,h);
+
+  const min = Math.min(...values), max = Math.max(...values);
+  const range = (max-min) || 1;
+  const n = values.length;
+
+  // title
+  ctx.fillStyle = "rgba(234,241,255,.92)";
+  ctx.font = "bold 14px system-ui";
+  ctx.fillText(title, pad, 22);
+
+  // grid lines + y labels (5)
+  ctx.font = "12px system-ui";
+  for(let i=0;i<=4;i++){
+    const y = 12 + (h-pad-12)*(i/4);
+    const val = (max - range*(i/4));
+    ctx.strokeStyle = "rgba(255,255,255,.08)";
+    ctx.beginPath(); ctx.moveTo(pad,y); ctx.lineTo(w-12,y); ctx.stroke();
+    ctx.fillStyle = "rgba(255,255,255,.6)";
+    ctx.fillText(fmt(val), 8, y+4);
+  }
+
+  // x labels (every ~2)
+  const step = Math.ceil(n/6);
+  for(let i=0;i<n;i+=step){
+    const x = pad + (w-12-pad)*(i/(n-1||1));
+    ctx.fillStyle = "rgba(255,255,255,.55)";
+    ctx.fillText(labels[i], x-14, h-pad+18);
+  }
+
+  // line
+  ctx.strokeStyle = "rgba(125,211,252,.85)";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  values.forEach((v,i)=>{
+    const x = pad + (w-12-pad)*(i/(n-1||1));
+    const y = 12 + (h-pad-12)*((max - v)/range);
+    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  });
+  ctx.stroke();
+
+  // points
+  ctx.fillStyle = "rgba(125,211,252,.9)";
+  values.forEach((v,i)=>{
+    const x = pad + (w-12-pad)*(i/(n-1||1));
+    const y = 12 + (h-pad-12)*((max - v)/range);
+    ctx.beginPath(); ctx.arc(x,y,3,0,Math.PI*2); ctx.fill();
+  });
+}
+
+function drawBar(canvas, labels, values, title){
+  const ctx = canvas.getContext("2d");
+  clearCanvas(canvas);
+  const w=canvas.width, h=canvas.height;
+  const {pad} = drawAxes(ctx,w,h);
+
+  const max = Math.max(...values) || 1;
+  const n = values.length;
+  const barW = (w-12-pad)/Math.max(n,1);
+
+  ctx.fillStyle = "rgba(234,241,255,.92)";
+  ctx.font = "bold 14px system-ui";
+  ctx.fillText(title, pad, 22);
+
+  // y grid lines
+  ctx.font = "12px system-ui";
+  for(let i=0;i<=4;i++){
+    const y = 12 + (h-pad-12)*(i/4);
+    const val = max - max*(i/4);
+    ctx.strokeStyle = "rgba(255,255,255,.08)";
+    ctx.beginPath(); ctx.moveTo(pad,y); ctx.lineTo(w-12,y); ctx.stroke();
+    ctx.fillStyle = "rgba(255,255,255,.6)";
+    ctx.fillText((val%1===0?val.toFixed(0):val.toFixed(1)), 8, y+4);
+  }
+
+  // bars
+  for(let i=0;i<n;i++){
+    const v = values[i];
+    const x0 = pad + i*barW + 6;
+    const x1 = pad + (i+1)*barW - 6;
+    const bw = Math.max(6, x1-x0);
+    const y = 12 + (h-pad-12)*(1 - v/max);
+    const base = h-pad;
+
+    ctx.fillStyle = "rgba(125,211,252,.75)";
+    ctx.fillRect(x0, y, bw, base-y);
+
+    ctx.fillStyle = "rgba(255,255,255,.55)";
+    const lab = labels[i].length>10 ? labels[i].slice(0,10)+"…" : labels[i];
+    ctx.fillText(lab, x0, h-pad+18);
+  }
+}
+
+/* ---------- Navigation ---------- */
+$("prevBtn").addEventListener("click", ()=>{
+  if(state.stepIndex>0){ state.stepIndex--; render(); }
+});
+$("nextBtn").addEventListener("click", ()=>{
+  if(state.stepIndex<STEPS.length-1){
+    // simple guard: plan requires question
+    if(STEPS[state.stepIndex].id==="plan" && !state.question.trim()){
+      alert("Судалгааны гол асуултаа бич.");
+      return;
+    }
+    if(STEPS[state.stepIndex].id==="collect" && !state.data){
+      alert("Өгөгдөл үүсгээд дараа нь шинжилгээ рүү ор.");
+      return;
+    }
+    state.stepIndex++;
+    render();
+    window.scrollTo({top:0,behavior:"smooth"});
+  }else{
+    alert("Дууслаа. Дүгнэлтийг хуулж аваад дэвтэртээ бичиж болно.");
+  }
+});
+
+render(); // initial
+
+/* ---------- Utils ---------- */
+function rand(a,b){ return a + Math.random()*(b-a); }
+function clamp(x,a,b){ return Math.max(a, Math.min(b,x)); }
+function clampInt(v,a,b){
+  const n = parseInt(v,10);
+  if(!Number.isFinite(n)) return a;
+  return Math.max(a, Math.min(b,n));
+}
+function mean(arr){ return arr.reduce((s,x)=>s+x,0)/(arr.length||1); }
+function fmt(x){
+  const p = Number.isFinite(state.precision)?state.precision:1;
+  return Number(x).toFixed(p);
+}
+function fmtRaw(x){
+  const p = Number.isFinite(state.precision)?state.precision:1;
+  return Number(x).toFixed(p);
+}
+function defaultStudents(){
+  return ["Ану","Бат","Саруул","Тэмүүжин","Номин","Энхжин","Билгүүн","Хулан","Од","Марал","Төгөлдөр","Цэлмэг"];
+}
+function weightedPick(items, weights){
+  const sum = weights.reduce((s,x)=>s+x,0);
+  let r = Math.random()*sum;
+  for(let i=0;i<items.length;i++){
+    r -= weights[i];
+    if(r<=0) return items[i];
+  }
+  return items[items.length-1];
+}
+function safeCSV(s){
+  const t = String(s??"");
+  if(/[,"\n]/.test(t)) return `"${t.replace(/"/g,'""')}"`;
+  return t;
+}
+function escapeHTML(s){
+  return String(s??"").replace(/[&<>"']/g, m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+}
+function escapeAttr(s){
+  return String(s??"").replace(/"/g,"&quot;");
+}
+
+function buildPlanText(){
+  const inv = currentInv();
+  return [
+    `Сэдэв: ${inv.title}`,
+    `Өгөгдлийн төрөл: ${inv.type}`,
+    `Асуулт: ${state.question || "-"}`,
+    `Who: ${state.who || "-"}`,
+    `Where: ${state.where || "-"}`,
+    `When: ${state.when || "-"}`,
+    `Frequency: ${state.frequency || "-"}`,
+    `Unit: ${state.unit || "-"}`,
+    `Precision: ${Number.isFinite(state.precision)?state.precision:"-"}`,
+    `Tool: ${state.tool || "-"}`
+  ].join("\n");
+}
+async function copyText(txt){
+  try{ await navigator.clipboard.writeText(txt); }
+  catch(e){
+    const ta = document.createElement("textarea");
+    ta.value = txt; document.body.appendChild(ta);
+    ta.select(); document.execCommand("copy");
+    document.body.removeChild(ta);
+  }
+}
+function showCopy(msg){
+  const el = $("copyMsg");
+  el.style.display = "block";
+  el.textContent = msg;
+  setTimeout(()=>el.style.display="none", 1400);
+}
+</script>
+</body>
+</html>
