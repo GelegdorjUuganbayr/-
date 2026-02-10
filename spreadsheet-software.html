@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="mn">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Mini Spreadsheet 6x6 (SUM/MIN/MAX/IF)</title>
+
+<style>
+:root{
+  --bg:#0b1220; --card:#0f1a2f; --text:#eaf1ff; --muted:#a9b7d0;
+  --border:rgba(255,255,255,.14); --accent:#7dd3fc;
+}
+*{ box-sizing:border-box; }
+
+body{
+  margin:0; padding:16px;
+  font-family:system-ui;
+  background:radial-gradient(1200px 700px at 20% 0%, #14264a 0%, var(--bg) 55%);
+  color:var(--text);
+}
+
+.wrap{max-width:980px;margin:auto;}
+
+.card{
+  background:#0f1a2f;
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:12px;
+  box-shadow:0 12px 30px rgba(0,0,0,.35);
+}
+
+.top{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-bottom:10px;
+}
+
+.hint{font-size:12px;color:var(--muted);}
+
+button{
+  background:rgba(125,211,252,.14);
+  border:1px solid var(--border);
+  color:white;
+  padding:8px 12px;
+  border-radius:10px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+}
+
+th,td{
+  border:1px solid var(--border);
+  padding:6px;
+}
+
+th{
+  background:rgba(255,255,255,.05);
+  color:var(--muted);
+}
+
+.addr{
+  background:rgba(255,255,255,.05);
+  width:50px;
+}
+
+input{
+  width:100%;
+  background:#0b1220;
+  color:white;
+  border:none;
+  padding:8px;
+  border-radius:6px;
+}
+
+input:focus{
+  outline:2px solid #7dd3fc;
+}
+
+.formula{background:#132047;}
+.err{outline:2px solid red;}
+</style>
+</head>
+
+<body>
+
+<div class="wrap">
+<div class="card">
+
+<div class="top">
+  <div class="hint">
+    Томьёо: =SUM(), =MIN(), =MAX(), =IF()<br>
+    Ж: =IF(B1>5,"OK","BAD")
+  </div>
+  <div>
+    <button id="calc">Тооцоолох</button>
+    <button id="reset">Эхлэл</button>
+  </div>
+</div>
+
+<table>
+<thead>
+<tr>
+  <th class="addr"></th>
+  <th>A</th><th>B</th><th>C</th><th>D</th><th>E</th><th>F</th>
+</tr>
+</thead>
+<tbody id="tbody"></tbody>
+</table>
+
+</div>
+</div>
+
+<script>
+(()=>{
+const COLS=["A","B","C","D","E","F"];
+const ROWS=6;
+
+const state={};
+const cache={};
+
+const init={
+A1:"Давтсан цаг",B1:"2",
+A2:"Унтсан цаг",B2:"7",
+A3:"Утас",B3:"4",
+A4:"Нийлбэр",B4:"=SUM(B1:B3)",
+A5:"Оноо",B5:"=B1*10+B2*5-B3*3",
+A6:"Дүн",B6:'=IF(B5>=60,"PASS","FAIL")'
+};
+
+// build grid
+const body=document.getElementById("tbody");
+
+for(let r=1;r<=ROWS;r++){
+  const tr=document.createElement("tr");
+
+  const th=document.createElement("td");
+  th.className="addr";
+  th.textContent=r;
+  tr.appendChild(th);
+
+  for(const c of COLS){
+    const td=document.createElement("td");
+    const id=c+r;
+
+    const inp=document.createElement("input");
+    inp.dataset.id=id;
+
+    inp.oninput=()=>state[id]=inp.value;
+
+    inp.onfocus=()=>{
+      if(isFormula(state[id])) inp.value=state[id];
+    };
+
+    inp.onblur=()=>recalc();
+
+    td.appendChild(inp);
+    tr.appendChild(td);
+  }
+  body.appendChild(tr);
+}
+
+// helpers
+function isFormula(v){
+  return typeof v==="string" && v.startsWith("=");
+}
+
+function get(addr){
+  if(addr in cache) return cache[addr];
+
+  if(isFormula(state[addr])){
+    try{
+      const f=state[addr].slice(1);
+      const js=compile(f);
+      const v=Function("return "+js)();
+      cache[addr]=v;
+      return v;
+    }catch{
+      return "#ERR";
+    }
+  }
+
+  const n=Number(state[addr]);
+  return isNaN(n)?state[addr]:n;
+}
+
+// compile
+function compile(expr){
+
+  // IF
+  expr=expr.replace(/IF\(([^,]+),([^,]+),([^)]+)\)/g,
+    "(($1)?($2):($3))");
+
+  // SUM MIN MAX range
+  expr=expr.replace(/(SUM|MIN|MAX)\((\w\d):(\w\d)\)/g,
+    (_,fn,a,b)=>{
+      let arr=[];
+      let r1=Number(a[1]);
+      let r2=Number(b[1]);
+      let col=a[0];
+
+      for(let i=r1;i<=r2;i++)
+        arr.push(get(col+i));
+
+      if(fn==="SUM") return arr.reduce((a,b)=>a+b,0);
+      if(fn==="MIN") return Math.min(...arr);
+      if(fn==="MAX") return Math.max(...arr);
+    });
+
+  // cell refs
+  expr=expr.replace(/[A-F][1-6]/g,m=>get(m));
+
+  return expr;
+}
+
+// recalc
+function recalc(){
+  for(const k in cache) delete cache[k];
+
+  document.querySelectorAll("input").forEach(inp=>{
+    const id=inp.dataset.id;
+    const raw=state[id]||"";
+    const val=get(id);
+
+    inp.classList.toggle("formula",isFormula(raw));
+
+    if(isFormula(raw)){
+      if(document.activeElement!==inp)
+        inp.value=val;
+    }else{
+      inp.value=raw;
+    }
+
+    inp.classList.toggle("err",val==="#ERR");
+  });
+}
+
+// init
+function reset(){
+  for(const k in init) state[k]=init[k];
+  for(let r=1;r<=ROWS;r++){
+    for(const c of COLS){
+      const k=c+r;
+      if(!(k in state)) state[k]="";
+    }
+  }
+  recalc();
+}
+
+document.getElementById("calc").onclick=recalc;
+document.getElementById("reset").onclick=reset;
+
+reset();
+})();
+</script>
+
+</body>
+</html>
