@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>WHILE Pseudocode Simulation</title>
+<style>
+  :root{
+    --bg:#0f172a; --card:#020617; --text:#e5e7eb; --muted:#94a3b8; --accent:#38bdf8;
+    --border:#334155;
+  }
+  *{ box-sizing:border-box; }
+  body{
+    margin:0; padding:20px;
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+  }
+  .wrap{ max-width:900px; margin:0 auto; display:grid; gap:16px; }
+  h2{ margin:0 0 8px; text-align:center; color:var(--accent); }
+  .grid{ display:grid; gap:16px; grid-template-columns: 1fr; }
+  @media (min-width: 860px){ .grid{ grid-template-columns: 1fr 1fr; } }
+  .card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:16px;
+  }
+  label{ display:block; margin-top:10px; color:var(--muted); font-size:14px; }
+  input, select, button{
+    width:100%;
+    padding:10px;
+    margin-top:6px;
+    border-radius:10px;
+    border:1px solid var(--border);
+    background:#0b1220;
+    color:var(--text);
+    outline:none;
+  }
+  button{
+    margin-top:14px;
+    border:none;
+    background:var(--accent);
+    color:#001018;
+    font-weight:700;
+    cursor:pointer;
+  }
+  button:hover{ filter:brightness(0.95); }
+  .hint{ color:var(--muted); font-size:13px; margin-top:8px; line-height:1.4; }
+  pre{
+    margin:0;
+    white-space:pre;
+    overflow:auto;
+    padding:12px;
+    border-radius:12px;
+    border:1px solid var(--border);
+    background:#0b1220;
+    color:#eaf1ff;
+    line-height:1.45;
+    font-size:14px;
+  }
+  .row{ display:flex; gap:10px; margin-top:12px; }
+  .row button{ width:auto; flex:1; }
+  .danger{ background:#ef4444; color:#0b0b0b; }
+  .danger:hover{ filter:brightness(0.95); }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <h2>WHILE Давталт — Pseudocode + Simulation</h2>
+
+  <div class="grid">
+    <!-- Controls -->
+    <div class="card">
+      <label>n:</label>
+      <input type="number" id="n" value="10" />
+
+      <label>i (эхлэх утга):</label>
+      <input type="number" id="i" value="1" />
+
+      <label>step:</label>
+      <input type="number" id="step" value="4" />
+
+      <label>Comparison operator:</label>
+      <select id="op">
+        <option value="<">&lt;</option>
+        <option value="<=">&lt;=</option>
+        <option value=">">&gt;</option>
+        <option value=">=">&gt;=</option>
+        <option value="!=">!=</option>
+      </select>
+
+      <div class="row">
+        <button id="runBtn">RUN</button>
+        <button class="danger" id="resetBtn">RESET</button>
+      </div>
+
+      <div class="hint">
+        ⚙️ Аль нэг утгыг өөрчлөх бүрт баруун талын <b>pseudocode</b> автоматаар шинэчлэгдэнэ.<br/>
+        ⚠️ step = 0 байвал i өөрчлөгдөхгүй тул infinite loop үүснэ.
+      </div>
+    </div>
+
+    <!-- Pseudocode -->
+    <div class="card">
+      <label style="margin-top:0">Pseudocode (live):</label>
+      <pre id="code"></pre>
+    </div>
+  </div>
+
+  <!-- Output -->
+  <div class="card">
+    <label style="margin-top:0">Output:</label>
+    <pre id="out"></pre>
+  </div>
+</div>
+
+<script>
+  const elN = document.getElementById("n");
+  const elI = document.getElementById("i");
+  const elStep = document.getElementById("step");
+  const elOp = document.getElementById("op");
+  const elCode = document.getElementById("code");
+  const elOut = document.getElementById("out");
+  const runBtn = document.getElementById("runBtn");
+  const resetBtn = document.getElementById("resetBtn");
+
+  function buildPseudocode(n, i, step, op){
+    return [
+      "START",
+      `\tn = ${n}`,
+      `\ti = ${i}`,
+      `\tstep = ${step}`,
+      "",
+      `\tWHILE i ${op} n DO`,
+      "\t\tPRINT i",
+      "\t\ti = i + step",
+      "\tEND WHILE",
+      "END"
+    ].join("\n");
+  }
+
+  function updateCode(){
+    const n = Number(elN.value);
+    const i = Number(elI.value);
+    const step = Number(elStep.value);
+    const op = elOp.value;
+    elCode.textContent = buildPseudocode(n, i, step, op);
+  }
+
+  function check(a, op, b){
+    switch(op){
+      case "<":  return a < b;
+      case "<=": return a <= b;
+      case ">":  return a > b;
+      case ">=": return a >= b;
+      case "!=": return a != b;
+    }
+  }
+
+  function run(){
+    const n = Number(elN.value);
+    let i = Number(elI.value);
+    const step = Number(elStep.value);
+    const op = elOp.value;
+
+    elOut.textContent = "";
+
+    if (!Number.isFinite(n) || !Number.isFinite(i) || !Number.isFinite(step)){
+      elOut.textContent = "⚠️ Зөвхөн тоо оруулна уу.";
+      return;
+    }
+
+    if (step === 0){
+      elOut.textContent = "⚠️ step = 0 тул i огт өөрчлөгдөхгүй (infinite loop үүснэ).";
+      return;
+    }
+
+    let guard = 0;
+    while(check(i, op, n)){
+      elOut.textContent += `PRINT → ${i}\n`;
+      i += step;
+      guard++;
+      if(guard > 1000){
+        elOut.textContent += "\n⚠️ Infinite loop байж магадгүй тул зогсоолоо (1000 алхам).";
+        break;
+      }
+    }
+    elOut.textContent += "\nEND WHILE";
+  }
+
+  function resetAll(){
+    elN.value = 10;
+    elI.value = 1;
+    elStep.value = 4;
+    elOp.value = "<";
+    elOut.textContent = "";
+    updateCode();
+  }
+
+  // Live update
+  [elN, elI, elStep, elOp].forEach(el => el.addEventListener("input", updateCode));
+  runBtn.addEventListener("click", run);
+  resetBtn.addEventListener("click", resetAll);
+
+  // init
+  updateCode();
+</script>
+
+</body>
+</html>
