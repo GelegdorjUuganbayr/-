@@ -7,7 +7,7 @@
 <style>
   :root{
     --bg:#0f172a; --card:#020617; --text:#e5e7eb; --muted:#94a3b8; --accent:#38bdf8;
-    --border:#334155;
+    --border:#334155; --accent2:#34d399; --warn:#fbbf24;
   }
   *{ box-sizing:border-box; }
   body{
@@ -16,10 +16,10 @@
     background: var(--bg);
     color: var(--text);
   }
-  .wrap{ max-width:900px; margin:0 auto; display:grid; gap:16px; }
+  .wrap{ max-width:1100px; margin:0 auto; display:grid; gap:16px; }
   h2{ margin:0 0 8px; text-align:center; color:var(--accent); }
   .grid{ display:grid; gap:16px; grid-template-columns: 1fr; }
-  @media (min-width: 860px){ .grid{ grid-template-columns: 1fr 1fr; } }
+  @media (min-width: 980px){ .grid{ grid-template-columns: 1fr 1fr; } }
   .card{
     background:var(--card);
     border:1px solid var(--border);
@@ -63,6 +63,54 @@
   .row button{ width:auto; flex:1; }
   .danger{ background:#ef4444; color:#0b0b0b; }
   .danger:hover{ filter:brightness(0.95); }
+
+  .tabs{ display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
+  .tabBtn{
+    width:auto;
+    padding:8px 10px;
+    border:1px solid var(--border);
+    background:#0b1220;
+    color:var(--text);
+    border-radius:999px;
+    cursor:pointer;
+    margin-top:0;
+    font-weight:600;
+  }
+  .tabBtn.active{
+    border-color:rgba(56,189,248,.7);
+    box-shadow:0 0 0 2px rgba(56,189,248,.15) inset;
+    color:#eaf1ff;
+  }
+
+  .sectionTitle{
+    display:flex; align-items:center; justify-content:space-between;
+    gap:10px; margin:0 0 10px;
+  }
+  .badge{
+    font-size:12px;
+    color:#001018;
+    background:var(--accent2);
+    padding:4px 10px;
+    border-radius:999px;
+    font-weight:800;
+  }
+  .pill{
+    font-size:12px;
+    color:#001018;
+    background:var(--warn);
+    padding:4px 10px;
+    border-radius:999px;
+    font-weight:800;
+  }
+
+  ol{ margin:0; padding-left:20px; }
+  li{ margin:10px 0; color:var(--text); }
+  li span{ color:var(--muted); }
+  .small{ font-size:13px; color:var(--muted); line-height:1.45; }
+  .twoCol{ display:grid; gap:16px; grid-template-columns: 1fr; }
+  @media (min-width: 980px){ .twoCol{ grid-template-columns: 1fr 1fr; } }
+
+  .mono{ font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
 </style>
 </head>
 <body>
@@ -70,63 +118,164 @@
 <div class="wrap">
   <h2>WHILE Давталт — Pseudocode + Simulation</h2>
 
-  <div class="grid">
-    <!-- Controls -->
+  <div class="twoCol">
+    <!-- LEFT: Controls -->
     <div class="card">
-      <label>n:</label>
-      <input type="number" id="n" value="10" />
-
-      <label>i (эхлэх утга):</label>
-      <input type="number" id="i" value="1" />
-
-      <label>step:</label>
-      <input type="number" id="step" value="4" />
-
-      <label>Comparison operator:</label>
-      <select id="op">
-        <option value="<">&lt;</option>
-        <option value="<=">&lt;=</option>
-        <option value=">">&gt;</option>
-        <option value=">=">&gt;=</option>
-        <option value="!=">!=</option>
-      </select>
-
-      <div class="row">
-        <button id="runBtn">RUN</button>
-        <button class="danger" id="resetBtn">RESET</button>
+      <div class="sectionTitle">
+        <div>
+          <div style="font-weight:800; font-size:16px;">Simulation сонгох</div>
+          <div class="small">Доороос simulation-аа сонгоод утгуудыг өөрчилж турш.</div>
+        </div>
+        <div class="badge">LIVE</div>
       </div>
 
-      <div class="hint">
-        ⚙️ Аль нэг утгыг өөрчлөх бүрт баруун талын <b>pseudocode</b> автоматаар шинэчлэгдэнэ.<br/>
-        ⚠️ step = 0 байвал i өөрчлөгдөхгүй тул infinite loop үүснэ.
+      <div class="tabs">
+        <button class="tabBtn active" id="tabGeneric">Generic WHILE</button>
+        <button class="tabBtn" id="tabFib">Fibonacci</button>
+      </div>
+
+      <!-- Generic controls -->
+      <div id="panelGeneric">
+        <label>n:</label>
+        <input type="number" id="n" value="10" />
+
+        <label>i (эхлэх утга):</label>
+        <input type="number" id="i" value="1" />
+
+        <label>step:</label>
+        <input type="number" id="step" value="4" />
+
+        <label>Comparison operator:</label>
+        <select id="op">
+          <option value="<">&lt;</option>
+          <option value="<=">&lt;=</option>
+          <option value=">">&gt;</option>
+          <option value=">=">&gt;=</option>
+          <option value="!=">!=</option>
+        </select>
+
+        <div class="row">
+          <button id="runBtn">RUN</button>
+          <button class="danger" id="resetBtn">RESET</button>
+        </div>
+
+        <div class="hint">
+          ⚙️ Аль нэг утгыг өөрчлөх бүрт баруун талын <b>pseudocode</b> автоматаар шинэчлэгдэнэ.<br/>
+          ⚠️ step = 0 байвал i өөрчлөгдөхгүй тул infinite loop үүснэ.
+        </div>
+      </div>
+
+      <!-- Fibonacci controls -->
+      <div id="panelFib" style="display:none;">
+        <label>n (эхний n гишүүн):</label>
+        <input type="number" id="fibN" value="8" min="1" />
+
+        <label>Эхний гишүүн (F1):</label>
+        <input type="number" id="fibA" value="0" />
+
+        <label>Хоёр дахь гишүүн (F2):</label>
+        <input type="number" id="fibB" value="1" />
+
+        <div class="row">
+          <button id="runFibBtn">RUN</button>
+          <button class="danger" id="resetFibBtn">RESET</button>
+        </div>
+
+        <div class="hint">
+          📌 Фибоначчийн дараалал: дараагийн гишүүн = өмнөх 2 гишүүний нийлбэр.<br/>
+          ⚠️ n маш их байвал (жиш: 5000) их урт output гарна.
+        </div>
       </div>
     </div>
 
-    <!-- Pseudocode -->
+    <!-- RIGHT: Pseudocode -->
     <div class="card">
-      <label style="margin-top:0">Pseudocode (live):</label>
+      <div class="sectionTitle">
+        <div style="font-weight:800; font-size:16px;">Pseudocode (live)</div>
+        <div class="pill" id="codeTag">GENERIC</div>
+      </div>
       <pre id="code"></pre>
     </div>
   </div>
 
+  <!-- Problems -->
+  <div class="card">
+    <div class="sectionTitle">
+      <div style="font-weight:800; font-size:16px;">Advanced бодлогууд (өгүүлбэр)</div>
+      <div class="badge">5</div>
+    </div>
+    <ol>
+      <li>
+        <b>Палиндром тоо шалгах</b><br/>
+        Нэг бүхэл эерэг тоо өгөгдөнө. Тухайн тооны цифрүүдийн дарааллыг эсрэгээр нь эргүүлэн бичнэ.
+        Хэрэв эргүүлж бичсэн тоо нь анхны тоотой яг ижил байвал уг тоог палиндром тоо гэж үзнэ.
+        Өгөгдсөн тоо палиндром мөн эсэхийг тодорхойлж үр дүнг хэвлэ.
+      </li>
+      <li>
+        <b>Хамгийн бага ерөнхий хуваагдагч (LCM) олох</b><br/>
+        Хоёр бүхэл эерэг тоо өгөгдөнө. Эдгээр хоёр тоонд хоёуланд нь үлдэгдэлгүй хуваагддаг
+        хамгийн бага эерэг бүхэл тоог олж хэвлэ.
+      </li>
+      <li>
+        <b>Хамгийн их ерөнхий хуваагч (GCD) олох</b><br/>
+        Хоёр бүхэл эерэг тоо өгөгдөнө. Эдгээр хоёр тоонд хоёуланд нь үлдэгдэлгүй хуваагддаг
+        хамгийн их бүхэл тоог олж хэвлэ.
+      </li>
+      <li>
+        <b>Тооны зэрэг бодох</b><br/>
+        Нэг бүхэл тоо <span class="mono">a</span> болон нэг бүхэл тоо <span class="mono">b</span> өгөгдөнө.
+        <span class="mono">a</span> тоог өөрөөр нь <span class="mono">b</span> удаа үржүүлсэн үр дүнг олж хэвлэ.
+      </li>
+      <li>
+        <b>Фибоначчийн дараалал</b><br/>
+        Нэг бүхэл эерэг тоо <span class="mono">n</span> өгөгдөнө. Фибоначчийн дарааллын эхний хоёр гишүүн нь
+        <span class="mono">0</span> ба <span class="mono">1</span> байна. Дараагийн гишүүн бүр нь өмнөх хоёр гишүүний
+        нийлбэртэй тэнцүү байна. Эхний <span class="mono">n</span> ширхэг гишүүнийг дарааллаар нь олж хэвлэ.
+        Гишүүн бүрийг зайгаар эсвэл шинэ мөрөөр тусгаарлан харуулна.
+      </li>
+    </ol>
+  </div>
+
   <!-- Output -->
   <div class="card">
-    <label style="margin-top:0">Output:</label>
+    <div class="sectionTitle">
+      <div style="font-weight:800; font-size:16px;">Output</div>
+      <div class="pill">RUN</div>
+    </div>
     <pre id="out"></pre>
   </div>
 </div>
 
 <script>
+  // ===== Elements =====
   const elN = document.getElementById("n");
   const elI = document.getElementById("i");
   const elStep = document.getElementById("step");
   const elOp = document.getElementById("op");
+
+  const elFibN = document.getElementById("fibN");
+  const elFibA = document.getElementById("fibA");
+  const elFibB = document.getElementById("fibB");
+
   const elCode = document.getElementById("code");
   const elOut = document.getElementById("out");
+  const codeTag = document.getElementById("codeTag");
+
   const runBtn = document.getElementById("runBtn");
   const resetBtn = document.getElementById("resetBtn");
+  const runFibBtn = document.getElementById("runFibBtn");
+  const resetFibBtn = document.getElementById("resetFibBtn");
 
-  function buildPseudocode(n, i, step, op){
+  const tabGeneric = document.getElementById("tabGeneric");
+  const tabFib = document.getElementById("tabFib");
+  const panelGeneric = document.getElementById("panelGeneric");
+  const panelFib = document.getElementById("panelFib");
+
+  // ===== State =====
+  let mode = "generic"; // "generic" | "fib"
+
+  // ===== Pseudocode builders =====
+  function buildPseudocode_Generic(n, i, step, op){
     return [
       "START",
       `\tn = ${n}`,
@@ -141,14 +290,28 @@
     ].join("\n");
   }
 
-  function updateCode(){
-    const n = Number(elN.value);
-    const i = Number(elI.value);
-    const step = Number(elStep.value);
-    const op = elOp.value;
-    elCode.textContent = buildPseudocode(n, i, step, op);
+  function buildPseudocode_Fib(n, a, b){
+    return [
+      "START",
+      `\tn = ${n}        // эхний n гишүүн`,
+      `\ta = ${a}        // эхний гишүүн`,
+      `\tb = ${b}        // хоёр дахь гишүүн`,
+      "\tcount = 1",
+      "",
+      "\tWHILE count <= n DO",
+      "\t\tPRINT a",
+      "",
+      "\t\ttemp = a + b",
+      "\t\ta = b",
+      "\t\tb = temp",
+      "",
+      "\t\tcount = count + 1",
+      "\tEND WHILE",
+      "END"
+    ].join("\n");
   }
 
+  // ===== Helpers =====
   function check(a, op, b){
     switch(op){
       case "<":  return a < b;
@@ -156,10 +319,50 @@
       case ">":  return a > b;
       case ">=": return a >= b;
       case "!=": return a != b;
+      default: return false;
     }
   }
 
-  function run(){
+  function setMode(nextMode){
+    mode = nextMode;
+
+    // Tabs UI
+    if(mode === "generic"){
+      tabGeneric.classList.add("active");
+      tabFib.classList.remove("active");
+      panelGeneric.style.display = "";
+      panelFib.style.display = "none";
+      codeTag.textContent = "GENERIC";
+      updateCode();
+      elOut.textContent = "";
+    } else {
+      tabFib.classList.add("active");
+      tabGeneric.classList.remove("active");
+      panelFib.style.display = "";
+      panelGeneric.style.display = "none";
+      codeTag.textContent = "FIBONACCI";
+      updateCode();
+      elOut.textContent = "";
+    }
+  }
+
+  function updateCode(){
+    if(mode === "generic"){
+      const n = Number(elN.value);
+      const i = Number(elI.value);
+      const step = Number(elStep.value);
+      const op = elOp.value;
+      elCode.textContent = buildPseudocode_Generic(n, i, step, op);
+    } else {
+      const n = Number(elFibN.value);
+      const a = Number(elFibA.value);
+      const b = Number(elFibB.value);
+      elCode.textContent = buildPseudocode_Fib(n, a, b);
+    }
+  }
+
+  // ===== Runs =====
+  function runGeneric(){
     const n = Number(elN.value);
     let i = Number(elI.value);
     const step = Number(elStep.value);
@@ -171,7 +374,6 @@
       elOut.textContent = "⚠️ Зөвхөн тоо оруулна уу.";
       return;
     }
-
     if (step === 0){
       elOut.textContent = "⚠️ step = 0 тул i огт өөрчлөгдөхгүй (infinite loop үүснэ).";
       return;
@@ -190,7 +392,43 @@
     elOut.textContent += "\nEND WHILE";
   }
 
-  function resetAll(){
+  function runFib(){
+    const n = Number(elFibN.value);
+    let a = Number(elFibA.value);
+    let b = Number(elFibB.value);
+
+    elOut.textContent = "";
+
+    if(!Number.isFinite(n) || !Number.isFinite(a) || !Number.isFinite(b)){
+      elOut.textContent = "⚠️ Зөвхөн тоо оруулна уу.";
+      return;
+    }
+    if(n <= 0){
+      elOut.textContent = "⚠️ n нь 1-ээс их байх ёстой.";
+      return;
+    }
+
+    let count = 1;
+    let guard = 0;
+
+    while(count <= n){
+      elOut.textContent += `PRINT → ${a}\n`;
+
+      const temp = a + b;
+      a = b;
+      b = temp;
+
+      count++;
+      guard++;
+      if(guard > 5000){
+        elOut.textContent += "\n⚠️ Хэт олон алхам тул зогсоолоо (5000 алхам).";
+        break;
+      }
+    }
+    elOut.textContent += "\nEND WHILE";
+  }
+
+  function resetGeneric(){
     elN.value = 10;
     elI.value = 1;
     elStep.value = 4;
@@ -199,13 +437,29 @@
     updateCode();
   }
 
-  // Live update
-  [elN, elI, elStep, elOp].forEach(el => el.addEventListener("input", updateCode));
-  runBtn.addEventListener("click", run);
-  resetBtn.addEventListener("click", resetAll);
+  function resetFib(){
+    elFibN.value = 8;
+    elFibA.value = 0;
+    elFibB.value = 1;
+    elOut.textContent = "";
+    updateCode();
+  }
+
+  // ===== Events =====
+  tabGeneric.addEventListener("click", () => setMode("generic"));
+  tabFib.addEventListener("click", () => setMode("fib"));
+
+  [elN, elI, elStep, elOp].forEach(el => el.addEventListener("input", () => { if(mode==="generic") updateCode(); }));
+  [elFibN, elFibA, elFibB].forEach(el => el.addEventListener("input", () => { if(mode==="fib") updateCode(); }));
+
+  runBtn.addEventListener("click", () => { setMode("generic"); runGeneric(); });
+  resetBtn.addEventListener("click", () => { setMode("generic"); resetGeneric(); });
+
+  runFibBtn.addEventListener("click", () => { setMode("fib"); runFib(); });
+  resetFibBtn.addEventListener("click", () => { setMode("fib"); resetFib(); });
 
   // init
-  updateCode();
+  setMode("generic");
 </script>
 
 </body>
