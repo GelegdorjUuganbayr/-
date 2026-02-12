@@ -130,8 +130,8 @@
       </div>
 
       <div class="tabs">
-        <button class="tabBtn active" id="tabGeneric">Generic WHILE</button>
-        <button class="tabBtn" id="tabFib">Fibonacci</button>
+        <button class="tabBtn active" id="tabGeneric" type="button">Generic WHILE</button>
+        <button class="tabBtn" id="tabFib" type="button">Fibonacci</button>
       </div>
 
       <!-- Generic controls -->
@@ -155,8 +155,8 @@
         </select>
 
         <div class="row">
-          <button id="runBtn">RUN</button>
-          <button class="danger" id="resetBtn">RESET</button>
+          <button id="runBtn" type="button">RUN</button>
+          <button class="danger" id="resetBtn" type="button">RESET</button>
         </div>
 
         <div class="hint">
@@ -177,8 +177,8 @@
         <input type="number" id="fibB" value="1" />
 
         <div class="row">
-          <button id="runFibBtn">RUN</button>
-          <button class="danger" id="resetFibBtn">RESET</button>
+          <button id="runFibBtn" type="button">RUN</button>
+          <button class="danger" id="resetFibBtn" type="button">RESET</button>
         </div>
 
         <div class="hint">
@@ -198,7 +198,16 @@
     </div>
   </div>
 
-  <!-- Problems -->
+  <!-- Output (Moved BEFORE Problems) -->
+  <div class="card">
+    <div class="sectionTitle">
+      <div style="font-weight:800; font-size:16px;">Output</div>
+      <div class="pill">RUN</div>
+    </div>
+    <pre id="out"></pre>
+  </div>
+
+  <!-- Problems (Moved AFTER Output) -->
   <div class="card">
     <div class="sectionTitle">
       <div style="font-weight:800; font-size:16px;">Advanced бодлогууд (өгүүлбэр)</div>
@@ -234,15 +243,6 @@
         Гишүүн бүрийг зайгаар эсвэл шинэ мөрөөр тусгаарлан харуулна.
       </li>
     </ol>
-  </div>
-
-  <!-- Output -->
-  <div class="card">
-    <div class="sectionTitle">
-      <div style="font-weight:800; font-size:16px;">Output</div>
-      <div class="pill">RUN</div>
-    </div>
-    <pre id="out"></pre>
   </div>
 </div>
 
