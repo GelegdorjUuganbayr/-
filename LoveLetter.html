@@ -1,94 +1,484 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="mn">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Happy Valentine's Day</title>
-<style>
-    body {
-        margin: 0;
-        height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        background: linear-gradient(135deg, #ff4e8a, #ff99cc);
-        font-family: Arial, sans-serif;
-        overflow: hidden;
-        text-align: center;
-        color: white;
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Гэгээн Валентины мэнд 💖</title>
+  <style>
+    :root{
+      --bg1:#1b0b1a;
+      --bg2:#3a0f2a;
+      --glass: rgba(255,255,255,.10);
+      --glass2: rgba(255,255,255,.16);
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.75);
+      --accent: #ff4d88;
+      --accent2:#ffb3c7;
+      --shadow: 0 18px 45px rgba(0,0,0,.38);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(900px 500px at 15% 15%, rgba(255,77,136,.24), transparent 55%),
+        radial-gradient(700px 450px at 85% 20%, rgba(255,179,199,.18), transparent 55%),
+        linear-gradient(135deg, var(--bg1), var(--bg2));
+      overflow:hidden;
     }
 
-    .card {
-        background: rgba(255,255,255,0.15);
-        padding: 40px;
-        border-radius: 20px;
-        backdrop-filter: blur(10px);
-        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    /* мягмарсан гэрэлтэх жижиг одод */
+    .sparkle{
+      position:absolute; inset:0;
+      background-image:
+        radial-gradient(2px 2px at 20% 30%, rgba(255,255,255,.55), transparent 60%),
+        radial-gradient(1px 1px at 70% 15%, rgba(255,255,255,.40), transparent 60%),
+        radial-gradient(1px 1px at 35% 80%, rgba(255,255,255,.35), transparent 60%),
+        radial-gradient(2px 2px at 85% 65%, rgba(255,255,255,.45), transparent 60%),
+        radial-gradient(1px 1px at 10% 70%, rgba(255,255,255,.30), transparent 60%);
+      opacity:.35;
+      animation: twinkle 6s ease-in-out infinite;
+      pointer-events:none;
+    }
+    @keyframes twinkle{
+      0%,100%{opacity:.25; transform:scale(1)}
+      50%{opacity:.45; transform:scale(1.02)}
     }
 
-    h1 {
-        font-size: 32px;
-        margin-bottom: 20px;
+    .wrap{
+      position:relative;
+      height:100%;
+      display:grid;
+      place-items:center;
+      padding:18px;
     }
 
-    button {
-        padding: 12px 25px;
-        font-size: 18px;
-        border: none;
-        border-radius: 30px;
-        cursor: pointer;
-        background: white;
-        color: #ff4e8a;
-        font-weight: bold;
-        transition: 0.3s;
+    .card{
+      width:min(720px, 92vw);
+      background: linear-gradient(180deg, var(--glass2), var(--glass));
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: 26px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+      padding: 28px 22px;
+      text-align:center;
+      position:relative;
+      overflow:hidden;
     }
 
-    button:hover {
-        transform: scale(1.1);
-        background: #ffe6f0;
+    .badge{
+      display:inline-flex;
+      gap:10px;
+      align-items:center;
+      padding:8px 14px;
+      border-radius:999px;
+      background: rgba(255,255,255,.10);
+      border:1px solid rgba(255,255,255,.14);
+      color:var(--muted);
+      font-size:14px;
+      letter-spacing:.3px;
+      margin-bottom:12px;
+    }
+    .pulse-dot{
+      width:10px;height:10px;border-radius:50%;
+      background: var(--accent);
+      box-shadow: 0 0 0 rgba(255,77,136,.6);
+      animation: pulse 1.6s infinite;
+    }
+    @keyframes pulse{
+      0%{box-shadow: 0 0 0 0 rgba(255,77,136,.55)}
+      70%{box-shadow: 0 0 0 16px rgba(255,77,136,0)}
+      100%{box-shadow: 0 0 0 0 rgba(255,77,136,0)}
     }
 
-    .heart {
-        position: absolute;
-        font-size: 24px;
-        animation: float 4s linear infinite;
+    h1{
+      margin: 4px 0 8px;
+      font-size: clamp(28px, 4vw, 44px);
+      line-height:1.12;
+      letter-spacing:.2px;
+    }
+    .name{
+      background: linear-gradient(90deg, #ffffff, var(--accent2));
+      -webkit-background-clip:text;
+      background-clip:text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 10px 30px rgba(255,179,199,.15);
     }
 
-    @keyframes float {
-        0% { transform: translateY(100vh); opacity: 1; }
-        100% { transform: translateY(-10vh); opacity: 0; }
+    p{
+      margin: 10px 0 0;
+      color: var(--muted);
+      font-size: clamp(14px, 2.2vw, 17px);
+      line-height:1.6;
     }
-</style>
+
+    .from{
+      margin-top: 14px;
+      font-size: 14px;
+      color: rgba(255,255,255,.8);
+    }
+    .from b{
+      color:#fff;
+    }
+
+    .controls{
+      margin-top: 18px;
+      display:flex;
+      gap:10px;
+      justify-content:center;
+      flex-wrap:wrap;
+    }
+    button{
+      border:none;
+      cursor:pointer;
+      padding: 12px 16px;
+      border-radius: 999px;
+      font-weight:700;
+      font-size: 15px;
+      transition: transform .15s ease, filter .2s ease, background .2s ease;
+      user-select:none;
+    }
+    .btn-primary{
+      background: linear-gradient(90deg, var(--accent), #ff2d6d);
+      color: white;
+      box-shadow: 0 12px 28px rgba(255,45,109,.25);
+    }
+    .btn-ghost{
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.16);
+      color: rgba(255,255,255,.9);
+    }
+    button:hover{ transform: translateY(-2px) scale(1.02); filter: brightness(1.03); }
+    button:active{ transform: translateY(0) scale(.99); }
+
+    .note{
+      margin-top: 14px;
+      font-size: 12.5px;
+      color: rgba(255,255,255,.70);
+    }
+
+    /* floating hearts */
+    .float{
+      position:absolute;
+      left:0; top:0;
+      width:100%;
+      height:100%;
+      pointer-events:none;
+      overflow:hidden;
+    }
+    .heart, .rose{
+      position:absolute;
+      bottom:-40px;
+      opacity:.95;
+      filter: drop-shadow(0 10px 16px rgba(0,0,0,.28));
+      animation: rise linear forwards;
+      will-change: transform, opacity;
+    }
+    @keyframes rise{
+      0%{ transform: translateY(0) translateX(0) rotate(0deg) scale(1); opacity: 0; }
+      10%{ opacity: .95; }
+      100%{ transform: translateY(-120vh) translateX(var(--drift)) rotate(var(--rot)) scale(var(--scale)); opacity: 0; }
+    }
+
+    /* big center heart */
+    .big-heart{
+      width: 120px;
+      height: 120px;
+      margin: 18px auto 0;
+      position: relative;
+      transform: rotate(-45deg);
+      background: linear-gradient(135deg, #ff2d6d, #ff7fb0);
+      border-radius: 18px;
+      box-shadow: 0 18px 55px rgba(255,45,109,.35);
+      animation: beat 1.35s infinite;
+    }
+    .big-heart::before,
+    .big-heart::after{
+      content:"";
+      position:absolute;
+      width:120px; height:120px;
+      border-radius:50%;
+      background: inherit;
+    }
+    .big-heart::before{ top:-60px; left:0; }
+    .big-heart::after{ left:60px; top:0; }
+    @keyframes beat{
+      0%,100%{ transform: rotate(-45deg) scale(1); }
+      50%{ transform: rotate(-45deg) scale(1.06); }
+    }
+
+    /* small rotating ribbon */
+    .ribbon{
+      position:absolute;
+      right:-40px; top:-40px;
+      width: 160px; height: 160px;
+      background: radial-gradient(circle at 30% 30%, rgba(255,179,199,.55), rgba(255,77,136,.12), transparent 70%);
+      transform: rotate(25deg);
+      border-radius: 50%;
+      filter: blur(0.2px);
+      opacity: .85;
+      pointer-events:none;
+    }
+
+    /* music hint */
+    .music-status{
+      margin-top:10px;
+      font-size: 13px;
+      color: rgba(255,255,255,.76);
+      display:flex;
+      justify-content:center;
+      gap:8px;
+      align-items:center;
+    }
+    .eq{
+      width:16px; height:12px; display:inline-flex; gap:2px;
+      align-items:flex-end;
+    }
+    .eq span{
+      width:3px;
+      height:30%;
+      background: rgba(255,255,255,.75);
+      border-radius:3px;
+      animation: eq 1s infinite;
+      opacity:.9;
+    }
+    .eq span:nth-child(2){animation-delay:.15s}
+    .eq span:nth-child(3){animation-delay:.3s}
+    @keyframes eq{
+      0%,100%{height:30%}
+      50%{height:100%}
+    }
+
+    /* little line at bottom */
+    .footer{
+      position:absolute;
+      left:0; right:0; bottom:14px;
+      text-align:center;
+      font-size:12px;
+      color: rgba(255,255,255,.55);
+      pointer-events:none;
+    }
+    a{ color: rgba(255,255,255,.8); }
+  </style>
 </head>
 <body>
+  <div class="sparkle"></div>
+  <div class="float" id="floatLayer"></div>
 
-<div class="card">
-    <h1>Happy Valentine's Day 💖<br>Oyunjargal</h1>
-    <p>From Uuganbayar with love ❤️</p>
-    <button onclick="showMessage()">Click Me</button>
-</div>
+  <div class="wrap">
+    <div class="card">
+      <div class="ribbon"></div>
+
+      <div class="badge">
+        <span class="pulse-dot"></span>
+        <span>Гэгээн Валентины мэнд 💝</span>
+      </div>
+
+      <h1>
+        <span class="name">Оюунжаргал</span> аа,<br/>
+        Чи миний зүрхний хамгийн дулаан мэдрэмж 💖
+      </h1>
+
+      <p id="msg">
+        Энэ өдөр чамд хэлэх үг минь нэг л өгүүлбэрт багтана: <b>“Чамтай хамт байхдаа би амар амгаланг мэдэрдэг.”</b><br/>
+        Дурсамж бүр минь чамаар дүүрэн байг.
+      </p>
+
+      <div class="big-heart" aria-hidden="true"></div>
+
+      <div class="from">
+        Хайраар дүүрэн мэндчилгээ — <b>Ууганбаяр</b> 💌
+      </div>
+
+      <div class="controls">
+        <button class="btn-primary" id="btnLove">💖 Мэндчилгээ асаах</button>
+        <button class="btn-ghost" id="btnMusic">🎵 Хөгжим тоглуулах</button>
+        <button class="btn-ghost" id="btnMore">🌹 Илүү романтик үг</button>
+      </div>
+
+      <div class="music-status" id="musicStatus" style="display:none;">
+        <div class="eq" aria-hidden="true"><span></span><span></span><span></span></div>
+        <span>Хөгжим тоглож байна…</span>
+      </div>
+
+      <div class="note">
+        *Хөгжим зарим утсанд зөвхөн <b>товч дарсны дараа</b> тоглодог шүү 🙂*
+      </div>
+    </div>
+
+    <div class="footer">Made with ❤️ for Оюунжаргал — from Ууганбаяр</div>
+  </div>
 
 <script>
-function showMessage() {
-    alert("Oyunjargal, you make my world brighter every day! 💕");
-    createHearts();
-}
+  const floatLayer = document.getElementById("floatLayer");
+  const btnLove = document.getElementById("btnLove");
+  const btnMusic = document.getElementById("btnMusic");
+  const btnMore = document.getElementById("btnMore");
+  const msg = document.getElementById("msg");
+  const musicStatus = document.getElementById("musicStatus");
 
-function createHearts() {
-    for(let i = 0; i < 30; i++) {
-        let heart = document.createElement("div");
-        heart.innerHTML = "💖";
-        heart.className = "heart";
-        heart.style.left = Math.random() * 100 + "vw";
-        heart.style.animationDuration = (Math.random() * 2 + 3) + "s";
-        document.body.appendChild(heart);
+  // ---- Romantic messages (Mongolian) ----
+  const messages = [
+    "Оюунжаргал аа, чи миний өдөр бүрийн хамгийн гоё шалтгаан. 💖",
+    "Чиний инээмсэглэл миний бүх ядаргааг мартуулдаг. 🌙✨",
+    "Чамайг бодох бүрд миний зүрх “баярлалаа” гэж хэлдэг. 💞",
+    "Чи миний амар амгалан, миний мөрөөдөл, миний хайр. 🌹",
+    "Өнөөдөр төдийгүй өдөр бүр чамд хайртайгаа хэлмээр байна. 💌",
+    "Чамтай хамт байхдаа цаг хүртэл зөөлөн урсдаг юм шиг санагддаг. 💫"
+  ];
+  let msgIndex = 0;
 
-        setTimeout(() => {
-            heart.remove();
-        }, 4000);
+  // ---- Floating hearts & roses ----
+  function spawnEmoji(symbol, count = 18){
+    for(let i=0;i<count;i++){
+      const el = document.createElement("div");
+      el.className = symbol === "🌹" ? "rose" : "heart";
+      el.textContent = symbol;
+
+      const left = Math.random()*100;
+      const size = Math.random()*22 + 18; // 18..40px
+      const dur  = Math.random()*2.5 + 4.0; // 4..6.5s
+      const drift = (Math.random()*160 - 80).toFixed(0) + "px";
+      const rot = (Math.random()*120 - 60).toFixed(0) + "deg";
+      const scale = (Math.random()*0.6 + 0.8).toFixed(2);
+
+      el.style.left = left + "vw";
+      el.style.fontSize = size + "px";
+      el.style.animationDuration = dur + "s";
+      el.style.setProperty("--drift", drift);
+      el.style.setProperty("--rot", rot);
+      el.style.setProperty("--scale", scale);
+
+      floatLayer.appendChild(el);
+      setTimeout(()=> el.remove(), dur*1000 + 200);
     }
-}
-</script>
+  }
 
+  // ---- Music: gentle oscillator chord ----
+  // Works offline, no external mp3 needed.
+  let audioCtx = null;
+  let master = null;
+  let playing = false;
+  let nodes = [];
+
+  function startMusic(){
+    if(playing) return;
+
+    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+    master = audioCtx.createGain();
+    master.gain.value = 0.0001;
+    master.connect(audioCtx.destination);
+
+    // soft fade-in
+    master.gain.exponentialRampToValueAtTime(0.10, audioCtx.currentTime + 1.2);
+
+    // chord progression (frequencies in Hz) - gentle romantic pad
+    const chords = [
+      [261.63, 329.63, 392.00], // C
+      [220.00, 277.18, 329.63], // Am
+      [196.00, 246.94, 293.66], // G
+      [174.61, 220.00, 261.63], // F
+    ];
+
+    let step = 0;
+    const chordDur = 2.8; // seconds
+
+    function playChord(ch){
+      // clear old
+      nodes.forEach(n => { try{ n.stop(); }catch(e){} });
+      nodes = [];
+
+      ch.forEach(freq=>{
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = "sine";
+        osc.frequency.value = freq;
+
+        // subtle vibrato
+        const lfo = audioCtx.createOscillator();
+        const lfoGain = audioCtx.createGain();
+        lfo.type = "sine";
+        lfo.frequency.value = 5.2;
+        lfoGain.gain.value = 3.0; // Hz
+        lfo.connect(lfoGain);
+        lfoGain.connect(osc.frequency);
+
+        // envelope
+        gain.gain.value = 0.0001;
+        gain.gain.exponentialRampToValueAtTime(0.06, audioCtx.currentTime + 0.25);
+        gain.gain.exponentialRampToValueAtTime(0.02, audioCtx.currentTime + chordDur - 0.15);
+
+        osc.connect(gain);
+        gain.connect(master);
+
+        osc.start();
+        lfo.start();
+
+        nodes.push(osc, lfo);
+      });
+    }
+
+    playChord(chords[step]);
+
+    const interval = setInterval(()=>{
+      if(!playing){
+        clearInterval(interval);
+        return;
+      }
+      step = (step + 1) % chords.length;
+      playChord(chords[step]);
+    }, chordDur * 1000);
+
+    playing = true;
+    musicStatus.style.display = "flex";
+    btnMusic.textContent = "⏸️ Хөгжим зогсоох";
+  }
+
+  function stopMusic(){
+    if(!playing) return;
+    playing = false;
+
+    if(master && audioCtx){
+      // fade out quickly
+      master.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.6);
+    }
+
+    setTimeout(()=>{
+      nodes.forEach(n => { try{ n.stop(); }catch(e){} });
+      nodes = [];
+      musicStatus.style.display = "none";
+      btnMusic.textContent = "🎵 Хөгжим тоглуулах";
+    }, 650);
+  }
+
+  // ---- Button actions ----
+  btnLove.addEventListener("click", ()=>{
+    // start a bigger burst of hearts and roses
+    spawnEmoji("💖", 22);
+    spawnEmoji("🌹", 12);
+    // also try to start music (allowed only after user gesture)
+    if(!playing) startMusic();
+  });
+
+  btnMusic.addEventListener("click", ()=>{
+    if(!playing) startMusic();
+    else stopMusic();
+  });
+
+  btnMore.addEventListener("click", ()=>{
+    msgIndex = (msgIndex + 1) % messages.length;
+    msg.innerHTML = messages[msgIndex];
+    spawnEmoji("🌹", 10);
+    spawnEmoji("💖", 10);
+  });
+
+  // gentle background drift hearts occasionally
+  setInterval(()=> {
+    spawnEmoji(Math.random() < 0.6 ? "💖" : "🌹", 5);
+  }, 1800);
+
+</script>
 </body>
 </html>
