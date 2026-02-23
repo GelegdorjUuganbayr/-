@@ -1,0 +1,888 @@
+<!doctype html>
+<html lang="mn">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>2.3 Databases — Дэвтэрт төвлөрсөн Interactive Хичээл (өргөтгөсөн онол)</title>
+  <style>
+    :root{
+      --bg:#0b1220;
+      --card:#0f1a2f;
+      --text:#eaf1ff;
+      --muted:#a9b7d0;
+      --border:rgba(255,255,255,.14);
+      --accent:#7dd3fc;
+      --accent2:#34d399;
+      --warn:#fbbf24;
+      --bad:#fb7185;
+    }
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: radial-gradient(1100px 700px at 20% 0%, #142040 0%, var(--bg) 55%);
+      color:var(--text);
+      line-height:1.5;
+    }
+    header{
+      padding:18px 16px 8px;
+      border-bottom:1px solid var(--border);
+      background: linear-gradient(180deg, rgba(125,211,252,.12), transparent);
+    }
+    .wrap{ max-width:1100px; margin:0 auto; padding:16px; }
+    .title{
+      display:flex; gap:12px; align-items:flex-start; justify-content:space-between; flex-wrap:wrap;
+    }
+    h1{ margin:0; font-size:20px; letter-spacing:.2px; }
+    .sub{ margin:6px 0 0; color:var(--muted); font-size:13px; max-width:78ch; }
+    .pillrow{ display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
+    .pill{
+      font-size:12px; color:var(--muted);
+      border:1px solid var(--border);
+      padding:6px 10px; border-radius:999px;
+      background: rgba(255,255,255,.04);
+    }
+    .grid{
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap:14px;
+      margin-top:14px;
+    }
+    @media (max-width: 920px){ .grid{ grid-template-columns: 1fr; } }
+    .card{
+      border:1px solid var(--border);
+      background: rgba(15,26,47,.92);
+      border-radius:16px;
+      padding:14px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.25);
+    }
+    .card h2{
+      margin:0 0 10px;
+      font-size:16px;
+      color:var(--accent);
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .card h3{ margin:14px 0 8px; font-size:14px; color:var(--accent2); }
+    .muted{ color:var(--muted); }
+    .mini{
+      font-size:12.5px;
+      color:var(--muted);
+      border:1px dashed rgba(255,255,255,.2);
+      padding:10px;
+      border-radius:12px;
+      background: rgba(0,0,0,.15);
+    }
+    .note{
+      font-size:13px;
+      padding:10px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.04);
+    }
+    .note strong{ color: var(--accent); }
+    .dangerline{
+      margin-top:8px;
+      border-left:3px solid rgba(251,113,133,.55);
+      padding:10px;
+      color: #ffd3db;
+      background: rgba(251,113,133,.06);
+      border-radius:12px;
+      font-size:13px;
+    }
+    .warnline{
+      margin-top:8px;
+      border-left:3px solid rgba(251,191,36,.55);
+      padding:10px;
+      color: #fff7d6;
+      background: rgba(251,191,36,.06);
+      border-radius:12px;
+      font-size:13px;
+    }
+    .goodline{
+      margin-top:8px;
+      border-left:3px solid rgba(34,197,94,.55);
+      padding:10px;
+      color: #d8ffe8;
+      background: rgba(34,197,94,.06);
+      border-radius:12px;
+      font-size:13px;
+    }
+    .row{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+    .btn{
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.06);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:12px;
+      cursor:pointer;
+      font-weight:600;
+      transition:.15s transform, .15s background;
+      user-select:none;
+    }
+    .btn:hover{ background: rgba(255,255,255,.09); transform: translateY(-1px); }
+    .btn:active{ transform: translateY(0); }
+    .btn.primary{ border-color: rgba(125,211,252,.35); background: rgba(125,211,252,.12); }
+    .btn.small{ padding:8px 10px; border-radius:10px; font-size:13px; }
+    .kbd{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size:12px;
+      padding:2px 6px;
+      border-radius:8px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.05);
+      white-space:nowrap;
+    }
+    details{
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:10px 12px;
+      background: rgba(255,255,255,.04);
+      margin-top:10px;
+    }
+    details > summary{
+      cursor:pointer;
+      font-weight:700;
+      list-style:none;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+    details > summary::-webkit-details-marker { display:none; }
+    .split{ display:grid; grid-template-columns: 1fr 1fr; gap:12px; }
+    @media (max-width: 680px){ .split{ grid-template-columns: 1fr; } }
+    table{
+      width:100%;
+      border-collapse: collapse;
+      overflow:hidden;
+      border-radius:12px;
+      border:1px solid var(--border);
+      background: rgba(0,0,0,.12);
+    }
+    th, td{
+      padding:10px;
+      border-bottom:1px solid rgba(255,255,255,.08);
+      font-size:13px;
+      text-align:left;
+      vertical-align:top;
+    }
+    th{
+      font-size:12px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing:.06em;
+      background: rgba(255,255,255,.03);
+    }
+    tr:last-child td{ border-bottom:none; }
+    .tag{
+      font-size:12px;
+      padding:3px 8px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      color:var(--muted);
+      background: rgba(255,255,255,.03);
+      display:inline-block;
+    }
+    .hr{ height:1px; background: var(--border); margin:12px 0; }
+    .inputs{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+      margin-top:8px;
+    }
+    @media (max-width: 520px){ .inputs{ grid-template-columns: 1fr; } }
+    label{ font-size:12px; color:var(--muted); display:block; margin-bottom:6px; }
+    input, select, textarea{
+      width:100%;
+      padding:10px;
+      border-radius:12px;
+      border:1px solid var(--border);
+      background: rgba(0,0,0,.18);
+      color: var(--text);
+      outline: none;
+    }
+    textarea{ min-height:90px; resize: vertical; }
+    .status{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; font-size:13px; color:var(--muted); }
+    .dot{
+      width:10px; height:10px; border-radius:50%;
+      background: rgba(255,255,255,.25);
+      border:1px solid rgba(255,255,255,.2);
+    }
+    .dot.good{ background: rgba(34,197,94,.65); border-color: rgba(34,197,94,.75); }
+    .dot.bad{ background: rgba(251,113,133,.65); border-color: rgba(251,113,133,.75); }
+    .dot.warn{ background: rgba(251,191,36,.65); border-color: rgba(251,191,36,.75); }
+    .mono{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size:12px;
+      white-space:pre-wrap;
+      background: rgba(0,0,0,.25);
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:14px;
+      padding:10px;
+      color: #e7f1ff;
+    }
+    @media print{
+      body{ background:#fff; color:#000; }
+      header{ background:none; border-bottom:1px solid #ddd; }
+      .card{ box-shadow:none; background:#fff; border:1px solid #ddd; }
+      .btn{ display:none; }
+      .mono{ background:#f7f7f7; color:#000; border:1px solid #ddd; }
+      .pill, .tag{ border:1px solid #ddd; background:#f7f7f7; color:#333; }
+      input, select, textarea{ border:1px solid #ccc; color:#000; background:#fff; }
+      .dangerline,.warnline,.goodline{ border-left-color:#999; background:#f7f7f7; color:#000; }
+      details{ border:1px solid #ddd; background:#fff; }
+    }
+  </style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="title">
+      <div>
+        <h1>2.3 Databases — Interactive (өргөтгөсөн онол + дэвтэр + simulator)</h1>
+        <p class="sub">
+          Энэ хувилбар дээр <b>datatype</b>-ийг эхлээд маш ойлгомжтой тайлбарлаад, тэгээд л дасгал асууж байна.
+          Мөн “хэт их hint” өгөхөөс зайлсхийж, <span class="kbd">Өөрийгөө шалгах</span> хэсгийг нуугдмал байлгасан.
+        </p>
+        <div class="pillrow">
+          <span class="pill">Field = багана</span>
+          <span class="pill">Record = мөр</span>
+          <span class="pill">Data type = төрлийн дүрэм</span>
+          <span class="pill">Primary key = давтагдашгүй</span>
+          <span class="pill">Query = шүүлт/хайлт</span>
+        </div>
+      </div>
+      <div class="row">
+        <button class="btn primary" id="btnPrint">🖨️ Хэвлэх</button>
+        <button class="btn" id="btnReset">↩️ Reset</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="grid">
+    <!-- LEFT: THEORY + NOTEBOOK -->
+    <section class="card">
+      <h2>1) Онол (ойлгомжтой, жишээтэй) <span class="tag">Read → Write</span></h2>
+
+      <div class="note">
+        <strong>Database</strong> бол нэг төрлийн мэдээллийг хүснэгт хэлбэрээр хадгалсан зүйл.
+        Хүснэгт нь:
+        <ul>
+          <li><b>Field (Column / Багана)</b>: нэг төрлийн мэдээлэл. Жишээ: “Age” баганад зөвхөн нас.</li>
+          <li><b>Record (Row / Мөр)</b>: нэг хүний/нэг тоглоомын бүтэн мэдээлэл. Жишээ: “Bat + 12 + UB”.</li>
+        </ul>
+      </div>
+
+      <h3>1.1 Data type гэж юу вэ?</h3>
+      <div class="note">
+        <strong>Data type</strong> = “энэ баганад ямар төрлийн зүйл бичих вэ?” гэсэн дүрэм.
+        Жишээ нь:
+        <ul>
+          <li><b>Number (тоон төрөл)</b>: 3, 12, 150 гэх мэт. Тооцоо/харьцуулалт хийж болно (<span class="kbd">&gt;</span> <span class="kbd">&lt;</span>).</li>
+          <li><b>Text (үсэг/текст)</b>: “puzzle”, “UB”, “Bill &amp; Betty” гэх мэт.</li>
+        </ul>
+        <div class="warnline">
+          Яагаад type хэрэгтэй вэ?<br>
+          Хэрвээ Age талбарт “twelve” гэж бичээд байвал <span class="kbd">Age &gt; 10</span> гэх query буруу ажиллана.
+        </div>
+      </div>
+
+      <div class="split">
+        <div>
+          <table aria-label="Datatype examples">
+            <thead><tr><th>Field</th><th>Зөв төрөл</th><th>Жишээ</th></tr></thead>
+            <tbody>
+              <tr><td>Age</td><td>Number</td><td>12</td></tr>
+              <tr><td>Height</td><td>Number</td><td>1.45</td></tr>
+              <tr><td>Game name</td><td>Text</td><td>Work It Out</td></tr>
+              <tr><td>Genre</td><td>Text</td><td>puzzle</td></tr>
+              <tr><td>Player number</td><td>Number</td><td>5</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="mini">
+          <b>Санамж:</b><br>
+          • “Number” бол тоо учраас <span class="kbd">&gt; &lt; =</span> ашиглаад хайж болно.<br>
+          • “Text” дээр бас <span class="kbd">&gt; &lt;</span> ашиглаж болно (үсгийн дараалал: A→Z).<br>
+          • Phrase search хийх үед ихэнх DB дээр <span class="kbd">" "</span> хэрэгтэй: Genre="puzzle".
+        </div>
+      </div>
+
+      <h3>Дэвтэрийн дасгал A — Data type сонгох</h3>
+      <p class="muted">Доорх field бүрт “Number” эсвэл “Text” гэж бич.</p>
+      <ol>
+        <li>Name</li>
+        <li>Age</li>
+        <li>Eye colour</li>
+        <li>Number of pets</li>
+        <li>Game name</li>
+        <li>Age rating</li>
+      </ol>
+
+      <details>
+        <summary>Өөрийгөө шалгах <span class="kbd">open</span></summary>
+        <div class="goodline">
+          Name=Text, Age=Number, Eye colour=Text, Number of pets=Number, Game name=Text, Age rating=Number.
+        </div>
+      </details>
+
+      <h3>1.2 Primary key гэж юу вэ?</h3>
+      <div class="note">
+        <strong>Primary key</strong> = record бүрийг ялгах <b>давтагдашгүй</b> утга.
+        Жишээ: StudentID, GameCode, PlayerNumber.
+        <div class="dangerline">
+          Primary key давтагдвал хоёр өөр record-ийг ялгаж чадахгүй → database буруу болно.
+        </div>
+      </div>
+
+      <h3>Дэвтэрийн дасгал B — Field / Record</h3>
+      <table aria-label="Exercise Field Record">
+        <thead><tr><th>Name</th><th>Age</th><th>City</th></tr></thead>
+        <tbody>
+          <tr><td>Bat</td><td>12</td><td>UB</td></tr>
+          <tr><td>Sara</td><td>13</td><td>Darkhan</td></tr>
+          <tr><td>Tom</td><td>12</td><td>UB</td></tr>
+        </tbody>
+      </table>
+      <ol>
+        <li>Нэг field нэрлэ.</li>
+        <li>Нэг record нэрлэ.</li>
+      </ol>
+
+      <details>
+        <summary>Өөрийгөө шалгах <span class="kbd">open</span></summary>
+        <div class="goodline">Field жишээ: Name. Record жишээ: “Sara, 13, Darkhan”.</div>
+      </details>
+
+      <h3>1.3 Query гэж юу вэ?</h3>
+      <div class="note">
+        <strong>Query</strong> = “ямар record-уудыг гаргаж ирэх вэ?” гэсэн хайлтын дүрэм.
+        <ul>
+          <li><b>Number query:</b> Age &gt; 10</li>
+          <li><b>Text query:</b> Genre = "puzzle"</li>
+          <li><b>Text (үсгийн дараалал):</b> Name &lt; "D" → D-ээс өмнөх үсгээр эхэлсэн нэрс</li>
+        </ul>
+      </div>
+
+      <h3>Дэвтэрийн дасгал C — Query бодоод “үр дүнг” бич</h3>
+      <table aria-label="Exercise Query">
+        <thead><tr><th>Name</th><th>Age</th></tr></thead>
+        <tbody>
+          <tr><td>Bat</td><td>10</td></tr>
+          <tr><td>Sara</td><td>15</td></tr>
+          <tr><td>Tom</td><td>12</td></tr>
+        </tbody>
+      </table>
+      <ol>
+        <li><span class="kbd">Age &gt; 11</span> → ямар мөрүүд?</li>
+        <li><span class="kbd">Age = 10</span> → ямар мөр?</li>
+        <li><span class="kbd">Name &lt; "T"</span> → ямар мөрүүд?</li>
+      </ol>
+
+      <details>
+        <summary>Өөрийгөө шалгах <span class="kbd">open</span></summary>
+        <div class="goodline">
+          Age&gt;11 → Sara, Tom. Age=10 → Bat. Name&lt;"T" → Bat, Sara (T-ээс өмнө).
+        </div>
+      </details>
+
+      <h3>Дэвтэрийн дасгал D — Computer games дээр phrase search</h3>
+      <table aria-label="Computer Games">
+        <thead><tr><th>Game name</th><th>Age rating</th><th>Genre</th></tr></thead>
+        <tbody>
+          <tr><td>Bill &amp; Betty</td><td>12</td><td>2D platform</td></tr>
+          <tr><td>Build Blocks</td><td>3</td><td>arcade</td></tr>
+          <tr><td>Ping Pong</td><td>3</td><td>arcade</td></tr>
+          <tr><td>Puzzle Place</td><td>8</td><td>puzzle</td></tr>
+          <tr><td>Super Adventurer</td><td>12</td><td>2D platform</td></tr>
+          <tr><td>Blocks Super Build</td><td>3</td><td>puzzle</td></tr>
+          <tr><td>The Great Race</td><td>3</td><td>racing</td></tr>
+          <tr><td>Work It Out</td><td>8</td><td>puzzle</td></tr>
+        </tbody>
+      </table>
+      <ol>
+        <li>“puzzle” төрлийг хайх query-г цаасан дээрээ бич. (Field + criteria)</li>
+        <li><span class="kbd">"Work It Out"</span> → ямар record?</li>
+        <li><span class="kbd">"Super"</span> → ямар record-ууд?</li>
+      </ol>
+
+      <details>
+        <summary>Өөрийгөө шалгах <span class="kbd">open</span></summary>
+        <div class="goodline">
+          Puzzle query: Genre = "puzzle".<br>
+          "Work It Out" → Work It Out мөр.<br>
+          "Super" → Super Adventurer, Blocks Super Build.
+        </div>
+      </details>
+
+      <h3>Challenge (hintгүй)</h3>
+      <ol>
+        <li>Age нь 5-аас доош тоглоомын query бич.</li>
+        <li>Game name нь A, B, C-ээр эхэлсэн тоглоомын query бич.</li>
+      </ol>
+    </section>
+
+    <!-- RIGHT: SIMULATOR -->
+    <aside class="card" id="sim">
+      <h2>2) Mini Database Simulator <span class="tag">Try after notebook</span></h2>
+      <div class="mini">
+        Энд зөвхөн туршиж шалгана. Эхлээд <b>дэвтэр дээрээ бод</b> → дараа нь энд run хий.
+      </div>
+
+      <div class="hr"></div>
+
+      <div class="row">
+        <button class="btn primary small" id="loadGames">🎮 Computer games өгөгдөл</button>
+        <button class="btn small" id="loadZoo">🦒 Zoo template</button>
+        <button class="btn small" id="clearAll">🧹 Цэвэрлэх</button>
+      </div>
+
+      <h3>2.1 Table бүтэц</h3>
+      <div class="inputs">
+        <div>
+          <label>Fields (таслалаар салга)</label>
+          <input id="fieldsInput" value="Game name,Age,Genre" />
+        </div>
+        <div>
+          <label>Primary key field</label>
+          <select id="pkSelect"></select>
+        </div>
+      </div>
+
+      <div class="row" style="margin-top:10px;">
+        <button class="btn primary small" id="applyFields">✅ Structure apply</button>
+        <button class="btn small" id="checkPK">🔑 PK давхардал шалгах</button>
+      </div>
+
+      <div class="status" style="margin-top:10px;">
+        <span class="dot" id="pkDot"></span>
+        <span id="pkStatus" class="muted">PK status: (structure apply хийсний дараа шалгаарай)</span>
+      </div>
+
+      <h3>2.2 Record нэмэх</h3>
+      <div id="addRowArea"></div>
+      <div class="row" style="margin-top:10px;">
+        <button class="btn primary small" id="addRecordBtn">➕ Add record</button>
+        <button class="btn small" id="deleteLastBtn">🗑️ Сүүлийн мөр устгах</button>
+      </div>
+
+      <h3>2.3 Query</h3>
+      <div class="inputs">
+        <div>
+          <label>Field</label>
+          <select id="qField"></select>
+        </div>
+        <div>
+          <label>Operator</label>
+          <select id="qOp">
+            <option value="=">=</option>
+            <option value=">">&gt;</option>
+            <option value="<">&lt;</option>
+            <option value="contains">contains (text)</option>
+            <option value="starts">starts with (text)</option>
+          </select>
+        </div>
+      </div>
+      <div class="inputs">
+        <div style="grid-column:1/-1">
+          <label>Value</label>
+          <input id="qVal" placeholder="Жишээ: 10 | puzzle | Super" />
+        </div>
+      </div>
+
+      <div class="row" style="margin-top:10px;">
+        <button class="btn primary small" id="runQuery">▶️ Run query</button>
+        <button class="btn small" id="resetQuery">↩️ Reset query</button>
+      </div>
+
+      <div class="hr"></div>
+
+      <h3>Үр дүн</h3>
+      <div class="status">
+        <span class="tag" id="countTag">0 record</span>
+        <span class="muted" id="lastQueryText">Query: (run хийээгүй)</span>
+      </div>
+
+      <div style="margin-top:10px;">
+        <table id="dataTable" aria-label="Data table"></table>
+      </div>
+
+      <h3 style="margin-top:14px;">Цаасан дээр бичих хэлбэр</h3>
+      <div class="mono" id="paperQuery">Age > 10</div>
+
+      <details>
+        <summary>Жижиг санамж (хэт hint биш) <span class="kbd">open</span></summary>
+        <div class="warnline">
+          Access дээр Text query хийхдээ ихэвчлэн <b>" "</b> хэрэглэнэ: Genre = "puzzle".<br>
+          Simulator дээр харин text гэдгийг автоматаар ойлгоно.
+        </div>
+      </details>
+    </aside>
+  </div>
+
+  <section class="card" style="margin-top:14px;">
+    <h2>3) Бие даалт (дэвтэр дээр) <span class="tag">10 record</span></h2>
+    <ol>
+      <li>Fields: <b>ID, Name, Age, Height, Eye colour, Pets</b> гэж хүснэгт зур.</li>
+      <li>10 record өөрөө зохиож бөглө.</li>
+      <li>Primary key-г сонго (ихэвчлэн ID).</li>
+      <li>Доорх query-үүдийг цаасан дээр бичээд ямар record гарахыг тэмдэглэ:
+        <ul>
+          <li>Age &gt; 11</li>
+          <li>Height &lt;= 1.45</li>
+          <li>Eye colour &lt; "D" (A–C)</li>
+          <li>Pets &gt;= 2</li>
+          <li>Pets = 0</li>
+        </ul>
+      </li>
+    </ol>
+  </section>
+</div>
+
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+
+  const btnPrint = $("btnPrint");
+  const btnReset = $("btnReset");
+
+  const fieldsInput = $("fieldsInput");
+  const pkSelect = $("pkSelect");
+  const pkDot = $("pkDot");
+  const pkStatus = $("pkStatus");
+
+  const addRowArea = $("addRowArea");
+  const addRecordBtn = $("addRecordBtn");
+  const deleteLastBtn = $("deleteLastBtn");
+
+  const qField = $("qField");
+  const qOp = $("qOp");
+  const qVal = $("qVal");
+  const runQuery = $("runQuery");
+  const resetQuery = $("resetQuery");
+
+  const applyFields = $("applyFields");
+  const checkPK = $("checkPK");
+  const dataTable = $("dataTable");
+  const countTag = $("countTag");
+  const lastQueryText = $("lastQueryText");
+  const paperQuery = $("paperQuery");
+
+  const loadGames = $("loadGames");
+  const loadZoo = $("loadZoo");
+  const clearAll = $("clearAll");
+
+  // State
+  let fields = ["Game name","Age","Genre"];
+  let primaryKey = "Game name";
+  let rows = [];
+  let lastFiltered = null;
+
+  const sampleGames = [
+    {"Game name":"Bill & Betty","Age":12,"Genre":"2D platform"},
+    {"Game name":"Build Blocks","Age":3,"Genre":"arcade"},
+    {"Game name":"Ping Pong","Age":3,"Genre":"arcade"},
+    {"Game name":"Puzzle Place","Age":8,"Genre":"puzzle"},
+    {"Game name":"Super Adventurer","Age":12,"Genre":"2D platform"},
+    {"Game name":"Blocks Super Build","Age":3,"Genre":"puzzle"},
+    {"Game name":"The Great Race","Age":3,"Genre":"racing"},
+    {"Game name":"Work It Out","Age":8,"Genre":"puzzle"},
+  ];
+
+  const zooTemplate = {
+    fields: ["Animal","Name","Age","Gender","Food","AnimalID"],
+    pk: "AnimalID",
+    rows: [
+      {Animal:"giraffe", Name:"Aaliyah", Age:17, Gender:"F", Food:"leaves", AnimalID:1},
+      {Animal:"monkey", Name:"Abu", Age:12, Gender:"F", Food:"fruit", AnimalID:2},
+      {Animal:"giant panda", Name:"Bai Yun", Age:8, Gender:"F", Food:"bamboo", AnimalID:3},
+    ]
+  };
+
+  function parseFields(str){
+    return str.split(",").map(s => s.trim()).filter(Boolean);
+  }
+
+  function setPKStatus(type, text){
+    pkDot.classList.remove("good","bad","warn");
+    if(type) pkDot.classList.add(type);
+    pkStatus.textContent = text;
+  }
+
+  function buildPkSelect(){
+    pkSelect.innerHTML = "";
+    fields.forEach(f => {
+      const opt = document.createElement("option");
+      opt.value = f;
+      opt.textContent = f;
+      pkSelect.appendChild(opt);
+    });
+    if(fields.includes(primaryKey)) pkSelect.value = primaryKey;
+    else {
+      primaryKey = fields[0] || "";
+      pkSelect.value = primaryKey;
+    }
+  }
+
+  function buildQueryFieldSelect(){
+    qField.innerHTML = "";
+    fields.forEach(f => {
+      const opt = document.createElement("option");
+      opt.value = f;
+      opt.textContent = f;
+      qField.appendChild(opt);
+    });
+    qField.value = fields[0] || "";
+  }
+
+  function buildAddRowInputs(){
+    addRowArea.innerHTML = "";
+    const grid = document.createElement("div");
+    grid.className = "inputs";
+    fields.forEach(f => {
+      const box = document.createElement("div");
+      const lab = document.createElement("label");
+      lab.textContent = f + " (record field)";
+      const inp = document.createElement("input");
+      inp.id = "add_" + f;
+      inp.placeholder = (f.toLowerCase().includes("age") || f.toLowerCase().includes("id") || f.toLowerCase().includes("height") || f.toLowerCase().includes("pets"))
+        ? "Жишээ: 10"
+        : "Жишээ: puzzle";
+      box.appendChild(lab);
+      box.appendChild(inp);
+      grid.appendChild(box);
+    });
+    addRowArea.appendChild(grid);
+  }
+
+  function normalizeValue(v){
+    const trimmed = (v ?? "").toString().trim();
+    if(trimmed === "") return "";
+    if(/^-?\d+(\.\d+)?$/.test(trimmed)) return Number(trimmed);
+    return trimmed;
+  }
+
+  function escapeHtml(s){
+    return s.replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
+            .replaceAll('"',"&quot;").replaceAll("'","&#39;");
+  }
+
+  function renderTable(showRows){
+    const data = showRows ?? rows;
+    let html = "<thead><tr>";
+    fields.forEach(f => html += `<th>${escapeHtml(f)}</th>`);
+    html += "</tr></thead><tbody>";
+    data.forEach(r => {
+      html += "<tr>";
+      fields.forEach(f => {
+        const val = (r[f] === undefined || r[f] === null) ? "" : r[f];
+        html += `<td>${escapeHtml(String(val))}</td>`;
+      });
+      html += "</tr>";
+    });
+    html += "</tbody>";
+    dataTable.innerHTML = html;
+    countTag.textContent = `${data.length} record`;
+  }
+
+  function checkPrimaryKeyUniqueness(){
+    if(!primaryKey){
+      setPKStatus("warn", "PK status: Primary key сонгоогүй байна.");
+      return false;
+    }
+    const seen = new Set();
+    for(const r of rows){
+      const key = r[primaryKey];
+      const k = (key === undefined || key === null) ? "" : String(key);
+      if(seen.has(k)){
+        setPKStatus("bad", `PK status: ❌ Давхардал байна (${primaryKey}).`);
+        return false;
+      }
+      seen.add(k);
+    }
+    if(rows.length === 0){
+      setPKStatus("warn", "PK status: Record байхгүй (түр OK).");
+      return true;
+    }
+    setPKStatus("good", `PK status: ✅ Давхардал алга (${primaryKey}).`);
+    return true;
+  }
+
+  function paperQueryText(field, op, val){
+    const isNum = (typeof val === "number" && !Number.isNaN(val));
+    if(op === "contains") return `${field} contains "${String(val)}"`;
+    if(op === "starts") return `${field} starts with "${String(val)}"`;
+    return isNum ? `${field} ${op} ${String(val)}` : `${field} ${op} "${String(val)}"`;
+  }
+
+  function runFilter(){
+    const field = qField.value;
+    const op = qOp.value;
+    const raw = qVal.value.trim();
+    const val = normalizeValue(raw);
+
+    if(!field || raw === ""){
+      lastFiltered = rows.slice();
+      lastQueryText.textContent = "Query: (хоосон) — бүх record";
+      paperQuery.textContent = "(хоосон) — бүх record";
+      renderTable(lastFiltered);
+      return;
+    }
+
+    let filtered = rows.slice();
+
+    if(op === "="){
+      filtered = filtered.filter(r => {
+        const a = r[field];
+        if(typeof val === "number") return Number(a) === val;
+        return String(a ?? "") === String(val);
+      });
+    } else if(op === ">" || op === "<"){
+      filtered = filtered.filter(r => {
+        const a = r[field];
+        const aNum = Number(a);
+        const vNum = Number(val);
+        const aIsNum = (typeof a === "number") || (!Number.isNaN(aNum) && String(a).trim() !== "");
+        const vIsNum = (typeof val === "number") || (!Number.isNaN(vNum) && String(val).trim() !== "");
+
+        if(aIsNum && vIsNum){
+          return op === ">" ? (aNum > vNum) : (aNum < vNum);
+        }
+        const aStr = String(a ?? "");
+        const vStr = String(val ?? "");
+        return op === ">" ? (aStr.localeCompare(vStr) > 0) : (aStr.localeCompare(vStr) < 0);
+      });
+    } else if(op === "contains"){
+      filtered = filtered.filter(r => String(r[field] ?? "").toLowerCase().includes(String(val).toLowerCase()));
+    } else if(op === "starts"){
+      filtered = filtered.filter(r => String(r[field] ?? "").toLowerCase().startsWith(String(val).toLowerCase()));
+    }
+
+    lastFiltered = filtered;
+    lastQueryText.textContent = `Query: ${field} ${op} ${raw}`;
+    paperQuery.textContent = paperQueryText(field, op, val);
+    renderTable(filtered);
+  }
+
+  // buttons
+  btnPrint.addEventListener("click", () => window.print());
+
+  btnReset.addEventListener("click", () => {
+    fieldsInput.value = "Game name,Age,Genre";
+    fields = parseFields(fieldsInput.value);
+    primaryKey = "Game name";
+    rows = [];
+    lastFiltered = null;
+
+    buildPkSelect();
+    buildQueryFieldSelect();
+    buildAddRowInputs();
+
+    qOp.value = "=";
+    qVal.value = "";
+    setPKStatus(null, "PK status: (structure apply хийсний дараа шалгаарай)");
+    lastQueryText.textContent = "Query: (run хийээгүй)";
+    paperQuery.textContent = "Age > 10";
+    renderTable([]);
+  });
+
+  applyFields.addEventListener("click", () => {
+    const f = parseFields(fieldsInput.value);
+    if(f.length === 0){ alert("Fields хоосон байж болохгүй."); return; }
+    fields = f;
+    rows = rows.map(r => {
+      const nr = {};
+      fields.forEach(k => nr[k] = r[k] ?? "");
+      return nr;
+    });
+    primaryKey = fields.includes(pkSelect.value) ? pkSelect.value : fields[0];
+    buildPkSelect();
+    buildQueryFieldSelect();
+    buildAddRowInputs();
+    setPKStatus("warn", "PK status: Structure шинэчлэгдлээ. Одоо PK шалга.");
+    renderTable(lastFiltered ?? rows);
+  });
+
+  pkSelect.addEventListener("change", () => {
+    primaryKey = pkSelect.value;
+    setPKStatus("warn", `PK status: Сонгосон PK = ${primaryKey}. Шалгаарай.`);
+  });
+
+  checkPK.addEventListener("click", () => checkPrimaryKeyUniqueness());
+
+  addRecordBtn.addEventListener("click", () => {
+    const r = {};
+    fields.forEach(f => r[f] = normalizeValue($("add_" + f).value));
+    rows.push(r);
+    fields.forEach(f => $("add_" + f).value = "");
+    renderTable(lastFiltered ?? rows);
+    setPKStatus("warn", "PK status: Record нэмэгдлээ. Хэрвээ хүсвэл PK шалга.");
+  });
+
+  deleteLastBtn.addEventListener("click", () => {
+    rows.pop();
+    renderTable(lastFiltered ?? rows);
+    setPKStatus("warn", "PK status: Сүүлийн record устлаа.");
+  });
+
+  runQuery.addEventListener("click", () => runFilter());
+
+  resetQuery.addEventListener("click", () => {
+    qOp.value = "=";
+    qVal.value = "";
+    lastFiltered = null;
+    lastQueryText.textContent = "Query: (reset) — бүх record";
+    paperQuery.textContent = "Age > 10";
+    renderTable(rows);
+  });
+
+  clearAll.addEventListener("click", () => {
+    rows = [];
+    lastFiltered = null;
+    renderTable([]);
+    setPKStatus("warn", "PK status: Бүх record цэвэрлэгдлээ.");
+    lastQueryText.textContent = "Query: (none)";
+  });
+
+  loadGames.addEventListener("click", () => {
+    fieldsInput.value = "Game name,Age,Genre";
+    fields = parseFields(fieldsInput.value);
+    primaryKey = "Game name";
+    rows = sampleGames.map(x => ({...x}));
+    buildPkSelect();
+    buildQueryFieldSelect();
+    buildAddRowInputs();
+    renderTable(rows);
+    setPKStatus("warn", "PK status: Өгөгдөл ачааллаа. Одоо PK шалгаад, дараа нь query турш.");
+    lastQueryText.textContent = "Query: (none)";
+  });
+
+  loadZoo.addEventListener("click", () => {
+    fieldsInput.value = zooTemplate.fields.join(", ");
+    fields = [...zooTemplate.fields];
+    primaryKey = zooTemplate.pk;
+    rows = zooTemplate.rows.map(x => ({...x}));
+    buildPkSelect();
+    buildQueryFieldSelect();
+    buildAddRowInputs();
+    renderTable(rows);
+    setPKStatus("warn", "PK status: Zoo template ачааллаа. AnimalID давтагдахгүй байх ёстой.");
+    lastQueryText.textContent = "Query: (none)";
+  });
+
+  // init
+  fields = parseFields(fieldsInput.value);
+  buildPkSelect();
+  buildQueryFieldSelect();
+  buildAddRowInputs();
+  renderTable([]);
+})();
+</script>
+</body>
+</html>
