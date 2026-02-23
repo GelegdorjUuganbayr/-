@@ -1,0 +1,731 @@
+<!doctype html>
+<html lang="mn">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>2.2 Creating a Spreadsheet — Онол + Дэвтэрийн дасгал + Mini Spreadsheet Simulator</title>
+  <style>
+    :root{
+      --bg:#0b1220;
+      --card:#0f1a2f;
+      --ink:#eaf1ff;
+      --muted:#a9b7d0;
+      --border:rgba(255,255,255,.14);
+      --accent:#7dd3fc;
+      --accent2:#34d399;
+      --warn:#fbbf24;
+      --bad:#fb7185;
+      --ok:#22c55e;
+      --shadow:0 12px 30px rgba(0,0,0,.35);
+      --r:18px;
+    }
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      background:
+        radial-gradient(1100px 700px at 15% -10%, rgba(125,211,252,.18), transparent 55%),
+        radial-gradient(900px 600px at 115% 15%, rgba(52,211,153,.12), transparent 55%),
+        var(--bg);
+      color: var(--ink);
+    }
+    .wrap{ max-width: 1100px; margin:0 auto; padding:16px; display:grid; gap:14px; }
+    header{
+      border:1px solid var(--border);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      border-radius: var(--r);
+      padding: 14px;
+      box-shadow: var(--shadow);
+    }
+    h1{ margin:0; font-size: clamp(18px, 2.6vw, 28px); }
+    .sub{ margin:8px 0 0; color: var(--muted); line-height:1.5; font-size: 14px; }
+    .pill{
+      display:flex; gap:8px; flex-wrap:wrap; align-items:center;
+      margin-top:10px;
+    }
+    .chip{
+      display:inline-flex; gap:8px; align-items:center;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.03);
+      border-radius: 999px;
+      padding: 6px 10px;
+      color: var(--muted);
+      font-size: 13px;
+      white-space:nowrap;
+    }
+    .chip.ok{ border-color: rgba(34,197,94,.35); background: rgba(34,197,94,.08); color: rgba(34,197,94,.95); }
+    .chip.bad{ border-color: rgba(251,113,133,.35); background: rgba(251,113,133,.08); color: rgba(251,113,133,.95); }
+
+    .card{
+      border:1px solid var(--border);
+      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+      border-radius: var(--r);
+      padding: 14px;
+      box-shadow: var(--shadow);
+    }
+    h2{ margin:0 0 8px; font-size: 18px; color: var(--accent); }
+    h3{ margin:0 0 8px; font-size: 15px; color: var(--accent2); }
+    p{ margin: 8px 0; line-height:1.6; color: var(--muted); }
+    ul{ margin: 8px 0 0; padding-left: 18px; color: var(--muted); line-height:1.6; }
+    li{ margin: 6px 0; }
+    .note{
+      border:1px dashed rgba(251,191,36,.55);
+      background: rgba(251,191,36,.08);
+      border-radius: 14px;
+      padding: 10px 12px;
+      color: #ffe9a8;
+      line-height:1.5;
+      font-size: 13px;
+      margin-top: 10px;
+    }
+    .mono{ font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; color: var(--ink); }
+    .tblwrap{
+      overflow:auto;
+      border-radius: 14px;
+      border:1px solid var(--border);
+      background: rgba(2,6,23,.35);
+      margin-top: 10px;
+    }
+    table{ width:100%; border-collapse: collapse; min-width: 720px; }
+    th,td{ border-bottom:1px solid rgba(255,255,255,.08); padding: 10px; }
+    th{
+      position: sticky; top:0;
+      background: rgba(15,26,47,.92);
+      color: var(--muted);
+      font-size: 13px;
+      text-align:left;
+      backdrop-filter: blur(6px);
+    }
+    td.r, th.r{ text-align:right; }
+    .empty{
+      display:inline-block;
+      min-width: 90px;
+      border-bottom: 2px dotted rgba(255,255,255,.35);
+      height: 1em;
+      vertical-align: baseline;
+    }
+    .twoCol{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    @media (max-width: 860px){
+      .twoCol{ grid-template-columns: 1fr; }
+    }
+    .box{
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(2,6,23,.25);
+      border-radius: 14px;
+      padding: 12px;
+    }
+    .qtitle{
+      color: var(--ink);
+      font-weight: 900;
+      margin: 0 0 6px;
+    }
+    .checklist li{ margin: 8px 0; }
+    hr{ border:none; border-top:1px solid rgba(255,255,255,.10); margin: 12px 0; }
+
+    /* === Mini Spreadsheet Simulator styles === */
+    .simGrid{
+      display:grid;
+      grid-template-columns: 52px repeat(6, minmax(84px, 1fr));
+      overflow:auto;
+      border:1px solid var(--border);
+      border-radius: 14px;
+      background: rgba(2,6,23,.35);
+      min-width: 700px;
+    }
+    .corner, .colH, .rowH{
+      padding: 8px 8px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      border-right: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.02);
+      color: var(--muted);
+      font-weight: 900;
+      font-size: 12px;
+      text-align:center;
+      position: sticky;
+      z-index: 2;
+    }
+    .corner{ top:0; left:0; z-index: 4; }
+    .colH{ top:0; z-index: 3; }
+    .rowH{ left:0; z-index: 3; }
+
+    .cellBox{
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      border-right: 1px solid rgba(255,255,255,.08);
+      padding: 6px;
+      background: rgba(2,6,23,.18);
+    }
+    .cellBtn{
+      width:100%;
+      padding: 10px 10px;
+      border-radius: 12px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(2,6,23,.30);
+      color: var(--ink);
+      cursor:pointer;
+      text-align:left;
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+    }
+    .cellBtn:hover{ background: rgba(255,255,255,.06); }
+    .cellBtn.active{
+      border-color: rgba(125,211,252,.75);
+      box-shadow: 0 0 0 3px rgba(125,211,252,.12);
+    }
+    .cellVal{
+      overflow:hidden; text-overflow: ellipsis; white-space: nowrap;
+      max-width: 100%;
+      font-weight: 800;
+    }
+    .cellHint{
+      color: var(--muted);
+      font-size: 11px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      opacity: .9;
+      white-space: nowrap;
+    }
+
+    .simTop{
+      display:flex; gap:10px; align-items:center; justify-content:space-between;
+      flex-wrap:wrap;
+      margin-top: 10px;
+    }
+    .formulaBar{
+      display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+      border:1px solid var(--border);
+      background: rgba(2,6,23,.30);
+      border-radius: 14px;
+      padding: 10px;
+    }
+    .addr{
+      padding: 6px 10px;
+      border-radius: 999px;
+      border:1px solid var(--border);
+      background: rgba(125,211,252,.10);
+      color: var(--accent);
+      font-weight: 900;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+    .formulaInput{
+      flex: 1;
+      min-width: 240px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border:1px solid var(--border);
+      background: rgba(2,6,23,.45);
+      color: var(--ink);
+      outline:none;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 13px;
+    }
+    .formulaInput:focus{
+      border-color: rgba(125,211,252,.65);
+      box-shadow: 0 0 0 3px rgba(125,211,252,.12);
+    }
+    .btnrow{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+    button{
+      border:1px solid var(--border);
+      background: rgba(125,211,252,.12);
+      color: var(--ink);
+      padding: 10px 12px;
+      border-radius: 12px;
+      cursor:pointer;
+      font-weight: 900;
+    }
+    button:hover{ background: rgba(125,211,252,.18); }
+    button.secondary{ background: rgba(255,255,255,.05); }
+    button.secondary:hover{ background: rgba(255,255,255,.08); }
+    button.danger{ background: rgba(251,113,133,.10); border-color: rgba(251,113,133,.35); }
+    button.danger:hover{ background: rgba(251,113,133,.15); }
+
+    .msg{
+      margin-top: 10px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(2,6,23,.30);
+      border-radius: 14px;
+      padding: 10px 12px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .msg.ok{ border-color: rgba(34,197,94,.35); background: rgba(34,197,94,.08); color: rgba(34,197,94,.95); }
+    .msg.bad{ border-color: rgba(251,113,133,.35); background: rgba(251,113,133,.08); color: rgba(251,113,133,.95); }
+
+    /* Print-friendly */
+    @media print{
+      body{ background:#fff; color:#000; }
+      header,.card,.box,.tblwrap,.simGrid,.formulaBar,.msg{ background:#fff !important; color:#000 !important; border:1px solid #ccc !important; box-shadow:none !important; }
+      h2,h3{ color:#000 !important; }
+      p,ul,li,.sub,.chip,.note{ color:#000 !important; }
+      .mono,.cellHint,.cellVal{ color:#000 !important; }
+      th{ background:#eee !important; color:#000 !important; }
+      .note{ border:1px dashed #999 !important; }
+      .empty{ border-bottom: 2px dotted #000 !important; }
+      button{ display:none !important; } /* print дээр товч хэрэггүй */
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <header>
+      <h1>2.2 Creating a Spreadsheet — Онол + Дэвтэрийн дасгал + Simulator</h1>
+      <p class="sub">
+        Эхэнд нь хүүхдүүд дэвтэр дээрээ хүснэгт зураад бодно. Сүүлд нь “Mini Spreadsheet Simulator”-т орж
+        <b>=</b>, <b>cell reference</b>, <b>*</b>, <b>SUM</b>, <b>AVERAGE</b>-г бодитоор туршина.
+      </p>
+      <div class="pill">
+        <span class="chip">📝 Дэвтэр дээр бодно</span>
+        <span class="chip">✅ Алхам алхмаар</span>
+        <span class="chip ok">🧪 Сүүлд нь туршина (simulator)</span>
+      </div>
+    </header>
+
+    <section class="card">
+      <h2>1) ОНОЛ — Гол ойлголтууд</h2>
+      <div class="twoCol">
+        <div class="box">
+          <h3>Хүснэгт (Spreadsheet)</h3>
+          <ul>
+            <li>Хүснэгт бол мөр (row) ба багана (column)-аас бүрдэх тор.</li>
+            <li>Торны нэг хайрцаг = <b>нүд (cell)</b>.</li>
+            <li>Мөр нь тоогоор (1,2,3...), багана нь үсгээр (A,B,C...) нэрлэгдэнэ.</li>
+          </ul>
+        </div>
+        <div class="box">
+          <h3>Нүдний хаяг (Cell reference)</h3>
+          <ul>
+            <li>Нүдний хаяг = <b>үсэг + тоо</b> (жишээ: <span class="mono">B3</span>).</li>
+            <li><span class="mono">B</span> нь багана, <span class="mono">3</span> нь мөр.</li>
+            <li>Тооцоололд нүдний хаяг ашиглавал өгөгдөл өөрчлөгдөхөд хариу автоматаар өөрчлөгдөнө.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="twoCol" style="margin-top:12px;">
+        <div class="box">
+          <h3>Томьёо (Formula)</h3>
+          <ul>
+            <li>Томьёо бол тооцоолох заавар.</li>
+            <li>Томьёо <b>заавал</b> <span class="mono">=</span>-ээр эхэлнэ.</li>
+            <li>Операторууд: <span class="mono">+ - * /</span></li>
+            <li>Жишээ: <span class="mono">=B2*C2</span> (үржих).</li>
+          </ul>
+          <div class="note">
+            Сануулга: “Нийт” ихэвчлэн <b>Үнэ × Тоо</b> байдаг.
+          </div>
+        </div>
+
+        <div class="box">
+          <h3>Функц (Function)</h3>
+          <ul>
+            <li><b>SUM</b> — нийлбэр: <span class="mono">=SUM(D2:D6)</span></li>
+            <li><b>AVERAGE</b> — дундаж: <span class="mono">=AVERAGE(B2:B6)</span></li>
+            <li><span class="mono">:</span> тэмдэг нь “-аас - хүртэл” гэсэн утгатай.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>2) Жишээ хүснэгт (дэвтэр дээрээ хуулж зур)</h2>
+      <p>
+        Дэвтэр дээрээ мөр, баганы нэрийг заавал бич. Дараа нь D баганын “Нийт”-ийг бодож бөглөнө.
+      </p>
+
+      <div class="tblwrap">
+        <table aria-label="Example spreadsheet">
+          <thead>
+            <tr>
+              <th class="r"> </th>
+              <th>A (Бараа)</th>
+              <th class="r">B (Үнэ ₮)</th>
+              <th class="r">C (Тоо ш)</th>
+              <th class="r">D (Нийт ₮)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="r">1</td><td><b>Stationery Shop</b></td><td class="r"> </td><td class="r"> </td><td class="r"> </td></tr>
+            <tr><td class="r">2</td><td>Pens (Үзэг)</td><td class="r">800</td><td class="r">12</td><td class="r"><span class="empty"></span></td></tr>
+            <tr><td class="r">3</td><td>Pencils (Харандаа)</td><td class="r">500</td><td class="r">20</td><td class="r"><span class="empty"></span></td></tr>
+            <tr><td class="r">4</td><td>Notebooks (Дэвтэр)</td><td class="r">2500</td><td class="r">7</td><td class="r"><span class="empty"></span></td></tr>
+            <tr><td class="r">5</td><td>Erasers (Баллуур)</td><td class="r">300</td><td class="r">15</td><td class="r"><span class="empty"></span></td></tr>
+            <tr><td class="r">6</td><td>Rulers (Шугам)</td><td class="r">1200</td><td class="r">5</td><td class="r"><span class="empty"></span></td></tr>
+            <tr><td class="r">7</td><td><b>Бүх барааны нийт</b></td><td class="r"> </td><td class="r"> </td><td class="r"><span class="empty"></span></td></tr>
+            <tr><td class="r">8</td><td><b>Дундаж үнэ</b></td><td class="r"><span class="empty"></span></td><td class="r"> </td><td class="r"> </td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="note">
+        Гол дүрэм: <b>D2 = B2*C2</b>, <b>D3 = B3*C3</b> ... (Нийт = Үнэ × Тоо)
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>3) Дэвтэр дээр хийх дасгалууд (алхам алхмаар)</h2>
+
+      <div class="box">
+        <p class="qtitle">Дасгал 1 — Нүдний хаяг (Cell reference)</p>
+        <ul class="checklist">
+          <li>1) “Notebooks (Дэвтэр)” мөр хэд вэ? → <span class="empty"></span></li>
+          <li>2) “Notebooks”-ийн үнэ аль нүд вэ? → <span class="empty"></span></li>
+          <li>3) “Rulers”-ийн тоо аль нүд вэ? → <span class="empty"></span></li>
+          <li>4) “Pens”-ийн нийт гарах нүд аль вэ? → <span class="empty"></span></li>
+        </ul>
+      </div>
+
+      <hr/>
+
+      <div class="box">
+        <p class="qtitle">Дасгал 2 — Нийт (Total) бодох (үржих)</p>
+        <p>Дараахыг бодоод хүснэгтийн D баганад бөглөөрэй.</p>
+        <ul class="checklist">
+          <li>D2 = 800 × 12 = <span class="empty"></span></li>
+          <li>D3 = 500 × 20 = <span class="empty"></span></li>
+          <li>D4 = 2500 × 7 = <span class="empty"></span></li>
+          <li>D5 = 300 × 15 = <span class="empty"></span></li>
+          <li>D6 = 1200 × 5 = <span class="empty"></span></li>
+        </ul>
+      </div>
+
+      <hr/>
+
+      <div class="box">
+        <p class="qtitle">Дасгал 3 — Томьёог “үсгээр” бичих (тооцоолохгүй)</p>
+        <p>Доорх нүдэнд ямар томьёо бичих вэ? <b>Зөвхөн томьёог</b> бич.</p>
+        <ul class="checklist">
+          <li>Pens-ийн нийт (D2) = <span class="mono">=</span><span class="empty"></span></li>
+          <li>Pencils-ийн нийт (D3) = <span class="mono">=</span><span class="empty"></span></li>
+          <li>Notebooks-ийн нийт (D4) = <span class="mono">=</span><span class="empty"></span></li>
+        </ul>
+        <div class="note">Санамж: Нийт = Үнэ × Тоо. Үржих тэмдэг нь <span class="mono">*</span>.</div>
+      </div>
+
+      <hr/>
+
+      <div class="box">
+        <p class="qtitle">Дасгал 4 — Бүх барааны нийт (SUM)</p>
+        <ul class="checklist">
+          <li>1) D7 нүдэнд бичих томьёо: <span class="mono">=</span><span class="empty" style="min-width:220px;"></span></li>
+          <li>2) Дасгал 2-ын D2–D6 утгуудыг нэмж D7 дээр “нийт”-өө бич.</li>
+        </ul>
+      </div>
+
+      <hr/>
+
+      <div class="box">
+        <p class="qtitle">Дасгал 5 — Дундаж үнэ (AVERAGE)</p>
+        <ul class="checklist">
+          <li>1) B8 нүдэнд бичих томьёо: <span class="mono">=</span><span class="empty" style="min-width:220px;"></span></li>
+          <li>2) B2–B6 үнийн нийлбэрийг ол: <span class="empty"></span></li>
+          <li>3) Тэр нийлбэрээ 5-д хуваагаад дундажийг ол: <span class="empty"></span></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ✅ Requested: small working simulator at the end -->
+    <section class="card" id="sim">
+      <h2>4) Mini Spreadsheet Simulator (ажилладаг)</h2>
+      <p>
+        Одоо үзсэн зүйлсээ энд турш: нүд сонгоод дээрх мөрөнд томьёо бичнэ.
+        Дэмжих: <span class="mono">=</span>, <span class="mono">+ - * / ( )</span>, <span class="mono">SUM(A1:A5)</span>, <span class="mono">AVERAGE(B2:B6)</span>.
+      </p>
+
+      <div class="note">
+        Түргэн туршилт:
+        <ul style="margin:8px 0 0; padding-left:18px;">
+          <li>A2..A6 дээр тоо оруулаад A7 дээр <span class="mono">=SUM(A2:A6)</span></li>
+          <li>B2..B6 дээр тоо оруулаад B7 дээр <span class="mono">=AVERAGE(B2:B6)</span></li>
+          <li>C2 дээр 7, D2 дээр 6 бичээд E2 дээр <span class="mono">=C2*D2</span></li>
+        </ul>
+      </div>
+
+      <div class="simTop">
+        <div class="formulaBar">
+          <span class="addr" id="addr">A1</span>
+          <input class="formulaInput" id="bar" placeholder="Жишээ: =SUM(A2:A6)" />
+          <button id="apply">Хэрэглэх</button>
+        </div>
+
+        <div class="btnrow">
+          <button class="secondary" id="seed">Жишээ өгөгдөл</button>
+          <button class="danger" id="clear">Цэвэрлэх</button>
+        </div>
+      </div>
+
+      <div class="tblwrap" style="margin-top:12px;">
+        <div class="simGrid" id="grid"></div>
+      </div>
+
+      <div class="msg" id="status" style="display:none;"></div>
+    </section>
+
+  </div>
+
+  <script>
+    /***********************
+     * Mini Spreadsheet Simulator
+     * - Grid: A..F, 1..8
+     * - Each cell stores raw input: "12" or "=A1+A2" etc.
+     * - Supports: + - * / ( )
+     * - Functions: SUM(range), AVERAGE(range)
+     * - Range supports rectangles: A2:B4
+     ***********************/
+    const cols = ["A","B","C","D","E","F"];
+    const rows = [1,2,3,4,5,6,7,8];
+
+    const $ = (s, el=document)=> el.querySelector(s);
+    const $$ = (s, el=document)=> Array.from(el.querySelectorAll(s));
+
+    const stateKey = "mini_sheet_v1_mn";
+
+    function addr(c,r){ return `${c}${r}`; }
+    function escapeHtml(str){
+      return String(str)
+        .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;").replaceAll("'","&#039;");
+    }
+    function fmt(n){
+      if(!Number.isFinite(n)) return "—";
+      const nearInt = Math.abs(n - Math.round(n)) < 1e-9;
+      return nearInt ? String(Math.round(n)) : n.toFixed(2);
+    }
+
+    // sheet[id] = { raw: string, val: number|string }
+    let sheet = {};
+    let active = { c:"A", r:1 };
+
+    function defaultSheet(){
+      const s = {};
+      cols.forEach(c => rows.forEach(r => s[addr(c,r)] = { raw:"", val:"" }));
+      return s;
+    }
+
+    function load(){
+      const raw = localStorage.getItem(stateKey);
+      try{ sheet = raw ? JSON.parse(raw) : defaultSheet(); }
+      catch(e){ sheet = defaultSheet(); }
+    }
+    function save(){
+      localStorage.setItem(stateKey, JSON.stringify(sheet));
+    }
+
+    function setStatus(text, type){
+      const el = $("#status");
+      el.style.display = "block";
+      el.classList.remove("ok","bad");
+      if(type) el.classList.add(type);
+      el.textContent = text;
+    }
+
+    function setActive(c,r){
+      active = {c,r};
+      $("#addr").textContent = addr(c,r);
+      $("#bar").value = (sheet[addr(c,r)]?.raw ?? "");
+      $$(".cellBtn", $("#grid")).forEach(b => b.classList.remove("active"));
+      const btn = $(`#btn_${addr(c,r)}`);
+      if(btn) btn.classList.add("active");
+    }
+
+    function parseRange(rangeStr){
+      // "A2:B4" or "C3:C6"
+      const m = rangeStr.match(/^([A-F])([1-8])\s*:\s*([A-F])([1-8])$/i);
+      if(!m) return [];
+      const c1 = m[1].toUpperCase(), r1 = Number(m[2]);
+      const c2 = m[3].toUpperCase(), r2 = Number(m[4]);
+      const cStart = Math.min(cols.indexOf(c1), cols.indexOf(c2));
+      const cEnd   = Math.max(cols.indexOf(c1), cols.indexOf(c2));
+      const rStart = Math.min(r1, r2);
+      const rEnd   = Math.max(r1, r2);
+      const out = [];
+      for(let rr=rStart; rr<=rEnd; rr++){
+        for(let cc=cStart; cc<=cEnd; cc++){
+          out.push(addr(cols[cc], rr));
+        }
+      }
+      return out;
+    }
+
+    function getCellNumber(id){
+      const raw = (sheet[id]?.raw ?? "").trim();
+      if(raw === "") return 0;
+      if(raw.startsWith("=")){
+        const v = Number(sheet[id]?.val);
+        return Number.isFinite(v) ? v : 0;
+      }
+      const n = Number(raw);
+      return Number.isFinite(n) ? n : 0;
+    }
+
+    function evalFormula(formula){
+      // formula starts with "="
+      let expr = formula.trim().slice(1);
+
+      // Replace SUM(...) and AVERAGE(...), repeat a few times (simple nesting)
+      const funcPattern = /(SUM|AVERAGE)\s*\(\s*([A-F][1-8]\s*:\s*[A-F][1-8])\s*\)/ig;
+      let guard = 0;
+      while(funcPattern.test(expr) && guard < 20){
+        expr = expr.replace(funcPattern, (full, fn, range) => {
+          const ids = parseRange(range.replace(/\s+/g,""));
+          const nums = ids.map(getCellNumber);
+          const sum = nums.reduce((a,b)=>a+b,0);
+          if(String(fn).toUpperCase() === "SUM") return String(sum);
+          const avg = nums.length ? (sum / nums.length) : 0;
+          return String(avg);
+        });
+        guard++;
+      }
+
+      // Replace cell refs like A1
+      expr = expr.replace(/([A-F])([1-8])/g, (m,c,r)=>{
+        const id = addr(String(c).toUpperCase(), Number(r));
+        return String(getCellNumber(id));
+      });
+
+      // Validate remaining characters
+      if(!/^[0-9+\-*/().\s]+$/.test(expr)){
+        throw new Error("Дэмжигдээгүй тэмдэг байна (зөвхөн + - * / ( ) болон SUM/AVERAGE range ашиглана).");
+      }
+
+      // Evaluate expression
+      // eslint-disable-next-line no-new-func
+      const v = Function(`"use strict"; return (${expr});`)();
+      if(!Number.isFinite(v)) throw new Error("Тооцоолол боломжгүй (Infinity эсвэл NaN).");
+      return v;
+    }
+
+    function recalc(){
+      // do multiple passes for dependencies
+      for(let pass=0; pass<6; pass++){
+        for(const id of Object.keys(sheet)){
+          const raw = (sheet[id].raw ?? "").trim();
+          if(raw.startsWith("=")){
+            try{
+              sheet[id].val = evalFormula(raw);
+            }catch(e){
+              sheet[id].val = "";
+            }
+          }else{
+            sheet[id].val = "";
+          }
+        }
+      }
+      save();
+      render();
+    }
+
+    function render(){
+      const grid = $("#grid");
+      grid.innerHTML = "";
+
+      // corner
+      const corner = document.createElement("div");
+      corner.className = "corner";
+      corner.textContent = "";
+      grid.appendChild(corner);
+
+      // column headers
+      cols.forEach(c=>{
+        const h = document.createElement("div");
+        h.className = "colH";
+        h.textContent = c;
+        grid.appendChild(h);
+      });
+
+      // rows + cells
+      rows.forEach(r=>{
+        const rh = document.createElement("div");
+        rh.className = "rowH";
+        rh.textContent = r;
+        grid.appendChild(rh);
+
+        cols.forEach(c=>{
+          const id = addr(c,r);
+          const cell = sheet[id] || { raw:"", val:"" };
+
+          const box = document.createElement("div");
+          box.className = "cellBox";
+
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "cellBtn";
+          btn.id = `btn_${id}`;
+          btn.addEventListener("click", ()=> setActive(c,r));
+
+          const raw = (cell.raw ?? "").trim();
+          const display = raw.startsWith("=")
+            ? (cell.val === "" ? "—" : fmt(Number(cell.val)))
+            : (raw === "" ? "—" : raw);
+
+          const hint = raw.startsWith("=") ? raw : "утга";
+
+          btn.innerHTML = `
+            <span class="cellVal">${escapeHtml(display)}</span>
+            <span class="cellHint">${escapeHtml(hint)}</span>
+          `;
+
+          box.appendChild(btn);
+          grid.appendChild(box);
+        });
+      });
+
+      setActive(active.c, active.r);
+    }
+
+    function apply(){
+      const id = addr(active.c, active.r);
+      sheet[id] = sheet[id] || { raw:"", val:"" };
+      sheet[id].raw = $("#bar").value;
+      try{
+        recalc();
+        setStatus("Хадгаллаа. (Enter дарж бас болно)", "ok");
+      }catch(e){
+        setStatus(String(e?.message || e), "bad");
+      }
+    }
+
+    // Buttons + events
+    $("#apply").addEventListener("click", apply);
+    $("#bar").addEventListener("keydown", (e)=>{
+      if(e.key === "Enter"){
+        e.preventDefault();
+        apply();
+      }
+    });
+
+    $("#seed").addEventListener("click", ()=>{
+      // Small demo aligned with lesson: totals + sum + average
+      const seed = {
+        A2:"10", A3:"12", A4:"8", A5:"15", A6:"5",
+        A7:"=SUM(A2:A6)",
+        B2:"800", B3:"500", B4:"2500", B5:"300", B6:"1200",
+        B7:"=AVERAGE(B2:B6)",
+        C2:"7", D2:"6", E2:"=C2*D2"
+      };
+      for(const k of Object.keys(seed)){
+        if(sheet[k]) sheet[k].raw = seed[k];
+      }
+      recalc();
+      setActive("A",7);
+      setStatus("Жишээ өгөгдөл орууллаа. Одоо өөрчлөөд туршаарай.", "ok");
+    });
+
+    $("#clear").addEventListener("click", ()=>{
+      sheet = defaultSheet();
+      save();
+      render();
+      setActive("A",1);
+      setStatus("Цэвэрлэгдлээ.", "ok");
+    });
+
+    // Init
+    load();
+    render();
+    setStatus("Нүд сонгоод дээрх мөрөнд утга эсвэл томьёо бич. Ж: =B2*C2", "ok");
+  </script>
+</body>
+</html>
