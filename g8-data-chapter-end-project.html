@@ -1,0 +1,903 @@
+<!doctype html>
+<html lang="mn">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Хичээл: What-if analysis + Goal Seek | Validation + Data collection form</title>
+  <style>
+    :root{
+      --bg:#0b1220; --card:#101b33; --card2:#0f1a2f;
+      --text:#eaf1ff; --muted:#a9b7d0; --line:rgba(255,255,255,.14);
+      --accent:#7dd3fc; --good:#34d399; --warn:#fbbf24; --bad:#fb7185;
+      --shadow: 0 10px 28px rgba(0,0,0,.35);
+      --r:18px;
+    }
+    *{ box-sizing:border-box; }
+    body{
+      margin:0; color:var(--text);
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: radial-gradient(1000px 650px at 20% 0%, #14224a 0%, var(--bg) 55%, #070b14 100%);
+    }
+    a{ color:var(--accent); }
+    .wrap{ max-width:1100px; margin:0 auto; padding:16px; display:grid; gap:14px; }
+    header{
+      padding:14px 14px 12px; border:1px solid var(--line); background:rgba(16,27,51,.72);
+      border-radius:var(--r); box-shadow:var(--shadow);
+    }
+    h1{ margin:0; font-size: clamp(18px, 2.8vw, 26px); letter-spacing:.2px; }
+    .sub{ margin-top:6px; color:var(--muted); font-size: 13.5px; line-height:1.4; }
+    .row{ display:grid; gap:14px; grid-template-columns: 1fr; }
+    @media (min-width: 980px){ .row{ grid-template-columns: 1.08fr .92fr; } }
+    .card{
+      border:1px solid var(--line); background:rgba(16,27,51,.68);
+      border-radius:var(--r); box-shadow:var(--shadow); overflow:hidden;
+    }
+    .card .hd{
+      padding:12px 14px; border-bottom:1px solid var(--line);
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      background: linear-gradient(90deg, rgba(125,211,252,.12), rgba(16,27,51,0));
+    }
+    .card .hd h2{ margin:0; font-size: 16px; }
+    .card .bd{ padding:14px; display:grid; gap:12px; }
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:6px 10px; border-radius:999px;
+      border:1px solid var(--line); background:rgba(0,0,0,.18);
+      color:var(--muted); font-size:12.5px;
+    }
+    .grid2{ display:grid; gap:12px; grid-template-columns:1fr; }
+    @media (min-width: 720px){ .grid2{ grid-template-columns:1fr 1fr; } }
+    .note{
+      border:1px dashed rgba(125,211,252,.35);
+      background:rgba(125,211,252,.08);
+      border-radius:14px; padding:12px;
+      color: var(--text);
+    }
+    .note b{ color:var(--accent); }
+    .k{
+      background: rgba(0,0,0,.25);
+      border:1px solid var(--line);
+      border-radius:12px; padding:10px 12px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+      font-size: 12.5px; color:#e8eefc;
+      white-space: pre-wrap;
+    }
+    .btns{ display:flex; flex-wrap:wrap; gap:10px; }
+    button{
+      border:1px solid var(--line);
+      background:rgba(125,211,252,.10);
+      color:var(--text);
+      padding:10px 12px; border-radius:12px;
+      cursor:pointer; font-weight:650;
+    }
+    button:hover{ background:rgba(125,211,252,.18); }
+    button.secondary{ background:rgba(0,0,0,.18); }
+    button.good{ background:rgba(52,211,153,.12); }
+    button.bad{ background:rgba(251,113,133,.10); }
+    .mini{ color:var(--muted); font-size:12.5px; line-height:1.45; }
+    .tbl{
+      width:100%; border-collapse:separate; border-spacing:0;
+      border:1px solid var(--line); border-radius:14px; overflow:hidden;
+    }
+    .tbl th, .tbl td{ padding:10px 10px; border-bottom:1px solid var(--line); font-size:13px; }
+    .tbl th{ text-align:left; background:rgba(0,0,0,.20); color:#dbe8ff; }
+    .tbl tr:last-child td{ border-bottom:none; }
+    .tbl td input{
+      width:100%; padding:9px 10px; border-radius:10px;
+      border:1px solid rgba(255,255,255,.16);
+      background:rgba(0,0,0,.20); color:var(--text);
+      outline:none;
+    }
+    .tbl td input:focus{ border-color: rgba(125,211,252,.55); box-shadow:0 0 0 3px rgba(125,211,252,.15); }
+    .stat{
+      display:flex; flex-wrap:wrap; gap:10px;
+      align-items:center; justify-content:space-between;
+      padding:10px 12px; border:1px solid var(--line);
+      border-radius:14px; background:rgba(0,0,0,.18);
+    }
+    .tag{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:6px 10px; border-radius:999px;
+      border:1px solid var(--line); background:rgba(0,0,0,.15);
+      font-size:12.5px; color:var(--muted);
+    }
+    .tag.good{ color:#c9ffe8; border-color: rgba(52,211,153,.35); background:rgba(52,211,153,.10); }
+    .tag.bad{ color:#ffe1e8; border-color: rgba(251,113,133,.35); background:rgba(251,113,133,.10); }
+    .tag.warn{ color:#fff2c9; border-color: rgba(251,191,36,.35); background:rgba(251,191,36,.10); }
+    .hr{ height:1px; background:var(--line); margin:6px 0; }
+    .q{
+      border:1px solid var(--line); border-radius:14px; padding:12px;
+      background:rgba(0,0,0,.16);
+      display:grid; gap:8px;
+    }
+    .q .qt{ font-weight:800; }
+    .q label{ display:flex; gap:10px; align-items:flex-start; color:var(--text); }
+    .q input[type="radio"], .q input[type="checkbox"]{ transform: translateY(2px); }
+    .score{
+      font-weight:900; letter-spacing:.3px; font-size:14px;
+    }
+    .hint{
+      color:var(--muted); font-size:12.5px; line-height:1.45;
+      padding-left:2px;
+    }
+    .toast{
+      padding:10px 12px; border-radius:14px;
+      border:1px solid var(--line);
+      background:rgba(0,0,0,.20);
+      color:var(--muted);
+    }
+    .toast.good{ border-color: rgba(52,211,153,.35); background:rgba(52,211,153,.10); color:#dbfff1; }
+    .toast.bad{ border-color: rgba(251,113,133,.35); background:rgba(251,113,133,.10); color:#ffe3ea; }
+    .split{ display:grid; gap:12px; grid-template-columns:1fr; }
+    @media (min-width: 980px){ .split{ grid-template-columns: 1fr 1fr; } }
+    .smallcap{ font-size:12px; color:var(--muted); }
+    .select, select{
+      width:100%; padding:10px 10px; border-radius:12px;
+      border:1px solid rgba(255,255,255,.16);
+      background:rgba(0,0,0,.20); color:var(--text);
+      outline:none;
+    }
+    textarea{
+      width:100%; min-height:140px; resize:vertical;
+      padding:10px 10px; border-radius:12px;
+      border:1px solid rgba(255,255,255,.16);
+      background:rgba(0,0,0,.20); color:var(--text);
+      outline:none;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+      font-size:12.5px;
+    }
+    .muted{ color:var(--muted); }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>Сүүлийн хэсэг: “Шинэ ойлголт + Баталгаажуулах” интерактив хичээл</h1>
+      <div class="sub">
+        Энэ хуудсанд 2 шинэ ур чадварыг нэг дор сурна:
+        <b>Spreadsheet-ийн What-if analysis + Goal Seek</b> (тооцооллыг өөрчилж “яах вэ?” гэж турших),
+        мөн <b>Database-ийн validation + data collection form</b> (өгөгдлийг буруу оруулахгүй хамгаалах, форм үүсгэх).
+        <br/>Доор онол → жижиг туршилт → өөрөө хийх даалгавар → богино шалгалт гэсэн дарааллаар явна.
+      </div>
+    </header>
+
+    <!-- PART A -->
+    <section class="card" id="partA">
+      <div class="hd">
+        <h2>А хэсэг — What-if analysis & Goal Seek (Spreadsheet)</h2>
+        <span class="pill">⭐ “Туршиж үзээд ойлгох” горим</span>
+      </div>
+      <div class="bd">
+        <div class="note">
+          <b>What-if analysis гэж юу вэ?</b><br/>
+          Нэг эсвэл хэд хэдэн утгыг өөрчлөөд (ж: үнэ, зардал, тоо хэмжээ) үр дүн (ашиг, дүн, дундаж) яаж өөрчлөгдөхийг
+          <b>туршиж харж</b> дүгнэлт хийх аргыг хэлнэ.
+        </div>
+
+        <div class="grid2">
+          <div class="note">
+            <b>Жишээ 1</b>: “Барааны үнэ өсвөл ашиг өсөх үү?”<br/>
+            Үнэ (Price)-г өөрчилж Ашиг (Profit)-ийг харна.
+          </div>
+          <div class="note">
+            <b>Жишээ 2</b>: “Зардлыг бууруулбал хамгийн багадаа хэдэн ширхэг зарах хэрэгтэй вэ?”<br/>
+            Нэгж зардал (Unit cost) болон тоо (Units)-ыг туршина.
+          </div>
+        </div>
+
+        <div class="note">
+          <b>Goal Seek гэж юу вэ?</b><br/>
+          “Үр дүнг яг ийм болгоё” (ж: Ашиг = 500,000₮) гэж зорилт тавиад,
+          тэр зорилгод хүрэхийн тулд <b>аль нэг оролтын нүдний утгыг автоматаар олж</b> өгдөг хэрэгсэл.
+          (Spreadsheet програмуудад: Data → What-If Analysis → Goal Seek гэх мэт.)
+        </div>
+
+        <div class="hr"></div>
+
+        <div class="card" style="background:rgba(15,26,47,.55);">
+          <div class="hd">
+            <h2 style="font-size:15px;">Туршилт 1 — “Мини spreadsheet” (What-if)</h2>
+            <span class="pill">Оролт өөрчил → үр дүнг ажигла</span>
+          </div>
+          <div class="bd">
+            <div class="mini">
+              Доорх 3 утгыг өөрчилж, <b>Revenue</b>, <b>Total cost</b>, <b>Profit</b> яаж өөрчлөгдөхийг ажигла.
+              Энэ бол what-if analysis.
+            </div>
+
+            <table class="tbl" aria-label="mini spreadsheet">
+              <thead>
+                <tr>
+                  <th style="width:38%;">Нүд</th>
+                  <th>Утга</th>
+                  <th style="width:34%;">Тайлбар</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>A2: Units (тоо ширхэг)</td>
+                  <td><input id="units" type="number" inputmode="numeric" value="120" min="0" /></td>
+                  <td class="muted">Хэдийг зарсан бэ?</td>
+                </tr>
+                <tr>
+                  <td>A3: Price (нэгж үнэ)</td>
+                  <td><input id="price" type="number" inputmode="decimal" value="9000" min="0" /></td>
+                  <td class="muted">Нэг ширхэгийн үнэ</td>
+                </tr>
+                <tr>
+                  <td>A4: Unit cost (нэгж зардал)</td>
+                  <td><input id="ucost" type="number" inputmode="decimal" value="5200" min="0" /></td>
+                  <td class="muted">Нэг ширхэгийн зардал</td>
+                </tr>
+                <tr>
+                  <td>A5: Fixed cost (тогтмол зардал)</td>
+                  <td><input id="fcost" type="number" inputmode="decimal" value="180000" min="0" /></td>
+                  <td class="muted">Түрээс, тээвэр гэх мэт</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="stat">
+              <div class="tag">Revenue: <b id="rev">—</b></div>
+              <div class="tag">Total cost: <b id="tcost">—</b></div>
+              <div class="tag" id="profitTag">Profit: <b id="profit">—</b></div>
+            </div>
+
+            <div class="split">
+              <div>
+                <div class="smallcap">Формул (хүүхдүүд заавал бичиж сурна гэж бодоод энгийнээр):</div>
+                <div class="k" id="formulaBox">Revenue = Units × Price
+Total cost = Units × Unit cost + Fixed cost
+Profit = Revenue − Total cost</div>
+              </div>
+              <div>
+                <div class="smallcap">Жижиг даалгавар (дэвтэр дээр):</div>
+                <div class="note">
+                  1) Price-г 9000 → 10000 болгож Profit хэд болж өөрчлөгдөв?<br/>
+                  2) Unit cost-г 5200 → 6000 болговол Profit яах вэ?<br/>
+                  3) Units-ийг 120 → 80 болговол Profit ямар тэмдэгтэй ( + / − ) болох вэ?
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="card" style="background:rgba(15,26,47,.55);">
+          <div class="hd">
+            <h2 style="font-size:15px;">Туршилт 2 — Goal Seek симулятор</h2>
+            <span class="pill">Зорилт тавь → аль нүдийг өөрчлөхөө сонго</span>
+          </div>
+          <div class="bd">
+            <div class="mini">
+              Зорилт: <b>Profit</b>-ийг яг хүссэн тоонд хүргэе.
+              Доорх симулятор “Goal Seek”-ийн санааг дуурайлган тооцоод хамгийн ойр утгыг олно.
+            </div>
+
+            <div class="grid2">
+              <div>
+                <div class="smallcap">Зорилтот Profit (₮):</div>
+                <input id="targetProfit" class="select" type="number" inputmode="decimal" value="250000" />
+              </div>
+              <div>
+                <div class="smallcap">Аль оролтыг өөрчлөх вэ?</div>
+                <select id="changeWhich">
+                  <option value="units">Units (тоо ширхэг)</option>
+                  <option value="price">Price (нэгж үнэ)</option>
+                  <option value="ucost">Unit cost (нэгж зардал)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="btns">
+              <button class="good" id="runGoalSeek">Goal Seek ажиллуулах</button>
+              <button class="secondary" id="resetA">Анхны утга руу</button>
+            </div>
+
+            <div class="toast" id="gsResult">Энд үр дүн гарна…</div>
+
+            <div class="note">
+              <b>Өөрөө хийх даалгавар:</b><br/>
+              1) Profit-ийг 0 болгохын тулд Units хэд байвал тохирох вэ? (Break-even)<br/>
+              2) Profit-ийг 500,000₮ болгохын тулд Price-г хэд болгох шаардлагатай вэ?<br/>
+              3) Goal Seek ажиллуулахын өмнө таамаг гаргаад, дараа нь үр дүнгээ харьцуул.
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- PART B -->
+    <section class="card" id="partB">
+      <div class="hd">
+        <h2>Б хэсэг — Validation & Data collection form (Database)</h2>
+        <span class="pill">🛡️ “Буруу өгөгдлөөс хамгаалах” ур чадвар</span>
+      </div>
+      <div class="bd">
+        <div class="note">
+          <b>Validation-ийн зорилго</b><br/>
+          Өгөгдлийг зөв, цэвэр, ашиглахад бэлэн болгох.
+          Жишээ нь: насанд үсэг оруулахгүй, заавал бөглөх талбар хоосон үлдэхгүй,
+          имэйл “@”-гүй орж ирэхгүй гэх мэт.
+        </div>
+
+        <div class="grid2">
+          <div class="note">
+            <b>Жишээ validation дүрэм</b><br/>
+            • <b>Presence check</b>: хоосон эсэхийг шалгана<br/>
+            • <b>Length check</b>: тэмдэгтийн тоо хэтэрсэн/бага эсэх<br/>
+            • <b>Range check</b>: утга тодорхой хязгаарт байгаа эсэх<br/>
+            • <b>Format check</b>: зөв хэлбэр (ж: имэйл) эсэх
+          </div>
+          <div class="note">
+            <b>Яагаад хэрэгтэй вэ?</b><br/>
+            • Тайлан/тооцоолол буруу болохоос сэргийлнэ<br/>
+            • Давхардал, алдаа багасна<br/>
+            • Дараа нь хайлт, шүүлт, дүн гаргалт амар болно
+          </div>
+        </div>
+
+        <div class="card" style="background:rgba(15,26,47,.55);">
+          <div class="hd">
+            <h2 style="font-size:15px;">Туршилт 3 — Validation симулятор (форм бөглөж үз)</h2>
+            <span class="pill">Алдаа гаргаад өөрөө зас</span>
+          </div>
+          <div class="bd">
+            <div class="mini">
+              Доорх форм дээр санаатай “буруу” өгөгдөл оруулж үз.
+              Дараа нь <b>ямар дүрэм барьж байгааг</b> нэрлээд (presence/length/range/format) тэмдэглээрэй.
+            </div>
+
+            <table class="tbl" aria-label="validation form">
+              <thead>
+                <tr>
+                  <th style="width:32%;">Талбар</th>
+                  <th>Оруулах өгөгдөл</th>
+                  <th style="width:36%;">Validation дүрэм</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Нэр</td>
+                  <td><input id="v_name" placeholder="ж: Sofia" /></td>
+                  <td class="muted">Presence (хоосон байж болохгүй) + Length (2–20)</td>
+                </tr>
+                <tr>
+                  <td>Нас</td>
+                  <td><input id="v_age" type="number" inputmode="numeric" placeholder="ж: 12" /></td>
+                  <td class="muted">Range (6–18)</td>
+                </tr>
+                <tr>
+                  <td>Имэйл</td>
+                  <td><input id="v_email" placeholder="j: student@mail.com" /></td>
+                  <td class="muted">Format (имэйл хэлбэр)</td>
+                </tr>
+                <tr>
+                  <td>Код (ID)</td>
+                  <td><input id="v_id" placeholder="ж: ST-2048" /></td>
+                  <td class="muted">Format (ST- + 4 цифр)</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="btns">
+              <button class="good" id="checkValidation">Шалгах</button>
+              <button class="secondary" id="fillBad">Буруу жишээ оруулах</button>
+              <button class="secondary" id="fillGood">Зөв жишээ оруулах</button>
+              <button class="secondary" id="resetB">Цэвэрлэх</button>
+            </div>
+
+            <div class="toast" id="vResult">Энд алдаанууд жагсана…</div>
+
+            <div class="note">
+              <b>Дэвтэр дээрх даалгавар:</b><br/>
+              1) “Нэр” талбарт ямар 2 validation явж байна вэ?<br/>
+              2) “Нас” талбарын дүрмийг үгээр бич (ж: 6-18 хооронд).<br/>
+              3) “ID” талбарын формат дүрмийг өөрөө шинэчил: Жишээ нь <b>MN-123</b> (2 үсэг + “-” + 3 цифр).
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="background:rgba(15,26,47,.55);">
+          <div class="hd">
+            <h2 style="font-size:15px;">Туршилт 4 — “Form wizard” (форм үүсгэгч)</h2>
+            <span class="pill">Сонголтоор формын код үүсгэнэ</span>
+          </div>
+          <div class="bd">
+            <div class="mini">
+              Жинхэнэ програмууд (Access, LibreOffice Base гэх мэт) “wizard”-аар форм үүсгэдэг.
+              Доорх нь түүний <b>санааг</b> ойлгуулах мини хувилбар: талбар сонгоод “үүсгэх” дарахад формын HTML код гарна.
+            </div>
+
+            <div class="split">
+              <div class="q">
+                <div class="qt">1) Ямар талбаруудтай форм үүсгэх вэ?</div>
+                <label><input type="checkbox" class="w_field" value="fullname" checked /> Full name (Нэр)</label>
+                <label><input type="checkbox" class="w_field" value="age" checked /> Age (Нас)</label>
+                <label><input type="checkbox" class="w_field" value="email" checked /> Email (Имэйл)</label>
+                <label><input type="checkbox" class="w_field" value="class" /> Class (Анги)</label>
+                <label><input type="checkbox" class="w_field" value="phone" /> Phone (Утас)</label>
+                <div class="hint">Сонголтоо өөрчилж “Form үүсгэх” дараарай.</div>
+              </div>
+
+              <div class="q">
+                <div class="qt">2) Validation нэмэх үү?</div>
+                <label><input type="checkbox" id="w_required" checked /> Required (заавал бөглөх)</label>
+                <label><input type="checkbox" id="w_lengths" checked /> Length rules (урт/богино)</label>
+                <label><input type="checkbox" id="w_formats" checked /> Format rules (имэйл/утас)</label>
+                <label><input type="checkbox" id="w_ranges" checked /> Range rules (насны хязгаар)</label>
+                <div class="hint">Wizard ихэвчлэн ийм сонголтууд санал болгодог.</div>
+              </div>
+            </div>
+
+            <div class="btns">
+              <button class="good" id="buildForm">Form үүсгэх</button>
+              <button class="secondary" id="copyCode">Код хуулж авах</button>
+            </div>
+
+            <div class="smallcap">Үүссэн формын код (жишээ):</div>
+            <textarea id="formCode" spellcheck="false"></textarea>
+
+            <div class="note">
+              <b>Өөрөө хийх даалгавар:</b><br/>
+              1) Зөвхөн 3 талбартай форм үүсгэ: Full name, Email, Phone.<br/>
+              2) Email талбарт ямар validation тохиромжтой вэ? (format/presence/length гэх мэт)<br/>
+              3) “Нас” талбарыг заавал бөглөхгүй болгож үз (required-ийг унтраа) — энэ нь өгөгдөл дээр ямар эрсдэлтэй вэ?
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- CHECK YOUR PROGRESS -->
+    <section class="card" id="quiz">
+      <div class="hd">
+        <h2>Check your progress 2 — Богино шалгалт (интерактив)</h2>
+        <span class="pill">🎯 Ойлгосноо баталгаажуул</span>
+      </div>
+      <div class="bd">
+        <div class="mini">
+          Эдгээр нь “сүүлчийн” ойлголтуудыг шалгах богино тест. Хариулаад “Шалгах” дар.
+          (Санамж: 5,6-р асуултуудыг ном дээрх шиг “зураасаар холбох” байдлаар биш, энд <b>сонголтоор</b> хийлээ.)
+        </div>
+
+        <div class="grid2">
+          <div class="q">
+            <div class="qt">1) Симуляторын зорилго юу вэ?</div>
+            <label><input type="radio" name="q1" value="a" /> Тоглоом тоглуулах</label>
+            <label><input type="radio" name="q1" value="b" /> Бодит зүйлийн үйл явцыг дуурайлган үзүүлж, аюулгүй туршиж сургах</label>
+            <label><input type="radio" name="q1" value="c" /> Зөвхөн зураг зурах</label>
+          </div>
+
+          <div class="q">
+            <div class="qt">2) Симуляторын 2 жишээг сонго.</div>
+            <label><input type="checkbox" class="q2" value="flight" /> Нислэгийн симулятор</label>
+            <label><input type="checkbox" class="q2" value="weather" /> Цаг агаарын загварчлал (simulation)</label>
+            <label><input type="checkbox" class="q2" value="paint" /> Paint програм</label>
+            <label><input type="checkbox" class="q2" value="calc" /> Тооны машин (calculator)</label>
+            <div class="hint">2-ыг л зөв сонгоорой.</div>
+          </div>
+        </div>
+
+        <div class="grid2">
+          <div class="q">
+            <div class="qt">3) “Симуляторын feature” гэдэг нь юу вэ?</div>
+            <label><input type="radio" name="q3" value="a" /> Програмын “боломж/онцлог” (ж: pause, reset, speed)</label>
+            <label><input type="radio" name="q3" value="b" /> Заавал интернеттэй байх</label>
+            <label><input type="radio" name="q3" value="c" /> Дан ганц өнгө</label>
+          </div>
+
+          <div class="q">
+            <div class="qt">4) What-if analysis гэдэг нь…</div>
+            <label><input type="radio" name="q4" value="a" /> Нэг утгыг өөрчлөөд үр дүн яаж өөрчлөгдөхийг туршиж харах</label>
+            <label><input type="radio" name="q4" value="b" /> Бичвэр хэвлэх</label>
+            <label><input type="radio" name="q4" value="c" /> Файл устгах</label>
+          </div>
+        </div>
+
+        <div class="q">
+          <div class="qt">5) Term → Definition (сонголтоор тааруул)</div>
+          <div class="grid2">
+            <div>
+              <div class="smallcap">Field гэдэг нь:</div>
+              <select id="m_field" class="select">
+                <option value="">— Сонго —</option>
+                <option value="a">Нэг хүний/нэг мөрийн бүх өгөгдлийн цуглуулга</option>
+                <option value="b">Нэг төрлийн өгөгдөл хадгалах багана (ж: “Нас”)</option>
+                <option value="c">Буруу өгөгдлийг оруулахгүй шалгах дүрэм</option>
+                <option value="d">Өгөгдөл оруулах зориулалттай дэлгэц/форм</option>
+              </select>
+            </div>
+            <div>
+              <div class="smallcap">Record гэдэг нь:</div>
+              <select id="m_record" class="select">
+                <option value="">— Сонго —</option>
+                <option value="a">Нэг хүний/нэг мөрийн бүх өгөгдлийн цуглуулга</option>
+                <option value="b">Нэг төрлийн өгөгдөл хадгалах багана (ж: “Нас”)</option>
+                <option value="c">Буруу өгөгдлийг оруулахгүй шалгах дүрэм</option>
+                <option value="d">Өгөгдөл оруулах зориулалттай дэлгэц/форм</option>
+              </select>
+            </div>
+            <div>
+              <div class="smallcap">Validation гэдэг нь:</div>
+              <select id="m_validation" class="select">
+                <option value="">— Сонго —</option>
+                <option value="a">Нэг хүний/нэг мөрийн бүх өгөгдлийн цуглуулга</option>
+                <option value="b">Нэг төрлийн өгөгдөл хадгалах багана (ж: “Нас”)</option>
+                <option value="c">Буруу өгөгдлийг оруулахгүй шалгах дүрэм</option>
+                <option value="d">Өгөгдөл оруулах зориулалттай дэлгэц/форм</option>
+              </select>
+            </div>
+            <div>
+              <div class="smallcap">Data collection form гэдэг нь:</div>
+              <select id="m_form" class="select">
+                <option value="">— Сонго —</option>
+                <option value="a">Нэг хүний/нэг мөрийн бүх өгөгдлийн цуглуулга</option>
+                <option value="b">Нэг төрлийн өгөгдөл хадгалах багана (ж: “Нас”)</option>
+                <option value="c">Буруу өгөгдлийг оруулахгүй шалгах дүрэм</option>
+                <option value="d">Өгөгдөл оруулах зориулалттай дэлгэц/форм</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="q">
+          <div class="qt">6) Аль validation rule вэ? (3-ыг тааруул)</div>
+          <div class="grid2">
+            <div>
+              <div class="smallcap">“Хэдэн тэмдэг оруулсныг шалгана.”</div>
+              <select id="v1" class="select">
+                <option value="">— Сонго —</option>
+                <option value="length">Length check</option>
+                <option value="range">Range check</option>
+                <option value="presence">Presence check</option>
+              </select>
+            </div>
+            <div>
+              <div class="smallcap">“Утга тодорхой хязгаарт байгаа эсэх.”</div>
+              <select id="v2" class="select">
+                <option value="">— Сонго —</option>
+                <option value="length">Length check</option>
+                <option value="range">Range check</option>
+                <option value="presence">Presence check</option>
+              </select>
+            </div>
+            <div>
+              <div class="smallcap">“Заавал өгөгдөл оруулсан эсэх.”</div>
+              <select id="v3" class="select">
+                <option value="">— Сонго —</option>
+                <option value="length">Length check</option>
+                <option value="range">Range check</option>
+                <option value="presence">Presence check</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="q">
+          <div class="qt">7) Database-ийн suitability-г шалгахдаа 2 зүйлийг нэрлэ.</div>
+          <div class="hint">
+            Жишээ: өгөгдөл нь тухайн зорилгод хангалттай юу? / validation байгаа юу? / талбарууд зөв үү? / давхардал багатай юу?
+            <br/>Доор 2-г бичээд “Шалгах” дар.
+          </div>
+          <div class="grid2">
+            <input id="s1" class="select" placeholder="1-р зүйл…" />
+            <input id="s2" class="select" placeholder="2-р зүйл…" />
+          </div>
+        </div>
+
+        <div class="btns">
+          <button class="good" id="grade">Шалгах</button>
+          <button class="secondary" id="resetQuiz">Дахин хийх</button>
+        </div>
+
+        <div class="toast" id="quizResult">Оноо энд гарна…</div>
+      </div>
+    </section>
+
+    <footer class="mini" style="text-align:center; padding:10px 4px 18px; color:var(--muted);">
+      Хэрвээ хүсвэл: энэ хуудсыг “подкаст скрипт” + “слайд бүтэц” болгон хувиргаж өгч болно (заах хэлбэрээр).
+    </footer>
+  </div>
+
+  <script>
+    // ---------- Helpers ----------
+    const fmt = (n) => {
+      if (!isFinite(n)) return "—";
+      // thousands with commas, keep as integer for ₮
+      const s = Math.round(n).toString();
+      return s.replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "₮";
+    };
+
+    // ---------- Part A: mini spreadsheet ----------
+    const A0 = { units:120, price:9000, ucost:5200, fcost:180000 };
+
+    const elUnits = document.getElementById("units");
+    const elPrice = document.getElementById("price");
+    const elUCost = document.getElementById("ucost");
+    const elFCost = document.getElementById("fcost");
+    const elRev = document.getElementById("rev");
+    const elTCost = document.getElementById("tcost");
+    const elProfit = document.getElementById("profit");
+    const profitTag = document.getElementById("profitTag");
+
+    function getA(){
+      return {
+        units: Number(elUnits.value || 0),
+        price: Number(elPrice.value || 0),
+        ucost: Number(elUCost.value || 0),
+        fcost: Number(elFCost.value || 0),
+      };
+    }
+    function calc(a){
+      const revenue = a.units * a.price;
+      const tcost = a.units * a.ucost + a.fcost;
+      const profit = revenue - tcost;
+      return { revenue, tcost, profit };
+    }
+    function renderA(){
+      const a = getA();
+      const r = calc(a);
+      elRev.textContent = fmt(r.revenue);
+      elTCost.textContent = fmt(r.tcost);
+      elProfit.textContent = fmt(r.profit);
+
+      profitTag.classList.remove("good","bad","warn");
+      if (r.profit > 0) profitTag.classList.add("good");
+      else if (r.profit < 0) profitTag.classList.add("bad");
+      else profitTag.classList.add("warn");
+    }
+    [elUnits, elPrice, elUCost, elFCost].forEach(x => x.addEventListener("input", renderA));
+    renderA();
+
+    // ---------- Part A: goal seek ----------
+    const targetProfit = document.getElementById("targetProfit");
+    const changeWhich = document.getElementById("changeWhich");
+    const gsResult = document.getElementById("gsResult");
+
+    function goalSeek(){
+      const a = getA();
+      const target = Number(targetProfit.value || 0);
+      const which = changeWhich.value;
+
+      // Simple numeric search (bounded) for teaching purpose.
+      // We search the chosen variable in a reasonable range.
+      let lo, hi, step;
+      if (which === "units"){ lo = 0; hi = 5000; step = 1; }
+      if (which === "price"){ lo = 0; hi = 200000; step = 50; }
+      if (which === "ucost"){ lo = 0; hi = 200000; step = 50; }
+
+      let bestVal = a[which];
+      let bestDiff = Infinity;
+      let bestProfit = calc(a).profit;
+
+      // coarse scan
+      for (let v = lo; v <= hi; v += step){
+        const aa = { ...a, [which]: v };
+        const p = calc(aa).profit;
+        const d = Math.abs(p - target);
+        if (d < bestDiff){
+          bestDiff = d;
+          bestVal = v;
+          bestProfit = p;
+          if (bestDiff === 0) break;
+        }
+      }
+
+      // apply best
+      if (which === "units") elUnits.value = bestVal;
+      if (which === "price") elPrice.value = bestVal;
+      if (which === "ucost") elUCost.value = bestVal;
+      renderA();
+
+      const label = which === "units" ? "Units" : (which === "price" ? "Price" : "Unit cost");
+      gsResult.className = "toast";
+      const closeEnough = bestDiff <= Math.max(1, Math.abs(target) * 0.002); // 0.2% tolerance
+      if (closeEnough) gsResult.classList.add("good"); else gsResult.classList.add("warn");
+
+      gsResult.innerHTML =
+        `<b>Goal Seek үр дүн:</b> Profit ≈ <b>${fmt(bestProfit)}</b><br/>` +
+        `${label}-ийг <b>${bestVal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</b> болгож тохирууллаа.<br/>` +
+        `<span class="muted">Зорилт: ${fmt(target)} | Зөрүү: ${fmt(bestDiff).replace("₮","₮")}</span>`;
+    }
+
+    document.getElementById("runGoalSeek").addEventListener("click", goalSeek);
+    document.getElementById("resetA").addEventListener("click", () => {
+      elUnits.value = A0.units; elPrice.value = A0.price; elUCost.value = A0.ucost; elFCost.value = A0.fcost;
+      targetProfit.value = 250000; changeWhich.value = "units";
+      gsResult.className = "toast"; gsResult.textContent = "Энд үр дүн гарна…";
+      renderA();
+    });
+
+    // ---------- Part B: validation simulator ----------
+    const v_name = document.getElementById("v_name");
+    const v_age = document.getElementById("v_age");
+    const v_email = document.getElementById("v_email");
+    const v_id = document.getElementById("v_id");
+    const vResult = document.getElementById("vResult");
+
+    const reEmail = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+    const reID = /^ST-\d{4}$/;
+
+    function checkValidation(){
+      const name = (v_name.value || "").trim();
+      const age = Number(v_age.value);
+      const email = (v_email.value || "").trim();
+      const id = (v_id.value || "").trim();
+
+      const errs = [];
+
+      // Name: presence + length 2-20
+      if (!name) errs.push("• Нэр: Presence check — хоосон байж болохгүй.");
+      if (name && (name.length < 2 || name.length > 20)) errs.push("• Нэр: Length check — 2–20 тэмдэг байх ёстой.");
+
+      // Age: range 6-18
+      if (!isFinite(age)) errs.push("• Нас: Range check — тоо оруулах хэрэгтэй.");
+      else if (age < 6 || age > 18) errs.push("• Нас: Range check — 6–18 хооронд байх ёстой.");
+
+      // Email: format
+      if (!email) errs.push("• Имэйл: Presence check — хоосон байж болохгүй.");
+      else if (!reEmail.test(email)) errs.push("• Имэйл: Format check — зөв имэйл хэлбэр биш байна.");
+
+      // ID: format ST-#### (4 digits)
+      if (!id) errs.push("• ID: Presence check — хоосон байж болохгүй.");
+      else if (!reID.test(id)) errs.push("• ID: Format check — ST- + 4 цифр байх ёстой (ж: ST-2048).");
+
+      if (errs.length === 0){
+        vResult.className = "toast good";
+        vResult.innerHTML = "✅ Бүх талбар <b>зөв</b> байна. (Validation passed)";
+      } else {
+        vResult.className = "toast bad";
+        vResult.innerHTML = "❌ Алдаа олдлоо:<br/>" + errs.join("<br/>");
+      }
+    }
+
+    document.getElementById("checkValidation").addEventListener("click", checkValidation);
+    document.getElementById("fillBad").addEventListener("click", () => {
+      v_name.value = "A";
+      v_age.value = 3;
+      v_email.value = "studentmail.com";
+      v_id.value = "ST-20A8";
+      vResult.className = "toast"; vResult.textContent = "Одоо 'Шалгах' дар.";
+    });
+    document.getElementById("fillGood").addEventListener("click", () => {
+      v_name.value = "Sofia";
+      v_age.value = 12;
+      v_email.value = "student@mail.com";
+      v_id.value = "ST-2048";
+      vResult.className = "toast"; vResult.textContent = "Одоо 'Шалгах' дар.";
+    });
+    document.getElementById("resetB").addEventListener("click", () => {
+      v_name.value = ""; v_age.value = ""; v_email.value = ""; v_id.value = "";
+      vResult.className = "toast"; vResult.textContent = "Энд алдаанууд жагсана…";
+    });
+
+    // ---------- Wizard: build form ----------
+    const codeBox = document.getElementById("formCode");
+    function buildWizardForm(){
+      const fields = [...document.querySelectorAll(".w_field:checked")].map(x => x.value);
+      const req = document.getElementById("w_required").checked;
+      const lengths = document.getElementById("w_lengths").checked;
+      const formats = document.getElementById("w_formats").checked;
+      const ranges = document.getElementById("w_ranges").checked;
+
+      const map = {
+        fullname: { label:"Full name", type:"text", placeholder:"ж: Sofia", rules: [] },
+        age: { label:"Age", type:"number", placeholder:"ж: 12", rules: [] },
+        email: { label:"Email", type:"email", placeholder:"ж: student@mail.com", rules: [] },
+        class: { label:"Class", type:"text", placeholder:"ж: 6A", rules: [] },
+        phone: { label:"Phone", type:"tel", placeholder:"ж: 99112233", rules: [] },
+      };
+
+      let lines = [];
+      lines.push(`<!-- Wizard-аар үүссэн data collection form (HTML жишээ) -->`);
+      lines.push(`<form id="dataForm">`);
+
+      fields.forEach(f => {
+        const m = map[f];
+        let attrs = [];
+        if (req) attrs.push(`required`);
+        if (lengths && (f === "fullname")) { attrs.push(`minlength="2" maxlength="20"`); }
+        if (ranges && (f === "age")) { attrs.push(`min="6" max="18"`); }
+        if (formats && (f === "phone")) { attrs.push(`pattern="\\d{8}" title="8 цифр оруул"`); }
+        // email type already helps format
+        if (formats && (f === "email")) { /* keep type=email */ }
+
+        lines.push(`  <label style="display:block;margin:10px 0 6px;">${m.label}</label>`);
+        lines.push(`  <input type="${m.type}" name="${f}" placeholder="${m.placeholder}" ${attrs.join(" ")} style="width:100%;padding:10px;border-radius:10px;border:1px solid #ccc;" />`);
+      });
+
+      lines.push(`  <button type="submit" style="margin-top:12px;padding:10px 12px;">Submit</button>`);
+      lines.push(`</form>`);
+      lines.push(``);
+      lines.push(`<!-- Тайлбар: Wizard нь ихэвчлэн fields + validation + layout-ийг автоматаар тохируулж өгдөг. -->`);
+
+      codeBox.value = lines.join("\n");
+    }
+    document.getElementById("buildForm").addEventListener("click", buildWizardForm);
+    document.getElementById("copyCode").addEventListener("click", async () => {
+      try{
+        await navigator.clipboard.writeText(codeBox.value || "");
+        const old = document.getElementById("copyCode").textContent;
+        document.getElementById("copyCode").textContent = "Хууллаа ✅";
+        setTimeout(()=> document.getElementById("copyCode").textContent = old, 900);
+      } catch(e){
+        // ignore if blocked
+        alert("Clipboard зөвшөөрөлгүй байна. Кодоо гараар copy хийгээрэй.");
+      }
+    });
+    buildWizardForm();
+
+    // ---------- Quiz grading ----------
+    const quizResult = document.getElementById("quizResult");
+
+    function grade(){
+      let score = 0, total = 6; // q1 q2 q3 q4 q5 q6 (q7 is open-ended)
+
+      // q1 correct: b
+      const q1 = document.querySelector('input[name="q1"]:checked')?.value;
+      if (q1 === "b") score++;
+
+      // q2 correct: flight + weather only
+      const q2 = [...document.querySelectorAll(".q2:checked")].map(x=>x.value).sort().join(",");
+      if (q2 === ["flight","weather"].sort().join(",")) score++;
+
+      // q3 correct: a
+      const q3 = document.querySelector('input[name="q3"]:checked')?.value;
+      if (q3 === "a") score++;
+
+      // q4 correct: a
+      const q4 = document.querySelector('input[name="q4"]:checked')?.value;
+      if (q4 === "a") score++;
+
+      // q5 matching
+      const m_field = document.getElementById("m_field").value;       // b
+      const m_record = document.getElementById("m_record").value;     // a
+      const m_validation = document.getElementById("m_validation").value; // c
+      const m_form = document.getElementById("m_form").value;         // d
+      if (m_field==="b" && m_record==="a" && m_validation==="c" && m_form==="d") score++;
+
+      // q6
+      const v1 = document.getElementById("v1").value; // length
+      const v2 = document.getElementById("v2").value; // range
+      const v3 = document.getElementById("v3").value; // presence
+      if (v1==="length" && v2==="range" && v3==="presence") score++;
+
+      // q7: open-ended (just check non-empty)
+      const s1 = (document.getElementById("s1").value || "").trim();
+      const s2 = (document.getElementById("s2").value || "").trim();
+      const okOpen = (s1.length >= 6 && s2.length >= 6);
+
+      const pct = Math.round((score/total)*100);
+
+      quizResult.className = "toast";
+      if (pct >= 84) quizResult.classList.add("good");
+      else if (pct >= 60) quizResult.classList.add("warn");
+      else quizResult.classList.add("bad");
+
+      quizResult.innerHTML =
+        `<div class="score">Оноо: ${score} / ${total} (${pct}%)</div>` +
+        `<div class="muted">Aсуулт 7 нь нээлттэй тул: ${okOpen ? "✅ бичсэн байна" : "⚠️ 2 зүйлээ богино өгүүлбэрээр бичээрэй"}.</div>` +
+        `<div class="muted" style="margin-top:6px;">Зөвлөмж: If you missed something — A хэсгийн Goal Seek туршилтыг дахин ажиллуулаад “ямар нүд өөрчлөгдөж зорилт биелдэг вэ?” гэдгийг хэлж сур.</div>`;
+    }
+
+    document.getElementById("grade").addEventListener("click", grade);
+    document.getElementById("resetQuiz").addEventListener("click", () => {
+      // radios
+      ["q1","q3","q4"].forEach(n => {
+        document.querySelectorAll(`input[name="${n}"]`).forEach(x=>x.checked=false);
+      });
+      // checkboxes
+      document.querySelectorAll(".q2").forEach(x=>x.checked=false);
+      // selects
+      ["m_field","m_record","m_validation","m_form","v1","v2","v3"].forEach(id => document.getElementById(id).value="");
+      // open
+      document.getElementById("s1").value=""; document.getElementById("s2").value="";
+      quizResult.className = "toast"; quizResult.textContent = "Оноо энд гарна…";
+    });
+  </script>
+</body>
+</html>
