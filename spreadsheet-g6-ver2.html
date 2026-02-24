@@ -39,10 +39,7 @@
     }
     h1{ margin:0; font-size: clamp(18px, 2.6vw, 28px); }
     .sub{ margin:8px 0 0; color: var(--muted); line-height:1.5; font-size: 14px; }
-    .pill{
-      display:flex; gap:8px; flex-wrap:wrap; align-items:center;
-      margin-top:10px;
-    }
+    .pill{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-top:10px; }
     .chip{
       display:inline-flex; gap:8px; align-items:center;
       border:1px solid var(--border);
@@ -54,7 +51,6 @@
       white-space:nowrap;
     }
     .chip.ok{ border-color: rgba(34,197,94,.35); background: rgba(34,197,94,.08); color: rgba(34,197,94,.95); }
-    .chip.bad{ border-color: rgba(251,113,133,.35); background: rgba(251,113,133,.08); color: rgba(251,113,133,.95); }
 
     .card{
       border:1px solid var(--border);
@@ -104,40 +100,108 @@
       height: 1em;
       vertical-align: baseline;
     }
-    .twoCol{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-    @media (max-width: 860px){
-      .twoCol{ grid-template-columns: 1fr; }
-    }
+    .twoCol{ display:grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width: 860px){ .twoCol{ grid-template-columns: 1fr; } }
     .box{
       border:1px solid rgba(255,255,255,.10);
       background: rgba(2,6,23,.25);
       border-radius: 14px;
       padding: 12px;
     }
-    .qtitle{
-      color: var(--ink);
-      font-weight: 900;
-      margin: 0 0 6px;
-    }
+    .qtitle{ color: var(--ink); font-weight: 900; margin: 0 0 6px; }
     .checklist li{ margin: 8px 0; }
     hr{ border:none; border-top:1px solid rgba(255,255,255,.10); margin: 12px 0; }
 
-    /* === Mini Spreadsheet Simulator styles === */
-    .simGrid{
-      display:grid;
-      grid-template-columns: 52px repeat(6, minmax(84px, 1fr));
-      overflow:auto;
+    /* === Mobile-first Mini Spreadsheet Simulator (SMALL GRID) === */
+    .simTop{
+      display:flex; gap:10px; align-items:center; justify-content:space-between;
+      flex-wrap:wrap;
+      margin-top: 10px;
+    }
+    .formulaBar{
+      display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+      border:1px solid var(--border);
+      background: rgba(2,6,23,.30);
+      border-radius: 14px;
+      padding: 10px;
+      width: 100%;
+    }
+    .addr{
+      padding: 6px 10px;
+      border-radius: 999px;
+      border:1px solid var(--border);
+      background: rgba(125,211,252,.10);
+      color: var(--accent);
+      font-weight: 900;
+      font-size: 14px;
+      white-space: nowrap;
+    }
+    .formulaInput{
+      flex: 1;
+      min-width: 160px;
+      padding: 12px 12px;
+      border-radius: 12px;
+      border:1px solid var(--border);
+      background: rgba(2,6,23,.45);
+      color: var(--ink);
+      outline:none;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 14px;
+    }
+    .formulaInput:focus{
+      border-color: rgba(125,211,252,.65);
+      box-shadow: 0 0 0 3px rgba(125,211,252,.12);
+    }
+    .btnrow{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+    button{
+      border:1px solid var(--border);
+      background: rgba(125,211,252,.12);
+      color: var(--ink);
+      padding: 11px 12px;
+      border-radius: 12px;
+      cursor:pointer;
+      font-weight: 900;
+      font-size: 14px;
+    }
+    button:hover{ background: rgba(125,211,252,.18); }
+    button.secondary{ background: rgba(255,255,255,.05); }
+    button.secondary:hover{ background: rgba(255,255,255,.08); }
+    button.danger{ background: rgba(251,113,133,.10); border-color: rgba(251,113,133,.35); }
+    button.danger:hover{ background: rgba(251,113,133,.15); }
+
+    .msg{
+      margin-top: 10px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(2,6,23,.30);
+      border-radius: 14px;
+      padding: 10px 12px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .msg.ok{ border-color: rgba(34,197,94,.35); background: rgba(34,197,94,.08); color: rgba(34,197,94,.95); }
+    .msg.bad{ border-color: rgba(251,113,133,.35); background: rgba(251,113,133,.08); color: rgba(251,113,133,.95); }
+
+    /* Small grid that fits phones: 4 columns x 7 rows */
+    .simGridWrap{
+      margin-top: 12px;
       border:1px solid var(--border);
       border-radius: 14px;
       background: rgba(2,6,23,.35);
-      min-width: 700px;
+      overflow:auto; /* backup scroll, but normally fits */
+      -webkit-overflow-scrolling: touch;
+    }
+    .simGrid{
+      display:grid;
+      grid-template-columns: 50px repeat(4, minmax(78px, 1fr));
+      width: 100%;
+      min-width: 360px;
+    }
+    @media (max-width: 390px){
+      .simGrid{ grid-template-columns: 48px repeat(4, minmax(70px, 1fr)); }
     }
     .corner, .colH, .rowH{
-      padding: 8px 8px;
+      padding: 10px 6px;
       border-bottom: 1px solid rgba(255,255,255,.08);
       border-right: 1px solid rgba(255,255,255,.08);
       background: rgba(255,255,255,.02);
@@ -160,7 +224,7 @@
     }
     .cellBtn{
       width:100%;
-      padding: 10px 10px;
+      padding: 12px 10px;
       border-radius: 12px;
       border:1px solid rgba(255,255,255,.10);
       background: rgba(2,6,23,.30);
@@ -168,6 +232,7 @@
       cursor:pointer;
       text-align:left;
       display:flex; align-items:center; justify-content:space-between; gap:10px;
+      min-height: 44px; /* touch-friendly */
     }
     .cellBtn:hover{ background: rgba(255,255,255,.06); }
     .cellBtn.active{
@@ -177,7 +242,8 @@
     .cellVal{
       overflow:hidden; text-overflow: ellipsis; white-space: nowrap;
       max-width: 100%;
-      font-weight: 800;
+      font-weight: 900;
+      font-size: 15px; /* bigger numbers on phone */
     }
     .cellHint{
       color: var(--muted);
@@ -187,84 +253,16 @@
       white-space: nowrap;
     }
 
-    .simTop{
-      display:flex; gap:10px; align-items:center; justify-content:space-between;
-      flex-wrap:wrap;
-      margin-top: 10px;
-    }
-    .formulaBar{
-      display:flex; gap:10px; align-items:center; flex-wrap:wrap;
-      border:1px solid var(--border);
-      background: rgba(2,6,23,.30);
-      border-radius: 14px;
-      padding: 10px;
-    }
-    .addr{
-      padding: 6px 10px;
-      border-radius: 999px;
-      border:1px solid var(--border);
-      background: rgba(125,211,252,.10);
-      color: var(--accent);
-      font-weight: 900;
-      font-size: 13px;
-      white-space: nowrap;
-    }
-    .formulaInput{
-      flex: 1;
-      min-width: 240px;
-      padding: 10px 12px;
-      border-radius: 12px;
-      border:1px solid var(--border);
-      background: rgba(2,6,23,.45);
-      color: var(--ink);
-      outline:none;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-      font-size: 13px;
-    }
-    .formulaInput:focus{
-      border-color: rgba(125,211,252,.65);
-      box-shadow: 0 0 0 3px rgba(125,211,252,.12);
-    }
-    .btnrow{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
-    button{
-      border:1px solid var(--border);
-      background: rgba(125,211,252,.12);
-      color: var(--ink);
-      padding: 10px 12px;
-      border-radius: 12px;
-      cursor:pointer;
-      font-weight: 900;
-    }
-    button:hover{ background: rgba(125,211,252,.18); }
-    button.secondary{ background: rgba(255,255,255,.05); }
-    button.secondary:hover{ background: rgba(255,255,255,.08); }
-    button.danger{ background: rgba(251,113,133,.10); border-color: rgba(251,113,133,.35); }
-    button.danger:hover{ background: rgba(251,113,133,.15); }
-
-    .msg{
-      margin-top: 10px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(2,6,23,.30);
-      border-radius: 14px;
-      padding: 10px 12px;
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.5;
-    }
-    .msg.ok{ border-color: rgba(34,197,94,.35); background: rgba(34,197,94,.08); color: rgba(34,197,94,.95); }
-    .msg.bad{ border-color: rgba(251,113,133,.35); background: rgba(251,113,133,.08); color: rgba(251,113,133,.95); }
-
-    /* Print-friendly */
     @media print{
       body{ background:#fff; color:#000; }
-      header,.card,.box,.tblwrap,.simGrid,.formulaBar,.msg{ background:#fff !important; color:#000 !important; border:1px solid #ccc !important; box-shadow:none !important; }
+      header,.card,.box,.tblwrap,.simGridWrap,.formulaBar,.msg{ background:#fff !important; color:#000 !important; border:1px solid #ccc !important; box-shadow:none !important; }
       h2,h3{ color:#000 !important; }
       p,ul,li,.sub,.chip,.note{ color:#000 !important; }
       .mono,.cellHint,.cellVal{ color:#000 !important; }
       th{ background:#eee !important; color:#000 !important; }
       .note{ border:1px dashed #999 !important; }
       .empty{ border-bottom: 2px dotted #000 !important; }
-      button{ display:none !important; } /* print дээр товч хэрэггүй */
+      button{ display:none !important; }
     }
   </style>
 </head>
@@ -427,305 +425,346 @@
       </div>
     </section>
 
-    <!-- ✅ Requested: small working simulator at the end -->
-    <section class="card" id="sim">
-      <h2>4) Mini Spreadsheet Simulator (ажилладаг)</h2>
-      <p>
-        Одоо үзсэн зүйлсээ энд турш: нүд сонгоод дээрх мөрөнд томьёо бичнэ.
-        Дэмжих: <span class="mono">=</span>, <span class="mono">+ - * / ( )</span>, <span class="mono">SUM(A1:A5)</span>, <span class="mono">AVERAGE(B2:B6)</span>.
-      </p>
+    <!-- ✅ Mobile-friendly Simulator (ЗӨВ ХҮСНЭГТ: Бараа/Үнэ/Тоо/Нийт) -->
+<section class="card" id="sim">
+  <h2>4) Mini Spreadsheet Simulator (утсанд эвтэйхэн)</h2>
+  <p>
+    Нүд сонгоод дээрх мөрөнд утга эсвэл томьёо бичнэ.
+    Дэмжих: <span class="mono">=</span>, <span class="mono">+ - * / ( )</span>,
+    <span class="mono">SUM(A2:A6)</span>, <span class="mono">AVERAGE(B2:B6)</span>.
+  </p>
 
-      <div class="note">
-        Түргэн туршилт:
-        <ul style="margin:8px 0 0; padding-left:18px;">
-          <li>A2..A6 дээр тоо оруулаад A7 дээр <span class="mono">=SUM(A2:A6)</span></li>
-          <li>B2..B6 дээр тоо оруулаад B7 дээр <span class="mono">=AVERAGE(B2:B6)</span></li>
-          <li>C2 дээр 7, D2 дээр 6 бичээд E2 дээр <span class="mono">=C2*D2</span></li>
-        </ul>
-      </div>
-
-      <div class="simTop">
-        <div class="formulaBar">
-          <span class="addr" id="addr">A1</span>
-          <input class="formulaInput" id="bar" placeholder="Жишээ: =SUM(A2:A6)" />
-          <button id="apply">Хэрэглэх</button>
-        </div>
-
-        <div class="btnrow">
-          <button class="secondary" id="seed">Жишээ өгөгдөл</button>
-          <button class="danger" id="clear">Цэвэрлэх</button>
-        </div>
-      </div>
-
-      <div class="tblwrap" style="margin-top:12px;">
-        <div class="simGrid" id="grid"></div>
-      </div>
-
-      <div class="msg" id="status" style="display:none;"></div>
-    </section>
-
+  <div class="note">
+    Default өгөгдөлтэй нээгдэнэ (бүгд нэг өгөгдөл дээр ажиллана):
+    <ul style="margin:8px 0 0; padding-left:18px;">
+      <li><b>D2..D6</b> дээр “Нийт” (Үнэ×Тоо) автоматаар гарна</li>
+      <li><b>D7</b> дээр нийт нийлбэр гарна</li>
+      <li><b>B7</b> дээр дундаж үнэ гарна</li>
+    </ul>
   </div>
 
-  <script>
-    /***********************
-     * Mini Spreadsheet Simulator
-     * - Grid: A..F, 1..8
-     * - Each cell stores raw input: "12" or "=A1+A2" etc.
-     * - Supports: + - * / ( )
-     * - Functions: SUM(range), AVERAGE(range)
-     * - Range supports rectangles: A2:B4
-     ***********************/
-    const cols = ["A","B","C","D","E","F"];
-    const rows = [1,2,3,4,5,6,7,8];
+  <div class="simTop">
+    <div class="formulaBar">
+      <span class="addr" id="addr">A1</span>
+      <input class="formulaInput" id="bar" placeholder="Жишээ: =B2*C2" />
+      <button id="apply">Хэрэглэх</button>
+    </div>
 
-    const $ = (s, el=document)=> el.querySelector(s);
-    const $$ = (s, el=document)=> Array.from(el.querySelectorAll(s));
+    <div class="btnrow">
+      <button class="secondary" id="seed">Default өгөгдөл</button>
+      <button class="danger" id="clear">Default руу буцаах</button>
+    </div>
+  </div>
 
-    const stateKey = "mini_sheet_v1_mn";
+  <div class="simGridWrap" aria-label="Mini spreadsheet grid">
+    <div class="simGrid" id="grid"></div>
+  </div>
+<div class="box" style="margin-top:12px;">
+  <p class="qtitle">🧩 Mini дасгал — Томьёоны ач тус</p>
 
-    function addr(c,r){ return `${c}${r}`; }
-    function escapeHtml(str){
-      return String(str)
-        .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
-        .replaceAll('"',"&quot;").replaceAll("'","&#039;");
+  <ul class="checklist">
+
+    <li>
+      <b>Дасгал 1 — Томьёо өөрөө өөрчлөгддөг үү?</b><br>
+      <span class="mono">B2</span> (Үнэ)-г <b>800 → 1000</b> болгож өөрчил.<br>
+      <span class="mono">D2</span> автоматаар хэд болсон бэ? → <span class="empty"></span><br>
+      ➜ Дүгнэлт: Томьёоны давуу тал юу вэ? → <span class="empty" style="min-width:200px;"></span>
+    </li>
+
+    <li>
+      <b>Дасгал 2 — Өөрөө томьёо бичих</b><br>
+      <span class="mono">D5</span> нүдийг цэвэрлээд, өөрөө томьёог дахин бич:<br>
+      → ямар томьёо бичих вэ? → <span class="mono">=</span><span class="empty"></span><br>
+      → гарсан үр дүн → <span class="empty"></span>
+    </li>
+
+    <li>
+      <b>Дасгал 3 — SUM ашиглах</b><br>
+      <span class="mono">D7</span> нүдийг цэвэрлээд, нийлбэрийн томьёог өөрөө бич.<br>
+      → томьёо → <span class="mono">=</span><span class="empty"></span><br>
+      → үр дүн → <span class="empty"></span>
+    </li>
+
+    <li>
+      <b>Дасгал 4 — AVERAGE ашиглах</b><br>
+      <span class="mono">B7</span> нүдийг цэвэрлээд, дундажийн томьёог бич.<br>
+      → томьёо → <span class="mono">=</span><span class="empty"></span><br>
+      → үр дүн → <span class="empty"></span>
+    </li>
+
+  </ul>
+
+  <div class="note">
+    🎯 Энэ дасгалын зорилго:<br>
+    • Томьёо нь гараар дахин бодох шаардлагагүй болгодгийг ойлгох<br>
+    • Томьёог өөрөө бичиж сурах<br>
+    • SUM ба AVERAGE ашиглаж сурах
+  </div>
+</div>
+  <div class="msg" id="status" style="display:none;"></div>
+</section>
+
+<script>
+/***********************
+ * Mobile-first Mini Spreadsheet Simulator (Small Grid)
+ * - Grid: A..D, 1..7  (4 columns x 7 rows)
+ * - Columns: A=Бараа, B=Үнэ, C=Тоо, D=Нийт
+ * - Default dataset loads automatically
+ ***********************/
+const cols = ["A","B","C","D"];
+const rows = [1,2,3,4,5,6,7];
+
+const $ = (s, el=document)=> el.querySelector(s);
+const $$ = (s, el=document)=> Array.from(el.querySelectorAll(s));
+
+const stateKey = "mini_sheet_small_v2_mn";
+
+function addr(c,r){ return `${c}${r}`; }
+function escapeHtml(str){
+  return String(str)
+    .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;").replaceAll("'","&#039;");
+}
+function fmt(n){
+  if(!Number.isFinite(n)) return "—";
+  const nearInt = Math.abs(n - Math.round(n)) < 1e-9;
+  return nearInt ? String(Math.round(n)) : n.toFixed(2);
+}
+
+// ✅ Correct default dataset
+// A: Item, B: Price, C: Qty, D: Total
+const DEFAULT = {
+  A1:"Бараа",     B1:"Үнэ",   C1:"Тоо",   D1:"Нийт",
+  A2:"Үзэг",      B2:"800",   C2:"12",    D2:"=B2*C2",
+  A3:"Харандаа",  B3:"500",   C3:"20",    D3:"=B3*C3",
+  A4:"Дэвтэр",    B4:"2500",  C4:"7",     D4:"=B4*C4",
+  A5:"Баллуур",   B5:"300",   C5:"15",    D5:"=B5*C5",
+  A6:"Шугам",     B6:"1200",  C6:"5",     D6:"=B6*C6",
+  A7:"Нийт/Дундаж", B7:"=AVERAGE(B2:B6)", C7:"",     D7:"=SUM(D2:D6)"
+};
+
+// sheet[id] = { raw: string, val: number|string }
+let sheet = {};
+let active = { c:"B", r:2 };
+
+function defaultSheet(){
+  const s = {};
+  cols.forEach(c => rows.forEach(r => s[addr(c,r)] = { raw:"", val:"" }));
+  return s;
+}
+
+function applyDefaultData(){
+  sheet = defaultSheet();
+  for(const k of Object.keys(DEFAULT)){
+    if(sheet[k]) sheet[k].raw = DEFAULT[k];
+  }
+}
+
+function load(){
+  const raw = localStorage.getItem(stateKey);
+  if(!raw){
+    applyDefaultData();
+    return;
+  }
+  try{
+    sheet = JSON.parse(raw);
+    if(!sheet || typeof sheet !== "object") throw new Error("bad");
+    const base = defaultSheet();
+    for(const id of Object.keys(base)){
+      if(!sheet[id]) sheet[id] = { raw:"", val:"" };
+      if(typeof sheet[id].raw !== "string") sheet[id].raw = String(sheet[id].raw ?? "");
+      if(sheet[id].val === undefined) sheet[id].val = "";
     }
-    function fmt(n){
-      if(!Number.isFinite(n)) return "—";
-      const nearInt = Math.abs(n - Math.round(n)) < 1e-9;
-      return nearInt ? String(Math.round(n)) : n.toFixed(2);
-    }
+  }catch(e){
+    applyDefaultData();
+  }
+}
+function save(){ localStorage.setItem(stateKey, JSON.stringify(sheet)); }
 
-    // sheet[id] = { raw: string, val: number|string }
-    let sheet = {};
-    let active = { c:"A", r:1 };
+function setStatus(text, type){
+  const el = $("#status");
+  el.style.display = "block";
+  el.classList.remove("ok","bad");
+  if(type) el.classList.add(type);
+  el.textContent = text;
+}
 
-    function defaultSheet(){
-      const s = {};
-      cols.forEach(c => rows.forEach(r => s[addr(c,r)] = { raw:"", val:"" }));
-      return s;
-    }
+function setActive(c,r){
+  active = {c,r};
+  $("#addr").textContent = addr(c,r);
+  $("#bar").value = (sheet[addr(c,r)]?.raw ?? "");
+  $$(".cellBtn", $("#grid")).forEach(b => b.classList.remove("active"));
+  const btn = $(`#btn_${addr(c,r)}`);
+  if(btn) btn.classList.add("active");
+}
 
-    function load(){
-      const raw = localStorage.getItem(stateKey);
-      try{ sheet = raw ? JSON.parse(raw) : defaultSheet(); }
-      catch(e){ sheet = defaultSheet(); }
+function parseRange(rangeStr){
+  const m = rangeStr.match(/^([A-D])([1-7])\s*:\s*([A-D])([1-7])$/i);
+  if(!m) return [];
+  const c1 = m[1].toUpperCase(), r1 = Number(m[2]);
+  const c2 = m[3].toUpperCase(), r2 = Number(m[4]);
+  const cStart = Math.min(cols.indexOf(c1), cols.indexOf(c2));
+  const cEnd   = Math.max(cols.indexOf(c1), cols.indexOf(c2));
+  const rStart = Math.min(r1, r2);
+  const rEnd   = Math.max(r1, r2);
+  const out = [];
+  for(let rr=rStart; rr<=rEnd; rr++){
+    for(let cc=cStart; cc<=cEnd; cc++){
+      out.push(addr(cols[cc], rr));
     }
-    function save(){
-      localStorage.setItem(stateKey, JSON.stringify(sheet));
-    }
+  }
+  return out;
+}
 
-    function setStatus(text, type){
-      const el = $("#status");
-      el.style.display = "block";
-      el.classList.remove("ok","bad");
-      if(type) el.classList.add(type);
-      el.textContent = text;
-    }
+function getCellNumber(id){
+  const raw = (sheet[id]?.raw ?? "").trim();
+  if(raw === "") return 0;
+  if(raw.startsWith("=")){
+    const v = Number(sheet[id]?.val);
+    return Number.isFinite(v) ? v : 0;
+  }
+  const n = Number(raw);
+  return Number.isFinite(n) ? n : 0;
+}
 
-    function setActive(c,r){
-      active = {c,r};
-      $("#addr").textContent = addr(c,r);
-      $("#bar").value = (sheet[addr(c,r)]?.raw ?? "");
-      $$(".cellBtn", $("#grid")).forEach(b => b.classList.remove("active"));
-      const btn = $(`#btn_${addr(c,r)}`);
-      if(btn) btn.classList.add("active");
-    }
+function evalFormula(formula){
+  let expr = formula.trim().slice(1);
 
-    function parseRange(rangeStr){
-      // "A2:B4" or "C3:C6"
-      const m = rangeStr.match(/^([A-F])([1-8])\s*:\s*([A-F])([1-8])$/i);
-      if(!m) return [];
-      const c1 = m[1].toUpperCase(), r1 = Number(m[2]);
-      const c2 = m[3].toUpperCase(), r2 = Number(m[4]);
-      const cStart = Math.min(cols.indexOf(c1), cols.indexOf(c2));
-      const cEnd   = Math.max(cols.indexOf(c1), cols.indexOf(c2));
-      const rStart = Math.min(r1, r2);
-      const rEnd   = Math.max(r1, r2);
-      const out = [];
-      for(let rr=rStart; rr<=rEnd; rr++){
-        for(let cc=cStart; cc<=cEnd; cc++){
-          out.push(addr(cols[cc], rr));
-        }
-      }
-      return out;
-    }
+  const funcPattern = /(SUM|AVERAGE)\s*\(\s*([A-D][1-7]\s*:\s*[A-D][1-7])\s*\)/ig;
+  let guard = 0;
+  while(funcPattern.test(expr) && guard < 20){
+    expr = expr.replace(funcPattern, (full, fn, range) => {
+      const ids = parseRange(range.replace(/\s+/g,""));
+      const nums = ids.map(getCellNumber);
+      const sum = nums.reduce((a,b)=>a+b,0);
+      if(String(fn).toUpperCase() === "SUM") return String(sum);
+      const avg = nums.length ? (sum / nums.length) : 0;
+      return String(avg);
+    });
+    guard++;
+  }
 
-    function getCellNumber(id){
-      const raw = (sheet[id]?.raw ?? "").trim();
-      if(raw === "") return 0;
+  expr = expr.replace(/([A-D])([1-7])/g, (m,c,r)=>{
+    const id = addr(String(c).toUpperCase(), Number(r));
+    return String(getCellNumber(id));
+  });
+
+  if(!/^[0-9+\-*/().\s]+$/.test(expr)){
+    throw new Error("Дэмжигдээгүй тэмдэг байна (зөвхөн + - * / ( ) болон SUM/AVERAGE range ашиглана).");
+  }
+
+  // eslint-disable-next-line no-new-func
+  const v = Function(`"use strict"; return (${expr});`)();
+  if(!Number.isFinite(v)) throw new Error("Тооцоолол боломжгүй (Infinity эсвэл NaN).");
+  return v;
+}
+
+function recalc(){
+  for(let pass=0; pass<6; pass++){
+    for(const id of Object.keys(sheet)){
+      const raw = (sheet[id].raw ?? "").trim();
       if(raw.startsWith("=")){
-        const v = Number(sheet[id]?.val);
-        return Number.isFinite(v) ? v : 0;
-      }
-      const n = Number(raw);
-      return Number.isFinite(n) ? n : 0;
-    }
-
-    function evalFormula(formula){
-      // formula starts with "="
-      let expr = formula.trim().slice(1);
-
-      // Replace SUM(...) and AVERAGE(...), repeat a few times (simple nesting)
-      const funcPattern = /(SUM|AVERAGE)\s*\(\s*([A-F][1-8]\s*:\s*[A-F][1-8])\s*\)/ig;
-      let guard = 0;
-      while(funcPattern.test(expr) && guard < 20){
-        expr = expr.replace(funcPattern, (full, fn, range) => {
-          const ids = parseRange(range.replace(/\s+/g,""));
-          const nums = ids.map(getCellNumber);
-          const sum = nums.reduce((a,b)=>a+b,0);
-          if(String(fn).toUpperCase() === "SUM") return String(sum);
-          const avg = nums.length ? (sum / nums.length) : 0;
-          return String(avg);
-        });
-        guard++;
-      }
-
-      // Replace cell refs like A1
-      expr = expr.replace(/([A-F])([1-8])/g, (m,c,r)=>{
-        const id = addr(String(c).toUpperCase(), Number(r));
-        return String(getCellNumber(id));
-      });
-
-      // Validate remaining characters
-      if(!/^[0-9+\-*/().\s]+$/.test(expr)){
-        throw new Error("Дэмжигдээгүй тэмдэг байна (зөвхөн + - * / ( ) болон SUM/AVERAGE range ашиглана).");
-      }
-
-      // Evaluate expression
-      // eslint-disable-next-line no-new-func
-      const v = Function(`"use strict"; return (${expr});`)();
-      if(!Number.isFinite(v)) throw new Error("Тооцоолол боломжгүй (Infinity эсвэл NaN).");
-      return v;
-    }
-
-    function recalc(){
-      // do multiple passes for dependencies
-      for(let pass=0; pass<6; pass++){
-        for(const id of Object.keys(sheet)){
-          const raw = (sheet[id].raw ?? "").trim();
-          if(raw.startsWith("=")){
-            try{
-              sheet[id].val = evalFormula(raw);
-            }catch(e){
-              sheet[id].val = "";
-            }
-          }else{
-            sheet[id].val = "";
-          }
-        }
-      }
-      save();
-      render();
-    }
-
-    function render(){
-      const grid = $("#grid");
-      grid.innerHTML = "";
-
-      // corner
-      const corner = document.createElement("div");
-      corner.className = "corner";
-      corner.textContent = "";
-      grid.appendChild(corner);
-
-      // column headers
-      cols.forEach(c=>{
-        const h = document.createElement("div");
-        h.className = "colH";
-        h.textContent = c;
-        grid.appendChild(h);
-      });
-
-      // rows + cells
-      rows.forEach(r=>{
-        const rh = document.createElement("div");
-        rh.className = "rowH";
-        rh.textContent = r;
-        grid.appendChild(rh);
-
-        cols.forEach(c=>{
-          const id = addr(c,r);
-          const cell = sheet[id] || { raw:"", val:"" };
-
-          const box = document.createElement("div");
-          box.className = "cellBox";
-
-          const btn = document.createElement("button");
-          btn.type = "button";
-          btn.className = "cellBtn";
-          btn.id = `btn_${id}`;
-          btn.addEventListener("click", ()=> setActive(c,r));
-
-          const raw = (cell.raw ?? "").trim();
-          const display = raw.startsWith("=")
-            ? (cell.val === "" ? "—" : fmt(Number(cell.val)))
-            : (raw === "" ? "—" : raw);
-
-          const hint = raw.startsWith("=") ? raw : "утга";
-
-          btn.innerHTML = `
-            <span class="cellVal">${escapeHtml(display)}</span>
-            <span class="cellHint">${escapeHtml(hint)}</span>
-          `;
-
-          box.appendChild(btn);
-          grid.appendChild(box);
-        });
-      });
-
-      setActive(active.c, active.r);
-    }
-
-    function apply(){
-      const id = addr(active.c, active.r);
-      sheet[id] = sheet[id] || { raw:"", val:"" };
-      sheet[id].raw = $("#bar").value;
-      try{
-        recalc();
-        setStatus("Хадгаллаа. (Enter дарж бас болно)", "ok");
-      }catch(e){
-        setStatus(String(e?.message || e), "bad");
+        try{ sheet[id].val = evalFormula(raw); }
+        catch(e){ sheet[id].val = ""; }
+      }else{
+        sheet[id].val = "";
       }
     }
+  }
+  save();
+  render();
+}
 
-    // Buttons + events
-    $("#apply").addEventListener("click", apply);
-    $("#bar").addEventListener("keydown", (e)=>{
-      if(e.key === "Enter"){
-        e.preventDefault();
-        apply();
-      }
+function render(){
+  const grid = $("#grid");
+  grid.innerHTML = "";
+
+  const corner = document.createElement("div");
+  corner.className = "corner";
+  corner.textContent = "";
+  grid.appendChild(corner);
+
+  cols.forEach(c=>{
+    const h = document.createElement("div");
+    h.className = "colH";
+    h.textContent = c;
+    grid.appendChild(h);
+  });
+
+  rows.forEach(r=>{
+    const rh = document.createElement("div");
+    rh.className = "rowH";
+    rh.textContent = r;
+    grid.appendChild(rh);
+
+    cols.forEach(c=>{
+      const id = addr(c,r);
+      const cell = sheet[id] || { raw:"", val:"" };
+
+      const box = document.createElement("div");
+      box.className = "cellBox";
+
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "cellBtn";
+      btn.id = `btn_${id}`;
+      btn.addEventListener("click", ()=> setActive(c,r));
+
+      const raw = (cell.raw ?? "").trim();
+      const display = raw.startsWith("=")
+        ? (cell.val === "" ? "—" : fmt(Number(cell.val)))
+        : (raw === "" ? "—" : raw);
+
+      const hint = raw.startsWith("=") ? raw : "утга";
+
+      btn.innerHTML = `
+        <span class="cellVal">${escapeHtml(display)}</span>
+        <span class="cellHint">${escapeHtml(hint)}</span>
+      `;
+
+      box.appendChild(btn);
+      grid.appendChild(box);
     });
+  });
 
-    $("#seed").addEventListener("click", ()=>{
-      // Small demo aligned with lesson: totals + sum + average
-      const seed = {
-        A2:"10", A3:"12", A4:"8", A5:"15", A6:"5",
-        A7:"=SUM(A2:A6)",
-        B2:"800", B3:"500", B4:"2500", B5:"300", B6:"1200",
-        B7:"=AVERAGE(B2:B6)",
-        C2:"7", D2:"6", E2:"=C2*D2"
-      };
-      for(const k of Object.keys(seed)){
-        if(sheet[k]) sheet[k].raw = seed[k];
-      }
-      recalc();
-      setActive("A",7);
-      setStatus("Жишээ өгөгдөл орууллаа. Одоо өөрчлөөд туршаарай.", "ok");
-    });
+  setActive(active.c, active.r);
+}
 
-    $("#clear").addEventListener("click", ()=>{
-      sheet = defaultSheet();
-      save();
-      render();
-      setActive("A",1);
-      setStatus("Цэвэрлэгдлээ.", "ok");
-    });
+function apply(){
+  const id = addr(active.c, active.r);
+  sheet[id] = sheet[id] || { raw:"", val:"" };
+  sheet[id].raw = $("#bar").value;
+  recalc();
+  setStatus("Хадгаллаа. (Enter дарж бас болно)", "ok");
+}
 
-    // Init
-    load();
-    render();
-    setStatus("Нүд сонгоод дээрх мөрөнд утга эсвэл томьёо бич. Ж: =B2*C2", "ok");
-  </script>
+$("#apply").addEventListener("click", apply);
+$("#bar").addEventListener("keydown", (e)=>{
+  if(e.key === "Enter"){
+    e.preventDefault();
+    apply();
+  }
+});
+
+$("#seed").addEventListener("click", ()=>{
+  applyDefaultData();
+  recalc();
+  setActive("D",7);
+  setStatus("Default өгөгдөл ачааллаа. Бүгд нэг өгөгдөл дээр ажиллана.", "ok");
+});
+
+$("#clear").addEventListener("click", ()=>{
+  applyDefaultData();
+  recalc();
+  setActive("B",2);
+  setStatus("Default өгөгдөл рүү буцлаа.", "ok");
+});
+
+load();
+recalc();
+render();
+setActive("B",2);
+setStatus("Одоо D2 дээр =B2*C2 ажиллаж байгааг хараад, B2 эсвэл C2-г өөрчлөөд туршаарай.", "ok");
+</script>
 </body>
 </html>
