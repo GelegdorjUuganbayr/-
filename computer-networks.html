@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8">
+<title>Networks and Digital Communication - 3.1</title>
+<style>
+body{
+    font-family: Arial, sans-serif;
+    margin: 40px;
+    background-color: #f4f6f9;
+    line-height: 1.6;
+}
+h1,h2,h3{
+    color:#1b3c59;
+}
+.section{
+    background:white;
+    padding:20px;
+    margin-bottom:25px;
+    border-radius:10px;
+    box-shadow:0 0 10px rgba(0,0,0,0.1);
+}
+table{
+    width:100%;
+    border-collapse: collapse;
+    margin-top:15px;
+}
+th,td{
+    border:1px solid #ccc;
+    padding:10px;
+    text-align:left;
+}
+th{
+    background:#1b3c59;
+    color:white;
+}
+.highlight{
+    background:#e8f4ff;
+    padding:10px;
+    border-left:5px solid #1b3c59;
+}
+.question{
+    background:#fff8dc;
+    padding:10px;
+    margin-top:10px;
+}
+</style>
+</head>
+<body>
+
+<h1>3.1 Networks and Digital Communication</h1>
+
+<div class="section">
+<h2>1. Network гэж юу вэ?</h2>
+<p><b>Network</b> гэдэг нь хоёр буюу түүнээс олон төхөөрөмж хоорондоо холбогдон мэдээлэл солилцох систем юм.</p>
+<p>Жишээ:</p>
+<ul>
+<li>Компьютер + принтер</li>
+<li>Гар утас + ухаалаг цаг</li>
+<li>Интернет (дэлхийн хэмжээний сүлжээ)</li>
+</ul>
+</div>
+
+<div class="section">
+<h2>2. Network-ийн төрлүүд</h2>
+
+<h3>2.1 PAN (Personal Area Network)</h3>
+<ul>
+<li>Цөөн төхөөрөмжтэй (ихэвчлэн 2–5)</li>
+<li>Нэг өрөөнд байрлана</li>
+<li>Хувийн хэрэглээ</li>
+<li>Төхөөрөмж, кабель нь хэрэглэгчийн өмч</li>
+</ul>
+<div class="highlight">
+Жишээ: Гар утас + Bluetooth чихэвч
+</div>
+
+<h3>2.2 LAN (Local Area Network)</h3>
+<ul>
+<li>Олон төхөөрөмжтэй байж болно</li>
+<li>Нэг барилга эсвэл кампус</li>
+<li>Сургууль, гэр, оффис</li>
+<li>Сүлжээний төхөөрөмж нь байгууллагын өмч</li>
+</ul>
+<div class="highlight">
+Жишээ: Сургуулийн компьютерийн лаборатори
+</div>
+
+<h3>2.3 WAN (Wide Area Network)</h3>
+<ul>
+<li>Хот, улс, дэлхийн хэмжээнд</li>
+<li>Төхөөрөмжүүд хол зайд байрлана</li>
+<li>Интернет бол хамгийн том WAN</li>
+<li>Зарим төхөөрөмж ISP-ийн өмч</li>
+</ul>
+<div class="highlight">
+Жишээ: Интернет
+</div>
+
+</div>
+
+<div class="section">
+<h2>3. Wired Connections (Утастай холболт)</h2>
+
+<h3>3.1 Copper Cable</h3>
+<ul>
+<li>Цахилгаан дохиогоор мэдээлэл дамжуулна</li>
+<li>Хурд: ~300 Mbps хүртэл</li>
+<li>Хямд</li>
+<li>Цахилгаан соронзон нөлөөнд өртдөг</li>
+<li>Зузаан бүрхүүлтэй</li>
+</ul>
+
+<h3>3.2 Fibre Optic Cable</h3>
+<ul>
+<li>Гэрлээр мэдээлэл дамжуулна</li>
+<li>Хурд: 10 Gbps ба түүнээс дээш</li>
+<li>Маш хурдан</li>
+<li>EMI-д өртдөггүй</li>
+<li>Нимгэн</li>
+<li>Суурилуулахад үнэтэй</li>
+</ul>
+
+</div>
+
+<div class="section">
+<h2>4. Wired vs Wireless</h2>
+
+<table>
+<tr>
+<th>Wired</th>
+<th>Wireless</th>
+</tr>
+<tr>
+<td>Илүү хурдан</td>
+<td>Илүү удаан</td>
+</tr>
+<tr>
+<td>Илүү найдвартай</td>
+<td>Хана, долгионоос хамаарна</td>
+</tr>
+<tr>
+<td>Илүү аюулгүй</td>
+<td>Password таавал хакердах боломжтой</td>
+</tr>
+<tr>
+<td>Суурилуулахад үнэтэй</td>
+<td>Суурилуулахад хямд</td>
+</tr>
+<tr>
+<td>Шинэ төхөөрөмж нэмэхэд төвөгтэй</td>
+<td>Шинэ төхөөрөмж нэмэхэд хялбар</td>
+</tr>
+</table>
+
+</div>
+
+<div class="section">
+<h2>5. Дасгал</h2>
+
+<h3>Асуултууд</h3>
+<div class="question">
+1. PAN хэдэн төхөөрөмжтэй байж болох вэ?<br>
+2. LAN хаана байрладаг вэ?<br>
+3. WAN-ийн жишээ хэлнэ үү.<br>
+4. Copper cable ямар дохио ашигладаг вэ?<br>
+5. Аль нь илүү хурдан вэ: Wired эсвэл Wireless?
+</div>
+
+<h3>Бодлого</h3>
+<div class="question">
+1. Сургууль 15 компьютер, 2 давхар номын санг холбох шаардлагатай. Wired эсвэл Wireless? Яагаад?<br><br>
+2. Гэртээ 2 утас, 1 laptop ашиглана. Аль төрлийн сүлжээ тохиромжтой вэ?
+</div>
+
+</div>
+
+<div class="section">
+<h2>6. Дүгнэлт</h2>
+<ul>
+<li>PAN – жижиг, ойр зай</li>
+<li>LAN – нэг барилга</li>
+<li>WAN – хол зай</li>
+<li>Copper – цахилгаан дохио</li>
+<li>Fibre – гэрлийн дохио</li>
+<li>Wired – хурдан, аюулгүй</li>
+<li>Wireless – хялбар, уян хатан</li>
+</ul>
+</div>
+
+</body>
+</html>
