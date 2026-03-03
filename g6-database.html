@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8">
+<title>2.3 Database — Онол ба Дасгал</title>
+
+<style>
+body{
+    font-family: Arial, sans-serif;
+    margin:40px;
+    line-height:1.6;
+}
+
+h1,h2,h3{
+    margin-top:30px;
+}
+
+.section{
+    margin-bottom:40px;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:10px;
+    margin-bottom:20px;
+}
+
+th, td{
+    border:1px solid #000;
+    padding:8px;
+    text-align:left;
+}
+
+.exercise{
+    margin-top:20px;
+    padding:15px;
+    border:1px solid #000;
+}
+</style>
+
+</head>
+<body>
+
+<h1>2.3 DATABASE</h1>
+
+<div class="section">
+<h2>1. Database гэж юу вэ?</h2>
+
+<p><b>Database</b> гэдэг нь мэдээллийг хүснэгт хэлбэрээр хадгалсан бүтэц юм.</p>
+
+<table>
+<tr>
+<th>Name</th>
+<th>Age</th>
+<th>City</th>
+</tr>
+<tr>
+<td>Bat</td>
+<td>12</td>
+<td>UB</td>
+</tr>
+<tr>
+<td>Sara</td>
+<td>13</td>
+<td>Darkhan</td>
+</tr>
+</table>
+
+</div>
+
+<div class="section">
+<h2>2. Field ба Record</h2>
+
+<p><b>Field</b> = Багана (жишээ: Age)</p>
+<p><b>Record</b> = Мөр (жишээ: Bat – 12 – UB)</p>
+
+</div>
+
+<div class="section">
+<h2>3. Data type</h2>
+
+<p><b>Data type</b> = тухайн field ямар төрлийн мэдээлэл хадгалах вэ?</p>
+
+<ul>
+<li><b>Number</b> → 5, 12, 100</li>
+<li><b>Text</b> → Bat, UB, puzzle</li>
+</ul>
+
+</div>
+
+<div class="section">
+<h2>4. Primary Key</h2>
+
+<p><b>Primary key</b> = record бүрийг ялгах давтагдашгүй утга.</p>
+
+<table>
+<tr>
+<th>ID</th>
+<th>Name</th>
+<th>Age</th>
+</tr>
+<tr>
+<td>1</td>
+<td>Bat</td>
+<td>12</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Sara</td>
+<td>13</td>
+</tr>
+</table>
+
+<p>ID нь primary key. Давтагдаж болохгүй.</p>
+
+</div>
+
+<div class="section">
+<h2>5. Query</h2>
+
+<p><b>Query</b> = мэдээлэл хайх дүрэм.</p>
+
+<ul>
+<li>Age > 12</li>
+<li>Name = "Bat"</li>
+<li>City = "UB"</li>
+</ul>
+
+</div>
+
+<hr>
+
+<h1>✏️ ДЭВТЭР ДЭЭР ХИЙХ ДААЛГАВАР</h1>
+
+<div class="exercise">
+<h3>Дасгал 1 — Field & Record</h3>
+
+<table>
+<tr>
+<th>Name</th>
+<th>Age</th>
+<th>City</th>
+</tr>
+<tr>
+<td>Bat</td>
+<td>12</td>
+<td>UB</td>
+</tr>
+<tr>
+<td>Sara</td>
+<td>13</td>
+<td>Darkhan</td>
+</tr>
+<tr>
+<td>Tom</td>
+<td>12</td>
+<td>UB</td>
+</tr>
+</table>
+
+<ol>
+<li>Нэг field нэрлэ.</li>
+<li>Нэг record нэрлэ.</li>
+<li>Хэдэн field байна вэ?</li>
+<li>Хэдэн record байна вэ?</li>
+</ol>
+</div>
+
+<div class="exercise">
+<h3>Дасгал 2 — Data type</h3>
+
+<ol>
+<li>Name</li>
+<li>Age</li>
+<li>Height</li>
+<li>Eye colour</li>
+<li>Number of pets</li>
+<li>City</li>
+</ol>
+
+<p>Дээрх field бүрт Number эсвэл Text гэж бич.</p>
+</div>
+
+<div class="exercise">
+<h3>Дасгал 3 — Primary Key</h3>
+
+<table>
+<tr>
+<th>StudentID</th>
+<th>Name</th>
+<th>Age</th>
+</tr>
+<tr>
+<td>1</td>
+<td>Bat</td>
+<td>12</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Sara</td>
+<td>13</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Tom</td>
+<td>12</td>
+</tr>
+</table>
+
+<ol>
+<li>Primary key аль field вэ?</li>
+<li>Яагаад?</li>
+<li>Age яагаад primary key байж болохгүй вэ?</li>
+</ol>
+
+</div>
+
+<div class="exercise">
+<h3>Дасгал 4 — Query</h3>
+
+<table>
+<tr>
+<th>Name</th>
+<th>Age</th>
+</tr>
+<tr>
+<td>Bat</td>
+<td>10</td>
+</tr>
+<tr>
+<td>Sara</td>
+<td>15</td>
+</tr>
+<tr>
+<td>Tom</td>
+<td>12</td>
+</tr>
+</table>
+
+<ol>
+<li>Age > 11 → ямар record-ууд?</li>
+<li>Age = 10 → ямар record?</li>
+<li>Name < "T" → ямар record-ууд?</li>
+</ol>
+
+</div>
+
+<div class="exercise">
+<h3>Дасгал 5 — Өөрийн Database зохио</h3>
+
+<ol>
+<li>Сэдэв сонго (Students / Games / Animals)</li>
+<li>5 field зохио</li>
+<li>8 record бөглө</li>
+<li>Data type бич</li>
+<li>Primary key сонго</li>
+<li>3 query зохио</li>
+</ol>
+
+</div>
+
+</body>
+</html>
