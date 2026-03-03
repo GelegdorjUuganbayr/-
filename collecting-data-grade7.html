@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2.4 Data Collection</title>
+
+<style>
+body{
+    font-family: Arial, sans-serif;
+    margin:0;
+    padding:15px;
+    background:#f4f6f8;
+    line-height:1.6;
+}
+
+h1,h2{
+    color:#222;
+}
+
+.section{
+    background:white;
+    padding:15px;
+    margin-bottom:15px;
+    border-radius:10px;
+}
+
+.definition{
+    background:#eef2f7;
+    padding:10px;
+    border-radius:8px;
+    margin-top:10px;
+}
+
+form{
+    display:flex;
+    flex-direction:column;
+}
+
+label{
+    margin-top:10px;
+    font-weight:bold;
+}
+
+input, select, textarea{
+    padding:8px;
+    margin-top:5px;
+    border-radius:6px;
+    border:1px solid #ccc;
+    font-size:14px;
+}
+
+button{
+    margin-top:15px;
+    padding:10px;
+    border:none;
+    border-radius:8px;
+    background:#0a66c2;
+    color:white;
+    font-size:15px;
+}
+
+.task{
+    background:#eef2f7;
+    padding:10px;
+    border-radius:8px;
+    margin-top:10px;
+}
+</style>
+</head>
+
+<body>
+
+<h1>📊 2.4 Data Collection</h1>
+
+<div class="section">
+<h2>🎯 Хичээлийн зорилго</h2>
+<ul>
+<li>Data capture form гэж юу болохыг ойлгох</li>
+<li>Effective form ямар байх ёстойг мэдэх</li>
+<li>Form дээр гардаг алдааг таних</li>
+<li>Form-ыг сайжруулж сурах</li>
+</ul>
+</div>
+
+<div class="section">
+<h2>📘 Онол</h2>
+
+<p><b>Data capture form</b> гэдэг нь хүний мэдээллийг цуглуулах зориулалттай маягт юм.</p>
+
+<p><b>Effective form</b> гэдэг нь:</p>
+<ul>
+<li>Ойлгомжтой асуулттай</li>
+<li>Логик дараалалтай</li>
+<li>Хариултын формат тодорхой</li>
+<li>Зөвхөн хэрэгтэй мэдээлэл асуусан</li>
+</ul>
+
+<p>Form муу хийгдсэн бол:</p>
+<ul>
+<li>Хүмүүс буруу хариулна</li>
+<li>Мэдээлэл зөрчилдөнө</li>
+<li>Database-д алдаа гарна</li>
+</ul>
+
+</div>
+
+<div class="section">
+<h2>📚 Нэр томьёо тайлбар</h2>
+
+<div class="definition">
+<b>Personal data</b> → Хүнийг таньж болох мэдээлэл.<br>
+Жишээ: нэр, төрсөн огноо, утасны дугаар
+</div>
+
+<div class="definition">
+<b>Format</b> → Хариултыг ямар хэлбэрээр бичихийг заасан дүрэм.<br>
+Жишээ: DD/MM/YYYY
+</div>
+
+<div class="definition">
+<b>Effective</b> → Ажлаа зөв, ойлгомжтой хийж чаддаг гэсэн утгатай.
+</div>
+
+</div>
+
+<div class="section">
+<h2>🧾 Жинхэнэ Data Capture Form Жишээ</h2>
+
+<form>
+
+<label>1. Бүтэн нэр</label>
+<input type="text" placeholder="Нэрээ бичнэ үү">
+
+<label>2. Төрсөн огноо (DD/MM/YYYY)</label>
+<input type="text" placeholder="21/11/2010">
+
+<label>3. Утасны дугаар (8 оронтой)</label>
+<input type="text" placeholder="99112233">
+
+<label>4. Та ямар төрлийн бялуунд дуртай вэ?</label>
+<select>
+<option>-- Сонгоно уу --</option>
+<option>Chocolate</option>
+<option>Cheesecake</option>
+<option>Fruit cake</option>
+<option>Red velvet</option>
+<option>Other</option>
+</select>
+
+<label>5. Сард хэдэн удаа бялуу иддэг вэ?</label>
+<select>
+<option>Never</option>
+<option>1–2 удаа</option>
+<option>3–5 удаа</option>
+<option>5-аас дээш</option>
+</select>
+
+<label>6. Нэмэлт санал</label>
+<textarea rows="3" placeholder="Санал..."></textarea>
+
+<button type="button">Илгээх</button>
+
+</form>
+
+<p style="margin-top:10px;">
+👆 Энэ бол жинхэнэ data capture form ямар харагддагийг харуулж байна.
+</p>
+
+</div>
+
+<div class="section">
+<h2>✏ Дэвтэр дээр хийх даалгавар</h2>
+
+<div class="task">
+1. Дээрх form яагаад effective гэж үзэж болох вэ? 4 шалтгаан бич.
+</div>
+
+<div class="task">
+2. Аль асуултууд personal data вэ?
+</div>
+
+<div class="task">
+3. Format заагаагүй бол ямар асуудал үүсэх вэ?
+</div>
+
+<div class="task">
+4. Cake shop-д зориулсан өөр form зохиож бич.
+</div>
+
+</div>
+
+<div class="section">
+<h2>🔐 Stay Safe</h2>
+Personal data-г зөвхөн итгэлтэй байгууллагад өгнө.
+</div>
+
+</body>
+</html>
