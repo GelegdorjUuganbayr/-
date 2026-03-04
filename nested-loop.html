@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8">
+<title>Pseudocode Nested Loop Lesson</title>
+
+<style>
+
+body{
+font-family: Arial;
+background:#0f172a;
+color:#e2e8f0;
+padding:30px;
+line-height:1.6;
+}
+
+.container{
+max-width:900px;
+margin:auto;
+}
+
+h1{color:#38bdf8;}
+h2{color:#22c55e;}
+h3{color:#facc15;}
+
+.card{
+background:#1e293b;
+padding:20px;
+border-radius:10px;
+margin-top:20px;
+}
+
+pre{
+background:#020617;
+padding:15px;
+border-radius:8px;
+color:#facc15;
+font-size:16px;
+}
+
+.exercise{
+background:#334155;
+padding:15px;
+border-radius:8px;
+margin-top:10px;
+}
+
+.tip{
+background:#064e3b;
+padding:15px;
+border-radius:8px;
+margin-top:10px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Nested Loop – Давхар давталт</h1>
+
+<div class="card">
+
+<h2>1. Давталтыг саная</h2>
+
+<p>
+Өмнөх хичээл дээр бид <b>давталт (loop)</b> үзсэн.
+</p>
+
+<p>
+Давталт гэдэг нь нэг үйлдлийг олон удаа давтаж гүйцэтгэхийг хэлнэ.
+</p>
+
+<pre>
+FOR i ← 1 TO 5
+    PRINT i
+NEXT i
+</pre>
+
+<p>
+Энэ код 1-ээс 5 хүртэлх тоог хэвлэнэ.
+</p>
+
+</div>
+
+
+<div class="card">
+
+<h2>2. Давхар давталт гэж юу вэ?</h2>
+
+<p>
+Заримдаа бид <b>давталтын дотор дахин давталт</b> хийх шаардлагатай болдог.
+</p>
+
+<p>
+Үүнийг <b>Nested Loop (давхар давталт)</b> гэдэг.
+</p>
+
+<div class="tip">
+
+Гол ойлголт:
+
+<ul>
+<li>Гаднах loop → мөр</li>
+<li>Дотор loop → багана</li>
+</ul>
+
+</div>
+
+</div>
+
+
+
+<div class="card">
+
+<h2>3. Энгийн жишээ</h2>
+
+<pre>
+FOR row ← 1 TO 3
+    FOR col ← 1 TO 4
+        PRINT "*"
+    NEXT col
+
+    PRINT NEWLINE
+NEXT row
+</pre>
+
+<p>Энэ кодын үр дүн:</p>
+
+<pre>
+****
+****
+****
+</pre>
+
+<p>
+Яагаад ингэж гарч байна вэ?
+</p>
+
+<ul>
+<li>row loop → 3 удаа ажиллана</li>
+<li>col loop → мөр бүр дээр 4 удаа ажиллана</li>
+</ul>
+
+</div>
+
+
+
+<div class="card">
+
+<h2>4. Алхамчилсан ойлголт</h2>
+
+<p>
+Энэ кодыг харъя.
+</p>
+
+<pre>
+FOR i ← 1 TO 4
+    FOR j ← 1 TO i
+        PRINT "*"
+    NEXT j
+
+    PRINT NEWLINE
+NEXT i
+</pre>
+
+<p>Үр дүн:</p>
+
+<pre>
+*
+**
+***
+****
+</pre>
+
+<p>
+Энд:
+</p>
+
+<ul>
+<li>i → мөрийн дугаар</li>
+<li>j → хэдэн од хэвлэхийг шийднэ</li>
+</ul>
+
+</div>
+
+
+
+<div class="card">
+
+<h2>5. Дэвтэр дээр ажиллах</h2>
+
+<h3>Бодлого 1</h3>
+
+<div class="exercise">
+
+Доорх код юу хэвлэх вэ?
+
+<pre>
+FOR i ← 1 TO 2
+    FOR j ← 1 TO 3
+        PRINT "*"
+    NEXT j
+
+    PRINT NEWLINE
+NEXT i
+</pre>
+
+Дэвтэр дээрээ үр дүнг бич.
+
+</div>
+
+
+<h3>Бодлого 2</h3>
+
+<div class="exercise">
+
+Доорх pattern-ийг гаргах pseudocode бич.
+
+<pre>
+*
+**
+***
+****
+</pre>
+
+</div>
+
+
+<h3>Бодлого 3</h3>
+
+<div class="exercise">
+
+Доорх pattern-ийг гаргах pseudocode бич.
+
+<pre>
+****
+****
+****
+****
+</pre>
+
+</div>
+
+</div>
+
+
+
+<div class="card">
+
+<h2>6. Сэтгэх бодлого</h2>
+
+<div class="exercise">
+
+1️⃣ Доорх pattern-ийг гаргах pseudocode бич.
+
+<pre>
+1
+12
+123
+1234
+</pre>
+
+</div>
+
+<div class="exercise">
+
+2️⃣ Доорх pattern-ийг гаргах pseudocode бич.
+
+<pre>
+****
+***
+**
+*
+</pre>
+
+</div>
+
+<div class="exercise">
+
+3️⃣ 5 мөр 5 баганатай квадрат хэвлэх pseudocode бич.
+
+</div>
+
+</div>
+
+
+
+<div class="card">
+
+<h2>7. Гол санаа</h2>
+
+<ul>
+
+<li>Nested loop = давталтын дотор давталт</li>
+<li>Гаднах loop → мөр</li>
+<li>Дотор loop → багана</li>
+<li>Pattern, grid хийхэд ашигладаг</li>
+
+</ul>
+
+</div>
+
+</div>
+
+</body>
+</html>
