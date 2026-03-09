@@ -3,195 +3,202 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Monte Rosa Tech - Цасны баяр</title>
 
 <style>
+*{box-sizing:border-box}
 
 body{
-margin:0;
-font-family:Arial, sans-serif;
-background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
-color:white;
-display:flex;
-justify-content:center;
-padding:20px;
-overflow-x:hidden;
+  margin:0;
+  font-family:Arial, sans-serif;
+  background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+  color:white;
+  display:flex;
+  justify-content:center;
+  padding:20px;
+  overflow-x:hidden;
 }
 
 /* Snow animation */
-
 .snow{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-pointer-events:none;
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  pointer-events:none;
+  z-index:0;
 }
 
 .snow span{
-position:absolute;
-color:white;
-animation:fall linear infinite;
+  position:absolute;
+  color:white;
+  opacity:0.85;
+  font-size:18px;
+  animation:fall linear infinite;
 }
 
 @keyframes fall{
-0%{transform:translateY(-10vh)}
-100%{transform:translateY(110vh)}
+  0%{transform:translateY(-10vh) rotate(0deg)}
+  100%{transform:translateY(110vh) rotate(360deg)}
 }
 
 /* Poster */
-
 .poster{
-max-width:520px;
-width:100%;
-background:rgba(255,255,255,0.08);
-backdrop-filter:blur(12px);
-border-radius:20px;
-padding:25px;
-box-shadow:0 15px 40px rgba(0,0,0,0.6);
+  position:relative;
+  z-index:1;
+  max-width:520px;
+  width:100%;
+  background:rgba(255,255,255,0.08);
+  backdrop-filter:blur(12px);
+  border-radius:20px;
+  padding:25px;
+  box-shadow:0 15px 40px rgba(0,0,0,0.6);
+  border:1px solid rgba(255,255,255,0.12);
 }
 
 .title{
-text-align:center;
-font-size:30px;
-font-weight:bold;
-margin-bottom:6px;
-animation:glow 3s infinite alternate;
+  text-align:center;
+  font-size:30px;
+  font-weight:bold;
+  margin-bottom:6px;
+  animation:glow 3s infinite alternate;
 }
 
 @keyframes glow{
-from{ text-shadow:0 0 10px #7dd3fc;}
-to{ text-shadow:0 0 20px #38bdf8;}
+  from{ text-shadow:0 0 10px #7dd3fc; }
+  to{ text-shadow:0 0 20px #38bdf8, 0 0 30px #0ea5e9; }
 }
 
 .school{
-text-align:center;
-font-size:16px;
-color:#7dd3fc;
-margin-bottom:20px;
+  text-align:center;
+  font-size:16px;
+  color:#7dd3fc;
+  margin-bottom:20px;
+  letter-spacing:1px;
 }
 
 .section{
-margin-bottom:18px;
+  margin-bottom:18px;
 }
 
 .label{
-font-weight:bold;
-color:#fbbf24;
-display:block;
-margin-bottom:6px;
+  font-weight:bold;
+  color:#fbbf24;
+  display:block;
+  margin-bottom:6px;
+  font-size:15px;
 }
 
 .text{
-font-size:14px;
-line-height:1.6;
-color:#e2e8f0;
+  font-size:14px;
+  line-height:1.6;
+  color:#e2e8f0;
 }
 
-/* Highlight holidays */
-
 .highlight{
-color:#fbbf24;
-font-weight:bold;
+  color:#fbbf24;
+  font-weight:bold;
 }
 
 .highlight2{
-color:#7dd3fc;
-font-weight:bold;
+  color:#7dd3fc;
+  font-weight:bold;
 }
 
 .schedule{
-background:rgba(255,255,255,0.05);
-padding:12px;
-border-radius:10px;
-margin-top:8px;
+  background:rgba(255,255,255,0.05);
+  padding:12px;
+  border-radius:10px;
+  margin-top:8px;
 }
 
 .schedule div{
-padding:6px 0;
-border-bottom:1px solid rgba(255,255,255,0.1);
+  padding:8px 0;
+  border-bottom:1px solid rgba(255,255,255,0.1);
+  color:#e2e8f0;
 }
 
 .schedule div:last-child{
-border:none;
+  border:none;
 }
 
 .footer{
-text-align:center;
-margin-top:20px;
-font-size:14px;
-color:#cbd5e1;
+  text-align:center;
+  margin-top:20px;
+  font-size:14px;
+  color:#cbd5e1;
+  border-top:1px solid rgba(255,255,255,0.1);
+  padding-top:14px;
 }
 
+@media (max-width:600px){
+  .title{font-size:24px}
+  .poster{padding:18px}
+  .text,.schedule div,.footer{font-size:13px}
+}
 </style>
-
 </head>
 <body>
 
 <div class="snow">
-<span style="left:10%;animation-duration:6s">❄</span>
-<span style="left:30%;animation-duration:8s">❄</span>
-<span style="left:50%;animation-duration:7s">❄</span>
-<span style="left:70%;animation-duration:9s">❄</span>
-<span style="left:90%;animation-duration:6s">❄</span>
+  <span style="left:5%;animation-duration:6s">❄</span>
+  <span style="left:15%;animation-duration:8s">❄</span>
+  <span style="left:28%;animation-duration:7s">❄</span>
+  <span style="left:40%;animation-duration:9s">❄</span>
+  <span style="left:52%;animation-duration:6s">❄</span>
+  <span style="left:65%;animation-duration:8s">❄</span>
+  <span style="left:78%;animation-duration:7s">❄</span>
+  <span style="left:90%;animation-duration:9s">❄</span>
 </div>
 
 <div class="poster">
+  <div class="title">❄ ЦАСНЫ БАЯР 2026 ❄</div>
+  <div class="school">Monte Rosa Tech</div>
 
-<div class="title">❄ ЦАСНЫ БАЯР 2026 ❄</div>
-<div class="school">Monte Rosa Tech</div>
+  <div class="section">
+    <span class="label">🎯 Зорилго</span>
+    <div class="text">
+      <span class="highlight">Олон улсын эмэгтэйчүүдийн эрхийг хамгаалах өдөр</span> болон
+      <span class="highlight2">Монгол цэргийн баяр</span>-ыг тохиолдуулан Monte Rosa Tech
+      сургуулийн багш, ажилчдын чөлөөт цагийг зөв боловсон өнгөрүүлэх,
+      хамтын ажиллагаа, нөхөрсөг уур амьсгалыг дэмжих, эрүүл мэнд,
+      бие бялдрыг дэмжихэд оршино.
+    </div>
+  </div>
 
-<div class="section">
-<span class="label">🎯 Зорилго</span>
+  <div class="section">
+    <span class="label">📍 Байршил</span>
+    <div class="text">Ойн булаг амралтын газар</div>
+  </div>
 
-<div class="text">
-<span class="highlight">Олон улсын эмэгтэйчүүдийн эрхийг хамгаалах өдөр</span> болон 
-<span class="highlight2">Монгол цэргийн баяр</span>-ыг тохиолдуулан Monte Rosa Tech 
-сургуулийн багш, ажилчдын чөлөөт цагийг зөв боловсон өнгөрүүлэх, 
-хамтын ажиллагаа, нөхөрсөг уур амьсгалыг дэмжих, эрүүл мэнд, 
-бие бялдрыг дэмжихэд оршино.
-</div>
+  <div class="section">
+    <span class="label">📅 Огноо</span>
+    <div class="text">2026.03.14</div>
+  </div>
 
-</div>
+  <div class="section">
+    <span class="label">🚌 Явах цаг</span>
+    <div class="text">08:00 – Сургуулиас хөдөлнө</div>
+  </div>
 
-<div class="section">
-<span class="label">📍 Байршил</span>
-Ойн булаг амралтын газар
-</div>
+  <div class="section">
+    <span class="label">🏆 Арга хэмжээ</span>
+    <div class="schedule">
+      <div>09:00 – Өглөөний цай</div>
+      <div>09:30 – Нээлтийн үйл ажиллагаа</div>
+      <div>10:00 – Багуудын спортын тэмцээн (олс таталт, буухиа)</div>
+      <div>12:00 – Өдрийн хоол</div>
+      <div>12:30 – Чөлөөт цаг</div>
+      <div>15:00 – ҮЭ-ийн арга хэмжээ (хорхог, дурсгалын зүйл гардуулах)</div>
+      <div>16:00 – Чөлөөт цаг</div>
+      <div>18:00 – УБ хот руу буцна</div>
+    </div>
+  </div>
 
-<div class="section">
-<span class="label">📅 Огноо</span>
-2026.03.14
-</div>
-
-<div class="section">
-<span class="label">🚌 Явах цаг</span>
-08:00 – Сургуулиас хөдөлнө
-</div>
-
-<div class="section">
-
-<span class="label">🏆 Арга хэмжээ</span>
-
-<div class="schedule">
-<div>09:00 – Өглөөний цай</div>
-<div>09:30 – Нээлтийн үйл ажиллагаа</div>
-<div>10:00 – Багуудын спортын тэмцээн</div>
-<div>12:00 – Өдрийн хоол</div>
-<div>12:30 – Чөлөөт цаг</div>
-<div>15:00 – ҮЭ-ийн арга хэмжээ</div>
-<div>16:00 – Чөлөөт цаг</div>
-<div>18:00 – УБ хот руу буцна</div>
-</div>
-
-</div>
-
-<div class="footer">
-Monte Rosa Tech багш, ажилчдын хамтын арга хэмжээ
-</div>
-
+  <div class="footer">
+    Monte Rosa Tech багш, ажилчдын хамтын арга хэмжээ
+  </div>
 </div>
 
 </body>
